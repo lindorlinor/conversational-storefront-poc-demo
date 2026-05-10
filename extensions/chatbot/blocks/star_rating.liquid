@@ -1,17 +1,10 @@
-<div id="chat-widget-root" data-api-url="{{ block.settings.api_url }}"></div>
+<div id="chat-widget-root" data-api-url="/apps/chatbot"></div>
 <script src="{{ 'bundle.js' | asset_url }}" defer></script>
 
 {% schema %}
 {
   "name": "Chat Widget",
   "target": "body",
-  "settings": [
-    {
-      "type": "text",
-      "id": "api_url",
-      "label": "App API URL",
-      "info": "URL completo dell'endpoint /api/chat (es. https://tua-app.myshopify.com/api/chat)"
-    }
-  ]
+  "settings": []
 }
 {% endschema %}
