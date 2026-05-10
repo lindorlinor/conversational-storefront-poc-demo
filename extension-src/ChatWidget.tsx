@@ -3,7 +3,7 @@ import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 
 export function ChatWidget({ apiUrl }: { apiUrl: string }) {
-  const { messages, sendMessage } = useChat({
+  const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
   });
 
@@ -66,6 +66,20 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
             )}
           </div>
         ))}
+        {(status === "streaming" || status === "submitted") && (
+          <div
+            style={{
+              alignSelf: "flex-start",
+              background: "#f0f0f0",
+              padding: "8px 12px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              color: "#999",
+            }}
+          >
+            ...
+          </div>
+        )}
       </div>
 
       <form
