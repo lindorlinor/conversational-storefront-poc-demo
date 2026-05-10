@@ -8,12 +8,6 @@ const accessToken = process.env.SHOPIFY_ACCESS_TOKEN
 const storefrontPassword = process.env.SHOPIFY_STOREFRONT_PASSWORD
 export const model = openai('gpt-4o')
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-}
-
 let cachedStorefrontCookie: string | null = null
 
 async function getStorefrontCookie(): Promise<string | null> {
@@ -72,16 +66,13 @@ export async function action({ request }: ActionFunctionArgs) {
       messages: await convertToModelMessages(messages),
     })
 
-    const response = result.toUIMessageStreamResponse()
-    const headers = new Headers(response.headers)
-    Object.entries(corsHeaders).forEach(([k, v]) => headers.set(k, v))
-    return new Response(response.body, { status: response.status, headers })
+    return result.toUIMessageStreamResponse()
   } catch (err) {
     console.error('[chat] ERROR:', err)
     const message = err instanceof Error ? err.message : String(err)
     return new Response(JSON.stringify({ error: message }), {
       status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
     })
   }
 }

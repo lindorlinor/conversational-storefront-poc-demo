@@ -1,20 +1,6 @@
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig, type Plugin, type UserConfig } from "vite";
+import { defineConfig, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-
-function csrfBypassPlugin(): Plugin {
-  return {
-    name: 'csrf-bypass',
-    configureServer(server) {
-      server.middlewares.use((req, _res, next) => {
-        if (req.method === 'POST' && req.url?.startsWith('/api/')) {
-          delete req.headers['origin']
-        }
-        next()
-      })
-    },
-  }
-}
 
 // Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
 // Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the Vite server.
@@ -52,12 +38,6 @@ if (host === "localhost") {
 export default defineConfig({
   server: {
     allowedHosts: [host],
-    cors: {
-      origin: 'https://conversational-commerce-67y9bqti.myshopify.com',
-      // methods: ['GET', 'POST', 'OPTIONS'],
-      // allowedHeaders: ['Content-Type'],
-      preflightContinue: false,
-    },
     port: Number(process.env.PORT || 3000),
     hmr: hmrConfig,
     fs: {
@@ -66,7 +46,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    csrfBypassPlugin(),
     reactRouter(),
     tsconfigPaths(),
   ],
