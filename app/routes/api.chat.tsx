@@ -10,16 +10,20 @@ export const model = openai('gpt-4o')
 
 let cachedStorefrontCookie: string | null = null
 
+
+async function passwordAuthenticate(): Promise<Response> {
+  return fetch(`https://${shop}.myshopify.com/password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `form_type=storefront_password&utf8=%E2%9C%93&password=${encodeURIComponent(storefrontPassword!)}`,
+    redirect: 'manual',
+  })
+}
 async function getStorefrontCookie(): Promise<string | null> {
   if (cachedStorefrontCookie) return cachedStorefrontCookie
   if (!storefrontPassword || !shop) return null
 
-  const response = await fetch(`https://${shop}.myshopify.com/password`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `form_type=storefront_password&utf8=%E2%9C%93&password=${encodeURIComponent(storefrontPassword)}`,
-    redirect: 'manual',
-  })
+  const response = await passwordAuthenticate()
 
   const setCookieHeader = response.headers.get('set-cookie')
   const match = setCookieHeader?.match(/_shopify_essential=([^;]+)/)
