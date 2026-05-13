@@ -1,5 +1,5 @@
 {
-  "uri": "https://raw.githubusercontent.com/lindorlinor/conversational-storefront-poc-demo/main/ucp-profile.json",
+  "uri": "https://cdn.jsdelivr.net/gh/lindorlinor/conversational-storefront-poc-demo@main/ucp-profile.json",
   "ucp": {
     "version": "2026-04-08",
     "capabilities": {
