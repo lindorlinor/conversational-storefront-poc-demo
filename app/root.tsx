@@ -14,6 +14,8 @@ export default function App() {
         <Meta />
         <Links />
       </head>
+      <meta name="shopify-api-key" content="%SHOPIFY_API_KEY%" />
+      <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
       <body>
         <Outlet />
         <ScrollRestoration />

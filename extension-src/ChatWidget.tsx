@@ -1,7 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
-
+import { ProductCard } from "./components";
+// import { m } from "node_modules/react-router/dist/development/index-react-server-client-Ck_yZ1qL.mjs";
 export function ChatWidget({ apiUrl }: { apiUrl: string }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
@@ -10,6 +11,7 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
   const [input, setInput] = useState("");
 
   return (
+    
     <div
       style={{
         position: "fixed",
@@ -22,8 +24,7 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
         boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
         zIndex: 9999,
         display: "flex",
-        flexDirection: "column",
-        maxHeight: "500px",
+        flexDirection: "column"
       }}
     >
       <div
@@ -33,21 +34,26 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
           fontWeight: 600,
           fontSize: "15px",
         }}
-      >
+        >
         Chat
       </div>
+        
 
       <div
         style={{
-          flex: 1,
           overflowY: "auto",
           padding: "12px 16px",
           display: "flex",
           flexDirection: "column",
           gap: "8px",
-          minHeight: "200px",
+          height: "400px",
         }}
       >
+
+        {messages.map((message): null => {
+          console.log(message);
+          return null;
+        })}
         {messages.map((message) => (
           <div
             key={message.id}
@@ -61,9 +67,17 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
               fontSize: "14px",
             }}
           >
-            {message.parts.map((part, i) =>
-              part.type === "text" ? <span key={i}>{part.text}</span> : null
-            )}
+            {message.parts.map((part, i) => {
+              if (part.type === "text") return <span key={i}>{part.text}</span>
+              if (part.type === "dynamic-tool" && part.state === "output-available") {
+                const output = part.output as { content: { text: string }[] }
+                const data = JSON.parse(output.content[0].text)
+                return data.products.map((p: { id: string; title: string ; media: { url: string }[] }) => (
+                  <ProductCard key={p.id} id={p.id} title={p.title} imgUrl={p.media[0].url} />
+                ))
+              }
+              return null
+            })}
           </div>
         ))}
         {(status === "streaming" || status === "submitted") && (

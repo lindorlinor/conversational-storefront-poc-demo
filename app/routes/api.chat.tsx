@@ -8,6 +8,7 @@ const accessToken = process.env.SHOPIFY_ACCESS_TOKEN
 const storefrontPassword = process.env.SHOPIFY_STOREFRONT_PASSWORD
 export const model = openai('gpt-4o')
 
+
 let cachedStorefrontCookie: string | null = null
 
 
