@@ -32,11 +32,10 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
           >
             {message.parts.map((part, i) => {
               if (part.type === "text") return <span key={i}>{part.text}</span>
-              if (part.type === "dynamic-tool" && part.state === "output-available") {
-                const output = part.output as { content: { text: string }[] }
-                const data = JSON.parse(output.content[0].text)
-                return data.products.map((p: { id: string; title: string ; media: { url: string }[] }) => (
-                  <ProductCard key={p.id} id={p.id} title={p.title} imgUrl={p.media[0].url} />
+              if (part.type === "tool-searchProductTool" && part.state === "output-available") {
+                const output = part.output as { products: Array<{ id: string; title: string; featuredImage?: { url: string } }> }
+                return output.products.map((p) => (
+                  <ProductCard key={p.id} id={p.id} title={p.title} imgUrl={p.featuredImage?.url ?? ''} />
                 ))
               }
               return null
