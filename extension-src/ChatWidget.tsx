@@ -11,45 +11,12 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
   const [input, setInput] = useState("");
 
   return (
-    
-    <div
-      style={{
-        position: "fixed",
-        bottom: "24px",
-        right: "24px",
-        width: "360px",
-        background: "white",
-        border: "1px solid #e0e0e0",
-        borderRadius: "12px",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
-        zIndex: 9999,
-        display: "flex",
-        flexDirection: "column"
-      }}
-    >
-      <div
-        style={{
-          padding: "12px 16px",
-          borderBottom: "1px solid #e0e0e0",
-          fontWeight: 600,
-          fontSize: "15px",
-        }}
-        >
+    <div className="fixed bottom-6 right-6 w-[480px] bg-white border border-gray-200 rounded-xl shadow-lg z-[9999] flex flex-col">
+      <h1 className="px-5 py-3 border-b border-gray-200 font-semibold text-3xl">
         Chat
-      </div>
-        
+      </h1>
 
-      <div
-        style={{
-          overflowY: "auto",
-          padding: "12px 16px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          height: "400px",
-        }}
-      >
-
+      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 h-[480px]">
         {messages.map((message): null => {
           console.log(message);
           return null;
@@ -57,15 +24,11 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
         {messages.map((message) => (
           <div
             key={message.id}
-            style={{
-              alignSelf: message.role === "user" ? "flex-end" : "flex-start",
-              maxWidth: "80%",
-              background: message.role === "user" ? "#000" : "#f0f0f0",
-              color: message.role === "user" ? "#fff" : "#000",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              fontSize: "14px",
-            }}
+            className={`max-w-[80%] px-4 py-2.5 rounded-lg text-base ${
+              message.role === "user"
+                ? "self-end bg-black text-white"
+                : "self-start bg-gray-100 text-black"
+            }`}
           >
             {message.parts.map((part, i) => {
               if (part.type === "text") return <span key={i}>{part.text}</span>
@@ -81,16 +44,7 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
           </div>
         ))}
         {(status === "streaming" || status === "submitted") && (
-          <div
-            style={{
-              alignSelf: "flex-start",
-              background: "#f0f0f0",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              fontSize: "14px",
-              color: "#999",
-            }}
-          >
+          <div className="self-start bg-gray-100 px-4 py-2.5 rounded-lg text-base text-gray-400">
             ...
           </div>
         )}
@@ -104,37 +58,17 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
             setInput("");
           }
         }}
-        style={{
-          padding: "12px 16px",
-          borderTop: "1px solid #e0e0e0",
-          display: "flex",
-          gap: "8px",
-        }}
+        className="px-5 py-4 border-t border-gray-200 flex gap-2"
       >
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Scrivi un messaggio..."
-          style={{
-            flex: 1,
-            padding: "8px 10px",
-            border: "1px solid #e0e0e0",
-            borderRadius: "6px",
-            fontSize: "14px",
-            outline: "none",
-          }}
+          className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-xl outline-none"
         />
         <button
           type="submit"
-          style={{
-            padding: "8px 16px",
-            background: "#000",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
+          className="px-4 py-2 bg-black text-white rounded-md text-xl cursor-pointer"
         >
           Invia
         </button>
