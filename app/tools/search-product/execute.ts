@@ -4,22 +4,22 @@ import { searchProductSchema } from './definition'
 type SearchProductArgs = z.infer<typeof searchProductSchema>
 
 const STOREFRONT_API_VERSION = '2025-01'
-const COLLECTION_HANDLE = 'automated-collection'
-
 const GRAPHQL_QUERY = `
   query SearchProducts(
-    $handle: String!
+    $query: String!
     $first: Int!
     $after: String
     $filters: [ProductFilter!]
   ) {
-    collection(handle: $handle) {
-      products(
-        first: $first
-        after: $after
-        filters: $filters
-      ) {
-        nodes {
+    search(
+      query: $query
+      first: $first
+      after: $after
+      productFilters: $filters
+      types: [PRODUCT]
+    ) {
+      nodes {
+        ... on Product {
           id
           title
           handle
@@ -35,10 +35,10 @@ const GRAPHQL_QUERY = `
           vendor
           tags
         }
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }
@@ -46,7 +46,7 @@ const GRAPHQL_QUERY = `
 
 export async function searchProductExecute(args: SearchProductArgs) {
   console.log('[searchProductTool] called with args:', JSON.stringify(args))
-  const { filters, metafield_filters } = args
+  const { filters, metafield_filters, limit = 10 } = args
 
   const shop = process.env.SHOPIFY_SHOP
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
@@ -87,8 +87,8 @@ export async function searchProductExecute(args: SearchProductArgs) {
       body: JSON.stringify({
         query: GRAPHQL_QUERY,
         variables: {
-          handle: COLLECTION_HANDLE,
-          first: 10,
+          query: args.query ?? '*',
+          first: limit,
           filters: productFilters.length > 0 ? productFilters : undefined,
         },
       }),
@@ -103,17 +103,13 @@ export async function searchProductExecute(args: SearchProductArgs) {
     throw new Error(data.errors[0].message)
   }
 
-  const products = data.data.collection?.products
-
-  if (!products) {
-    throw new Error(`Collection "${COLLECTION_HANDLE}" not found`)
-  }
+  const search = data.data.search
 
   return {
-    products: products.nodes,
+    products: search.nodes,
     pagination: {
-      hasNextPage: products.pageInfo.hasNextPage,
-      cursor: products.pageInfo.endCursor,
+      hasNextPage: search.pageInfo.hasNextPage,
+      cursor: search.pageInfo.endCursor,
     },
   }
 }
