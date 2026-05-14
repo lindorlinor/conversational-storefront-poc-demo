@@ -19,7 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const result = streamText({
       system: `Sei un assistente per uno store di snowboard.
           I prodotti possono avere metafield personalizzati (namespace: "custom"):
-          - key: "livello_rider_parte_2" — livello di difficoltà del prodotto (es. "prova" o "prova2")
+          - key: "livello_rider_parte_2" — livello di difficoltà del prodotto (es. "prova1" o "prova2")
 
           Quando l'utente cerca per caratteristiche che corrispondono a un metafield noto, usa metafield_filters oltre alla query testuale.
           Se una ricerca non produce risultati, riprova usando un approccio diverso (es. solo metafield, o senza filtri di prezzo).
