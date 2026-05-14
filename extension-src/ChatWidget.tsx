@@ -30,12 +30,13 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
                 : "self-start bg-gray-100 text-black"
             }`}
           >
+            {/* da sistemare obv, per ora sto vedendo solo se funzionano i tool */}
             {message.parts.map((part, i) => {
               if (part.type === "text") return <span key={i}>{part.text}</span>
               if (part.type === "tool-searchProductTool" && part.state === "output-available") {
-                const output = part.output as { products: Array<{ id: string; title: string; featuredImage?: { url: string } }> }
+                const output = part.output as { products: Array<{ id: string; title: string; handle: string; url: string | null; featuredImage?: { url: string } }> }
                 return output.products.map((p) => (
-                  <ProductCard key={p.id} id={p.id} title={p.title} imgUrl={p.featuredImage?.url ?? ''} />
+                  <ProductCard key={p.id} id={p.id} title={p.title} url={p.url ?? `/products/${p.handle}`} imgUrl={p.featuredImage?.url ?? ''} />
                 ))
               }
               return null

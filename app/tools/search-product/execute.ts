@@ -24,6 +24,7 @@ const GRAPHQL_QUERY = `
           title
           handle
           description
+          url: onlineStoreUrl
           priceRange {
             minVariantPrice { amount currencyCode }
             maxVariantPrice { amount currencyCode }

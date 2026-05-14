@@ -1,7 +1,7 @@
 import { Product } from "../models/types";
 const ProductCard = (product: Product) => {
 
-    const { id, title , imgUrl } = product;
+    const { id, title, url, imgUrl } = product;
   return (
     <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
         <s-box
@@ -10,7 +10,7 @@ const ProductCard = (product: Product) => {
         overflow="hidden"
         maxInlineSize="216px"
         >
-        <s-clickable href="">
+        <s-clickable href={url}>
             <s-image
             aspectRatio="1/1"
             objectFit="cover"
@@ -27,7 +27,7 @@ const ProductCard = (product: Product) => {
             alignItems="center"
         >
             <s-heading>{title}</s-heading>
-            <s-button href="" accessibilityLabel="View 4-pieces puzzle template">
+            <s-button href={url} accessibilityLabel="View 4-pieces puzzle template">
             View
             </s-button>
         </s-grid>
