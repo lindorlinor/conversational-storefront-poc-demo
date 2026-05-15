@@ -13,6 +13,12 @@ datasource db {
   url      = "file:dev.sqlite"
 }
 
+model SystemPrompt {
+  id      Int    @id @default(autoincrement())
+  shop    String @unique
+  content String
+}
+
 model Session {
   id            String    @id
   shop          String
