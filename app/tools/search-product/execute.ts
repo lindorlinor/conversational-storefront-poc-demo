@@ -30,10 +30,13 @@ const GRAPHQL_QUERY = `
             maxVariantPrice { amount currencyCode }
           }
           featuredImage { url altText }
-          availableForSale
-          productType
-          vendor
-          tags
+          variants(first: 10) {
+            nodes {
+              id
+              title
+              price { amount }
+            }
+          }
         }
       }
       pageInfo {

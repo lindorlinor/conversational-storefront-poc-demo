@@ -34,9 +34,9 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
             {message.parts.map((part, i) => {
               if (part.type === "text") return <span key={i}>{part.text}</span>
               if (part.type === "tool-searchProductTool" && part.state === "output-available") {
-                const output = part.output as { products: Array<{ id: string; title: string; handle: string; url: string | null; featuredImage?: { url: string } }> }
+                const output = part.output as { products: Array<{ id: string; handle: string; title: string; url: string | null; featuredImage?: { url: string }; priceRange: { minVariantPrice: { amount: string; currencyCode: string } }; variants?: { nodes: Array<{ id: string; title: string; price: { amount: string } }> } }> }
                 return output.products.map((p) => (
-                  <ProductCard key={p.id} id={p.id} title={p.title} url={p.url ?? `/products/${p.handle}`} imgUrl={p.featuredImage?.url ?? ''} />
+                  <ProductCard key={p.id} id={p.id} handle={p.handle} title={p.title} url={p.url ?? `/products/${p.handle}`} imgUrl={p.featuredImage?.url ?? ''} priceRange={p.priceRange} variants={p.variants?.nodes} />
                 ))
               }
               return null

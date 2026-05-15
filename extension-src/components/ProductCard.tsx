@@ -1,38 +1,93 @@
-import { Product } from "../models/types";
-const ProductCard = (product: Product) => {
+import { Product, Variant } from "../models/types";
 
-    const { id, title, url, imgUrl } = product;
-  return (
-    <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
-        <s-box
-        border="base"
-        borderRadius="base"
-        overflow="hidden"
-        maxInlineSize="216px"
-        >
-        <s-clickable href={url}>
-            <s-image
-            aspectRatio="1/1"
-            objectFit="cover"
-            alt={title}
-            src={imgUrl}
-            />
-        </s-clickable>
-        <s-divider />
-        <s-grid
-            gridTemplateColumns="1fr auto"
-            background="base"
-            padding="small"
-            gap="small"
-            alignItems="center"
-        >
-            <s-heading>{title}</s-heading>
-            <s-button href={url} accessibilityLabel="View 4-pieces puzzle template">
-            View
-            </s-button>
+const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle: string; productImgUrl: string; productUrl: string }) => {
+    const price = parseFloat(variant.price.amount).toFixed(2);
+
+    return (
+        <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
+            <s-box
+                border="base"
+                borderRadius="base"
+                overflow="hidden"
+                maxInlineSize="216px"
+            >
+                <s-clickable href={productUrl}>
+                    <s-image
+                        aspectRatio="1/1"
+                        objectFit="cover"
+                        alt={productTitle}
+                        src={productImgUrl}
+                    />
+                </s-clickable>
+                <s-divider />
+                <s-grid
+                    gridTemplateColumns="1fr auto"
+                    background="base"
+                    padding="small"
+                    gap="small"
+                    alignItems="center"
+                >
+                    <s-box>
+                        <s-heading>{productTitle}</s-heading>
+                        <s-text>{variant.title} — {price} EUR</s-text>
+                    </s-box>
+                    <s-button href={productUrl} accessibilityLabel={`View ${productTitle}`}>
+                        View
+                    </s-button>
+                </s-grid>
+            </s-box>
         </s-grid>
-        </s-box>
-    </s-grid>
-  )
+    );
+}
+
+const ProductCard = (product: Product) => {
+    const { title, url, imgUrl, priceRange, variants } = product;
+    const price = parseFloat(priceRange.minVariantPrice.amount).toFixed(2);
+
+    if (variants && variants.length > 0) {
+        return (
+            <>
+                {variants.map((variant) => (
+                    <VariantCard key={variant.id} variant={variant} productTitle={title} productImgUrl={imgUrl} productUrl={url} />
+                ))}
+            </>
+        );
+    }
+
+    return (
+        <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
+            <s-box
+                border="base"
+                borderRadius="base"
+                overflow="hidden"
+                maxInlineSize="216px"
+            >
+                <s-clickable href={url}>
+                    <s-image
+                        aspectRatio="1/1"
+                        objectFit="cover"
+                        alt={title}
+                        src={imgUrl}
+                    />
+                </s-clickable>
+                <s-divider />
+                <s-grid
+                    gridTemplateColumns="1fr auto"
+                    background="base"
+                    padding="small"
+                    gap="small"
+                    alignItems="center"
+                >
+                    <s-box>
+                        <s-heading>{title}</s-heading>
+                        <s-text>{price} EUR</s-text>
+                    </s-box>
+                    <s-button href={url} accessibilityLabel={`View ${title}`}>
+                        View
+                    </s-button>
+                </s-grid>
+            </s-box>
+        </s-grid>
+    );
 }
 export default ProductCard

@@ -41,12 +41,11 @@ export const searchProductSchema = z.object({
 
 export const searchProductDefinition = tool({
     description: `Search for products in the store.
+        Use this tool when the user wants to find, browse, or filter products.
 
-Use this tool when the user wants to find, browse, or filter products.
-
-IMPORTANT rules:
-- Only include filters the user explicitly mentioned. Do NOT guess or default filter values.
-- Do NOT set priceRange, availability, or categories unless the user specifically asks for them.
-- If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.`,
+        IMPORTANT rules:
+        - Only include filters the user explicitly mentioned. Do NOT guess or default filter values.
+        - Do NOT set priceRange, availability, or categories unless the user specifically asks for them.
+        - If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.`,
     inputSchema: searchProductSchema,
 });
