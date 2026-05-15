@@ -9,11 +9,11 @@ export const searchProductSchema = z.object({
         .object({
             priceRange: z
                 .object({
-                    min: z.number().positive().optional(),
-                    max: z.number().positive().optional(),
+                    min: z.number().optional().describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
+                    max: z.number().optional().describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
                 })
                 .optional()
-                .describe('ONLY set if the user explicitly mentions a price, budget, or price range. Do NOT default to 0.'),
+                .describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
             availability: z.boolean().optional().describe(
                 'ONLY set if the user explicitly asks for available (true) or unavailable (false) products. Do NOT include this field otherwise.'
             ),
