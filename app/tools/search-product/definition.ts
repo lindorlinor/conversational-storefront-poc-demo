@@ -47,7 +47,6 @@ Use this tool when the user wants to find, browse, or filter products.
 IMPORTANT rules:
 - Only include filters the user explicitly mentioned. Do NOT guess or default filter values.
 - Do NOT set priceRange, availability, or categories unless the user specifically asks for them.
-- If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.
-- query should be in the language the store products are written in.`,
+- If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.`,
     inputSchema: searchProductSchema,
 });
