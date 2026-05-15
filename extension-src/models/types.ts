@@ -2,6 +2,7 @@ export type Variant = {
     id: string;
     title: string;
     price: { amount: string };
+    image?: { url: string };
 }
 
 export type Product = {

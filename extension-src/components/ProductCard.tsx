@@ -2,6 +2,7 @@ import { Product, Variant } from "../models/types";
 
 const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle: string; productImgUrl: string; productUrl: string }) => {
     const price = parseFloat(variant.price.amount).toFixed(2);
+    const imgUrl = variant.image?.url ?? productImgUrl;
 
     return (
         <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
@@ -16,7 +17,7 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
                         aspectRatio="1/1"
                         objectFit="cover"
                         alt={productTitle}
-                        src={productImgUrl}
+                        src={imgUrl}
                     />
                 </s-clickable>
                 <s-divider />

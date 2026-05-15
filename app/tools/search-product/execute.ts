@@ -35,6 +35,7 @@ const GRAPHQL_QUERY = `
               id
               title
               price { amount }
+              image { url }
             }
           }
         }
