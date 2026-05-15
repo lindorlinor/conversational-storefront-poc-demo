@@ -1,8 +1,10 @@
 import { Product, Variant } from "../models/types";
+import { variantUrl } from "../utils/url";
 
 const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle: string; productImgUrl: string; productUrl: string }) => {
     const price = parseFloat(variant.price.amount).toFixed(2);
     const imgUrl = variant.image?.url ?? productImgUrl;
+    const url = variantUrl(productUrl, variant.id);
 
     return (
         <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
@@ -12,7 +14,7 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
                 overflow="hidden"
                 maxInlineSize="216px"
             >
-                <s-clickable href={productUrl}>
+                <s-clickable href={url}>
                     <s-image
                         aspectRatio="1/1"
                         objectFit="cover"
@@ -32,7 +34,7 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
                         <s-heading>{productTitle}</s-heading>
                         <s-text>{variant.title} — {price} EUR</s-text>
                     </s-box>
-                    <s-button href={productUrl} accessibilityLabel={`View ${productTitle}`}>
+                    <s-button href={url} accessibilityLabel={`View ${productTitle}`}>
                         View
                     </s-button>
                 </s-grid>

@@ -3,6 +3,7 @@ export type Variant = {
     title: string;
     price: { amount: string };
     image?: { url: string };
+    url: string;
 }
 
 export type Product = {
