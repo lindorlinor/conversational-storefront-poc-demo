@@ -3,27 +3,13 @@ import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import db from "../db.server";
-
-// aggiunto perchè app bridge stava patchando il fetch. la promise non risolveva mai perchè aspettava un token da admin che non arrivava
-function xhrPost(url: string, body: unknown): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onload = () => resolve(JSON.parse(xhr.responseText));
-    xhr.onerror = () => reject(new Error("XHR error"));
-    xhr.send(JSON.stringify(body));
-  });
-}
-
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
-  const record = await db.systemPrompt.findUnique({ where: { shop: session.shop } });
-  return { shop: session.shop, content: record?.content ?? "" };
+  // TODO: leggere il system prompt dal metaobject via admin.graphql(...)
+  const content = "";
+  return { shop: session.shop, content };
 };
-
 
 export default function Index() {
   const { shop, content } = useLoaderData<typeof loader>();
@@ -36,7 +22,8 @@ export default function Index() {
 
   const handleSave = () => {
     const value = textFieldRef.current?.value ?? "";
-    xhrPost("/api/system-prompt", { shop, content: value }).catch(console.error);
+    // TODO: salvare il system prompt nel metaobject via fetch/action
+    console.log("save:", shop, value);
   };
 
   return (
