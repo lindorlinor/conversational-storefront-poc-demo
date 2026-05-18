@@ -1,21 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useFetcher } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { getSystemPrompt } from "../system-prompt.graphql";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin, session } = await authenticate.admin(request);
+  const { admin } = await authenticate.admin(request);
   const content = await getSystemPrompt(admin);
-  return { shop: session.shop, content };
+  return { content };
 };
 
 export default function Index() {
-  const { shop, content } = useLoaderData<typeof loader>();
+  const { content } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<{ ok: boolean; error?: string }>();
   const textFieldRef = useRef<HTMLElementTagNameMap["s-text-field"]>(null);
   const [prompt, setPrompt] = useState(content);
-  const [isSaving, setIsSaving] = useState(false);
+
+  const isSaving = fetcher.state !== "idle";
 
   useEffect(() => {
     setPrompt(content);
@@ -23,15 +25,7 @@ export default function Index() {
 
   const handleSave = () => {
     const value = textFieldRef.current?.value ?? "";
-    const formData = new FormData();
-    formData.append("shop", shop);
-    formData.append("content", value);
-    setIsSaving(true);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/system-prompt");
-    xhr.onload = () => setIsSaving(false);
-    xhr.onerror = () => setIsSaving(false);
-    xhr.send(formData);
+    fetcher.submit({ content: value }, { method: "POST", action: "/api/system-prompt" });
   };
 
   return (

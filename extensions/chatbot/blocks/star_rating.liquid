@@ -1,16 +1,15 @@
-<div id="chat-widget-root" data-api-url="/apps/chatbot"></div>
-<script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
-<script src="{{ 'bundle.js' | asset_url }}" defer></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
+<a
+  href="/apps/chatbot"
+  class="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-neutral-800 transition-colors no-underline"
+>
+  💬 Chat
+</a>
 
-
-{% comment %} definisce i metadati del blocco per shopify ossia:
-  - il noem visualizzato nel theme editor di shopify 
-  - target body indica che è un embed block ossia viene iniettato direttamente 
-  - settings non esponde alcuna configurazione del theme editor{% endcomment %}
 {% schema %}
 {
-  "name": "Widgettino",
+  "name": "Chatbot",
   "target": "body",
   "settings": []
 }

@@ -1,15 +1,31 @@
 import { openai } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages, stepCountIs } from 'ai'
 import { searchProductTool } from '../tools/search-product'
-import { ActionFunctionArgs } from 'react-router';
+import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../system-prompt.graphql';
 
 export const model = openai('gpt-4.1')
 console.log('[chat] model loaded:', model.modelId)
 
-export async function loader() {
-  return new Response(null, { status: 405 })
+export async function loader({ request }: LoaderFunctionArgs) {
+  const appOrigin = new URL(request.url).origin.replace(/^http:/, 'https:');
+  const html = `<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+  </head>
+  <body style="margin:0">
+    <div id="chat-page-root"></div>
+    <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
+    <script src="${appOrigin}/chat-page.js" defer></script>
+  </body>
+</html>`;
+  return new Response(html, {
+    headers: { "Content-Type": "text/html" },
+  });
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -17,6 +33,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const shop = new URL(request.url).searchParams.get('shop') ?? '';
     const { admin } = await unauthenticated.admin(shop);
     const systemPrompt = await getSystemPrompt(admin);
+    console.log('[chat action] system prompt:', systemPrompt);
 
     const body = await request.json()
     const { messages } = body

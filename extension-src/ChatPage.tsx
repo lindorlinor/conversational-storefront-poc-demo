@@ -2,8 +2,8 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
 import { ProductCard } from "./components";
-// import { m } from "node_modules/react-router/dist/development/index-react-server-client-Ck_yZ1qL.mjs";
-export function ChatWidget({ apiUrl }: { apiUrl: string }) {
+
+export function ChatPage({ apiUrl }: { apiUrl: string }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
   });
@@ -11,16 +11,12 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
   const [input, setInput] = useState("");
 
   return (
-    <div className="fixed bottom-6 right-6 w-[480px] bg-white border border-gray-200 rounded-xl shadow-lg z-[9999] flex flex-col">
+    <div className="flex flex-col h-screen bg-white">
       <h1 className="px-5 py-3 border-b border-gray-200 font-semibold text-3xl">
         Chat
       </h1>
 
-      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 h-[480px]">
-        {messages.map((message): null => {
-          console.log(message);
-          return null;
-        })}
+      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -30,16 +26,46 @@ export function ChatWidget({ apiUrl }: { apiUrl: string }) {
                 : "self-start bg-gray-100 text-black"
             }`}
           >
-            {/* da sistemare obv, per ora sto vedendo solo se funzionano i tool */}
             {message.parts.map((part, i) => {
-              if (part.type === "text") return <span key={i}>{part.text}</span>
-              if (part.type === "tool-searchProductTool" && part.state === "output-available") {
-                const output = part.output as { products: Array<{ id: string; handle: string; title: string; url: string | null; featuredImage?: { url: string }; priceRange: { minVariantPrice: { amount: string; currencyCode: string } }; variants?: { nodes: Array<{ id: string; title: string; price: { amount: string }; image?: { url: string } }> } }> }
+              if (part.type === "text") return <span key={i}>{part.text}</span>;
+              if (
+                part.type === "tool-searchProductTool" &&
+                part.state === "output-available"
+              ) {
+                const output = part.output as {
+                  products: Array<{
+                    id: string;
+                    handle: string;
+                    title: string;
+                    url: string | null;
+                    featuredImage?: { url: string };
+                    priceRange: {
+                      minVariantPrice: { amount: string; currencyCode: string };
+                    };
+                    variants?: {
+                      nodes: Array<{
+                        id: string;
+                        title: string;
+                        price: { amount: string };
+                        image?: { url: string };
+                      }>;
+                    };
+                  }>;
+                };
                 return output.products.map((p) => (
-                  <ProductCard key={p.id} id={p.id} handle={p.handle} title={p.title} url={p.url ?? `/products/${p.handle}`} imgUrl={p.featuredImage?.url ?? ''} priceRange={p.priceRange} variants={p.variants?.nodes} />
-                ))
+                  <ProductCard
+                    key={p.id}
+                    id={p.id}
+                    handle={p.handle}
+                    title={p.title}
+                    url={p.url ?? `/products/${p.handle}`}
+                    imgUrl={p.featuredImage?.url ?? ""}
+                    priceRange={p.priceRange}
+                    variants={p.variants?.nodes}
+                  />
+                ));
               }
-              return null
+              return null;
             })}
           </div>
         ))}

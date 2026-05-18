@@ -24,17 +24,6 @@ description = "An example metaobject definition created by this template"
   [metaobjects.app.example.access]
   admin = "merchant_read_write"
 
-[metaobjects.app.system_prompt]
-name = "System Prompt"
-description = "Stores the AI system prompt configured by the merchant"
-
-  [metaobjects.app.system_prompt.access]
-  admin = "merchant_read_write"
-
-[metaobjects.app.system_prompt.fields.content]
-name = "Content"
-type = "multi_line_text_field"
-required = true
 
 [metaobjects.app.example.fields.title]
 name = "Title"

@@ -1,6 +1,6 @@
 import type { AdminApiContext } from "@shopify/shopify-app-react-router/server";
 
-const SYSTEM_PROMPT_TYPE = "$app:system_prompt";
+const SYSTEM_PROMPT_TYPE = "system_prompt_config";
 const SYSTEM_PROMPT_HANDLE = "config";
 
 export async function getSystemPrompt(admin: AdminApiContext): Promise<string> {
@@ -36,7 +36,8 @@ export async function saveSystemPrompt(admin: AdminApiContext, content: string):
       },
     },
   );
-  const { data } = await res.json();
-  const errors = data?.metaobjectUpsert?.userErrors;
+  const json = await res.json() as { errors?: { message: string }[]; data?: { metaobjectUpsert?: { userErrors?: { message: string }[] } } };
+  if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join(", "));
+  const errors = json.data?.metaobjectUpsert?.userErrors;
   if (errors?.length) throw new Error(errors.map((e: { message: string }) => e.message).join(", "));
 }

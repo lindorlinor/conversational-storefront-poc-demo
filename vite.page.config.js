@@ -1,7 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
-import tailwindcss from "@tailwindcss/vite";  
+import tailwindcss from "@tailwindcss/vite";
+
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 export default defineConfig({
@@ -13,19 +14,17 @@ export default defineConfig({
   },
   publicDir: false,
   build: {
-    outDir: resolve(__dirname, "extensions/chatbot/assets"),
+    outDir: resolve(__dirname, "public"),
     emptyOutDir: false,
     rollupOptions: {
-      input: resolve(__dirname, "extension-src/index.tsx"),
+      input: resolve(__dirname, "extension-src/page.tsx"),
       output: {
-        entryFileNames: "bundle.js",
+        entryFileNames: "chat-page.js",
         format: "iife",
-        name: "ShopifyChatWidget",
+        name: "ShopifyChatPage",
         inlineDynamicImports: true,
       },
     },
   },
-  plugins: [
-    tailwindcss()
-  ]
+  plugins: [tailwindcss()],
 });
