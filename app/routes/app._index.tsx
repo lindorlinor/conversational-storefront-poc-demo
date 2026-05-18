@@ -3,18 +3,19 @@ import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import { getSystemPrompt } from "../system-prompt.graphql";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { session } = await authenticate.admin(request);
-  // TODO: leggere il system prompt dal metaobject via admin.graphql(...)
-  const content = "";
+  const { admin, session } = await authenticate.admin(request);
+  const content = await getSystemPrompt(admin);
   return { shop: session.shop, content };
 };
 
 export default function Index() {
   const { shop, content } = useLoaderData<typeof loader>();
-  const [prompt, setPrompt] = useState(content);
   const textFieldRef = useRef<HTMLElementTagNameMap["s-text-field"]>(null);
+  const [prompt, setPrompt] = useState(content);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setPrompt(content);
@@ -22,8 +23,15 @@ export default function Index() {
 
   const handleSave = () => {
     const value = textFieldRef.current?.value ?? "";
-    // TODO: salvare il system prompt nel metaobject via fetch/action
-    console.log("save:", shop, value);
+    const formData = new FormData();
+    formData.append("shop", shop);
+    formData.append("content", value);
+    setIsSaving(true);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/system-prompt");
+    xhr.onload = () => setIsSaving(false);
+    xhr.onerror = () => setIsSaving(false);
+    xhr.send(formData);
   };
 
   return (
@@ -34,7 +42,9 @@ export default function Index() {
           label="System prompt"
           value={prompt}
         />
-        <button onClick={handleSave} type="button">Salva</button>
+        <button onClick={handleSave} type="button" disabled={isSaving}>
+          {isSaving ? "Salvataggio..." : "Salva"}
+        </button>
       </s-section>
     </s-page>
   );
