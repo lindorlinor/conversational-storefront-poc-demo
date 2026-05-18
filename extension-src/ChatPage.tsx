@@ -1,20 +1,27 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useState } from "react";
 import { ProductCard } from "./components";
+import { ChatInput } from "./components/chat-input/ChatInput";
 
 export function ChatPage({ apiUrl }: { apiUrl: string }) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
   });
 
-  const [input, setInput] = useState("");
-
   return (
     <div className="flex flex-col h-screen bg-white">
       <h1 className="px-5 py-3 border-b border-gray-200 font-semibold text-3xl">
         Chat
       </h1>
+
+      <div className="flex justify-center px-5 py-4 border-b border-gray-200">
+        <div className="w-1/2">
+          <ChatInput
+            onSend={(text) => sendMessage({ text })}
+            disabled={status === "streaming" || status === "submitted"}
+          />
+        </div>
+      </div>
 
       <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1">
         {messages.map((message) => (
@@ -76,29 +83,6 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
         )}
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (input.trim()) {
-            sendMessage({ text: input });
-            setInput("");
-          }
-        }}
-        className="px-5 py-4 border-t border-gray-200 flex gap-2"
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Scrivi un messaggio..."
-          className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-xl outline-none"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-black text-white rounded-md text-xl cursor-pointer"
-        >
-          Invia
-        </button>
-      </form>
     </div>
   );
 }
