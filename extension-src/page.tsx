@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { TamboProvider } from "@tambo-ai/react";
 import { ChatPage } from "./ChatPage";
 import rawStyles from "./page.css?inline";
 
@@ -11,6 +12,9 @@ document.head.appendChild(styleEl);
 
 const container = document.getElementById("chat-page-root");
 if (container) {
-  const apiUrl = `/apps/chatbot${window.location.search}`;
-  createRoot(container).render(<ChatPage apiUrl={apiUrl} />);
+  createRoot(container).render(
+    <TamboProvider apiKey={import.meta.env.VITE_TAMBO_API_KEY} userKey="user-1">
+      <ChatPage />
+    </TamboProvider>
+  );
 }

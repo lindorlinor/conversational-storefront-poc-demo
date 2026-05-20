@@ -2,8 +2,10 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 import tailwindcss from "@tailwindcss/vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
 
 export default defineConfig({
   esbuild: {
@@ -26,5 +28,10 @@ export default defineConfig({
       },
     },
   },
-  plugins: [tailwindcss()],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
+  plugins: [tailwindcss(), tsconfigPaths()],
 });
