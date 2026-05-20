@@ -2,6 +2,7 @@ import { Product, Variant } from "../models/types";
 import { variantUrl } from "../utils/url";
 
 const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle: string; productImgUrl: string; productUrl: string }) => {
+    if (!variant?.price?.amount || !variant.id) return null;
     const price = parseFloat(variant.price.amount).toFixed(2);
     const imgUrl = variant.image?.url ?? productImgUrl;
     const url = variantUrl(productUrl, variant.id);
@@ -45,6 +46,7 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
 
 const ProductCard = (product: Product) => {
     const { title, url, imgUrl, priceRange, variants } = product;
+    if (!priceRange?.minVariantPrice || !url || !title) return null;
     const price = parseFloat(priceRange.minVariantPrice.amount).toFixed(2);
 
     if (variants && variants.length > 0) {

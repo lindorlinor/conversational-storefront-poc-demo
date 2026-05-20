@@ -47,8 +47,7 @@ const GRAPHQL_QUERY = `
     }
   }
 `
-
-export async function searchProductExecute(args: SearchProductArgs) {
+ async function searchProductExecute(args: SearchProductArgs) {
   console.log('[searchProductTool] called with args:', JSON.stringify(args))
   const { filters, metafield_filters, limit = 10 } = args
 
@@ -110,10 +109,35 @@ export async function searchProductExecute(args: SearchProductArgs) {
   const search = data.data.search
 
   return {
-    products: search.nodes,
+    products: search.nodes.map((p: {
+      id: string; handle: string; title: string;
+      url: string | null;
+      featuredImage?: { url: string } | null;
+      priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
+      variants?: { nodes: Array<{ id: string; title: string; price: { amount: string }; image?: { url: string } | null }> };
+    }) => {
+      const productUrl = p.url ?? `/products/${p.handle}`;
+      return {
+        id: p.id,
+        handle: p.handle,
+        title: p.title,
+        url: productUrl,
+        imgUrl: p.featuredImage?.url ?? '',
+        priceRange: p.priceRange,
+        variants: p.variants?.nodes?.map(v => ({
+          id: v.id,
+          title: v.title,
+          price: v.price,
+          image: v.image ?? undefined,
+          url: `${productUrl}?variant=${v.id.split('/').pop()}`,
+        })),
+      };
+    }),
     pagination: {
       hasNextPage: search.pageInfo.hasNextPage,
       cursor: search.pageInfo.endCursor,
     },
   }
 }
+
+export default searchProductExecute

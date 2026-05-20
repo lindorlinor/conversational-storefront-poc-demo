@@ -44,6 +44,10 @@ export default defineConfig({
       // See https://vitejs.dev/config/server-options.html#server-fs-allow for more information
       allow: ["app", "node_modules"],
     },
+    cors: {
+      origin: 'https://conversational-commerce-67y9bqti.myshopify.com',
+      preflightContinue: false,
+    },
   },
   plugins: [
     reactRouter(),
