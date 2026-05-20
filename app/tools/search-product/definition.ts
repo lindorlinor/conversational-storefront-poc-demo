@@ -1,1 +1,1 @@
-export { searchProductSchema } from '../../extension-src/tambo-tools-definition/searchProductSchema'
+export { searchProductSchema } from '../../chatbot/tambo/searchProductSchema'

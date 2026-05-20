@@ -35,14 +35,17 @@ if (host === "localhost") {
   };
 }
 
+const appUrl = process.env.SHOPIFY_APP_URL ?? '';
+
 export default defineConfig({
+  base: appUrl ? `${appUrl}/` : '/',
   server: {
     allowedHosts: [host],
     port: Number(process.env.PORT || 3000),
     hmr: hmrConfig,
     fs: {
       // See https://vitejs.dev/config/server-options.html#server-fs-allow for more information
-      allow: ["app", "node_modules"],
+      allow: ["app", "src", "node_modules"],
     },
     cors: {
       origin: 'https://conversational-commerce-67y9bqti.myshopify.com',

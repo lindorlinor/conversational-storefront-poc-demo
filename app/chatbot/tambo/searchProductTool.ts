@@ -1,9 +1,7 @@
 import { z } from 'zod';
-import { TamboTool } from '@tambo-ai/react';
-import { searchProducts } from '../utils/url';
+import type { TamboTool } from '@tambo-ai/react';
 import { searchProductSchema } from './searchProductSchema';
-
-export { searchProductSchema };
+import { fetchProducts } from '../utils';
 
 const searchProductOutputSchema = z.object({
   products: z.array(z.object({
@@ -29,16 +27,14 @@ const searchProductOutputSchema = z.object({
   }),
 });
 
-export const searchProductTamboTool: TamboTool = {
-  name: "searchProducts",
-  description: `Search for products in the store.
+export function createSearchProductTool(shop: string, appUrl: string): TamboTool {
+  return {
+    name: "searchProducts",
+    description: `Search for products in the store.
     Use this tool when the user wants to find, browse, or filter products.
-
-    IMPORTANT rules:
-    - Only include filters the user explicitly mentioned. Do NOT guess or default filter values.
-    - Do NOT set priceRange, availability, or categories unless the user specifically asks for them.
-    - If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.`,
-  tool: searchProducts,
-  inputSchema: searchProductSchema,
-  outputSchema: searchProductOutputSchema,
-};
+    IMPORTANT: Only include filters the user explicitly mentioned. Do NOT guess filter values.`,
+    inputSchema: searchProductSchema,
+    outputSchema: searchProductOutputSchema,
+    tool: (args: z.infer<typeof searchProductSchema>) => fetchProducts(appUrl, shop, args),
+  };
+}

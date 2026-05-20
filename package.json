@@ -3,9 +3,6 @@
   "private": true,
   "scripts": {
     "build": "react-router build",
-    "build:page": "vite build --config vite.page.config.js",
-    "dev:page": "vite build --config vite.page.config.js --watch",
-    "build:all": "npm run build && npm run build:page",
     "dev": "shopify app dev",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
