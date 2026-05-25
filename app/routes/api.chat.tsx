@@ -11,18 +11,18 @@ console.log('[chat] model loaded:', model.modelId)
 export async function loader({ request }: LoaderFunctionArgs) {
   const appOrigin = new URL(request.url).origin.replace(/^http:/, 'https:');
   const html = `<!DOCTYPE html>
-<html lang="it">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat</title>
-  </head>
-  <body style="margin:0">
-    <div id="chat-page-root"></div>
-    <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
-    <script src="${appOrigin}/chat-page.js" defer></script>
-  </body>
-</html>`;
+    <html lang="it">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Chat</title>
+      </head>
+      <body style="margin:0">
+        <div id="chat-page-root"></div>
+        <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
+        <script src="${appOrigin}/chat-page.js" defer></script>
+      </body>
+    </html>`;
   return new Response(html, {
     headers: { "Content-Type": "text/html" },
   });

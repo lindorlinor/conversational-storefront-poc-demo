@@ -1,9 +1,21 @@
 import { useState, useEffect, useRef } from "react";
-import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
+import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
-import { getSystemPrompt } from "../system-prompt.graphql";
+import { getSystemPrompt, saveSystemPrompt } from "../system-prompt.graphql";
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { admin } = await authenticate.admin(request);
+  const formData = await request.formData();
+  const content = formData.get("content") as string;
+  try {
+    await saveSystemPrompt(admin, content);
+    return Response.json({ ok: true });
+  } catch (e) {
+    return Response.json({ ok: false, error: (e as Error).message }, { status: 500 });
+  }
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
@@ -25,7 +37,7 @@ export default function Index() {
 
   const handleSave = () => {
     const value = textFieldRef.current?.value ?? "";
-    fetcher.submit({ content: value }, { method: "POST", action: "/api/system-prompt" });
+    fetcher.submit({ content: value }, { method: "POST" });
   };
 
   return (
