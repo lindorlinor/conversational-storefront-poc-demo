@@ -42,6 +42,7 @@ export const searchProductSchema = z.object({
 export const searchProductDefinition = tool({
     description: `Search for products in the store.
         Use this tool when the user wants to find, browse, or filter products.
+        After obtaining results, call a ProductCard tool once for each product to display it visually.
 
         IMPORTANT rules:
         - Only include filters the user explicitly mentioned. Do NOT guess or default filter values.

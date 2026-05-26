@@ -1,6 +1,8 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { ProductCard } from "./components";
+// import { ProductCard } from "./components";
+import { ComponentMap } from "./registry-mapper";
+import { ComponentName} from "../app/components-schema/registry";
 import { ChatInput } from "./components/chat-input/ChatInput";
 
 export function ChatPage({ apiUrl }: { apiUrl: string }) {
@@ -26,16 +28,17 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
       <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1">
         {messages.map((message) => (
           <div
-            key={message.id}
-            className={`max-w-[80%] px-4 py-2.5 rounded-lg text-base ${
-              message.role === "user"
-                ? "self-end bg-black text-white"
-                : "self-start bg-gray-100 text-black"
-            }`}
+          key={message.id}
+          className={`max-w-[80%] px-4 py-2.5 rounded-lg text-base ${
+            message.role === "user"
+            ? "self-end bg-black text-white"
+            : "self-start bg-gray-100 text-black"
+          }`}
           >
             {message.parts.map((part, i) => {
+            console.log('message part:', part)
               if (part.type === "text") return <span key={i}>{part.text}</span>;
-              if (
+              /* if (
                 part.type === "tool-searchProductTool" &&
                 part.state === "output-available"
               ) {
@@ -72,7 +75,14 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
                   />
                 ));
               }
-              return null;
+              return null; */
+              if (!part.type.startsWith('tool-')) return null;
+              const toolPart = part as { type: string; state: string; input: Record<string, unknown> };
+              if (toolPart.state === 'input-streaming') return null;
+              const toolName = toolPart.type.slice('tool-'.length) as ComponentName;
+              const Component = ComponentMap[toolName];
+              if (!Component) return null;
+              return <Component key={i} {...toolPart.input} />;
             })}
           </div>
         ))}
