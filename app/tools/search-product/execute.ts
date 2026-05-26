@@ -49,12 +49,14 @@ const GRAPHQL_QUERY = `
 `
 
 export async function searchProductExecute(args: SearchProductArgs) {
-  console.log('[searchProductTool] called with args:', JSON.stringify(args))
+  // console.log('[searchProductTool] called with args:', JSON.stringify(args))
+  const t1 = Date.now()
+  console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
   const { filters, metafield_filters, limit = 10 } = args
 
   const shop = process.env.SHOPIFY_SHOP
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  console.log('[searchProductTool] shop:', shop, '| token present:', !!token)
+  // console.log('[searchProductTool] shop:', shop, '| token present:', !!token)
 
   const productFilters: Record<string, unknown>[] = []
 
@@ -100,7 +102,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
   )
 
   const data = await response.json()
-  console.log('[searchProductTool] response status:', response.status, '| data:', JSON.stringify(data).slice(0, 300))
+  // console.log('[searchProductTool] response status:', response.status, '| data:', JSON.stringify(data).slice(0, 300))
 
   if (data.errors) {
     console.error('[searchProductTool] GraphQL errors:', data.errors)
@@ -109,6 +111,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   const search = data.data.search
 
+  console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
   return {
     products: search.nodes,
     pagination: {
