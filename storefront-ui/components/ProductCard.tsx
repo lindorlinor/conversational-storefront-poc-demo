@@ -1,10 +1,10 @@
 import { Product, Variant } from "../models/types";
 import { variantUrl } from "../utils/url";
 
-const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle: string; productImgUrl: string; productUrl: string }) => {
-    const price = parseFloat(variant.price.amount).toFixed(2);
-    const imgUrl = variant.image?.url ?? productImgUrl;
-    const url = variantUrl(productUrl, variant.id);
+const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { variant: Variant; productTitle?: string; productImgUrl?: string; productUrl?: string }) => {
+    const price = variant.price?.amount ? parseFloat(variant.price.amount).toFixed(2) : '...';
+    const imgUrl = variant.image?.url ?? productImgUrl ?? '';
+    const url = variant.id && productUrl ? variantUrl(productUrl, variant.id) : productUrl ?? '';
 
     return (
         <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
@@ -45,13 +45,18 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
 
 const ProductCard = (product: Product) => {
     const { title, url, imgUrl, priceRange, variants } = product;
-    const price = parseFloat(priceRange.minVariantPrice.amount).toFixed(2);
+
+    if (!title) return null;
+
+    const price = priceRange?.minVariantPrice?.amount
+        ? parseFloat(priceRange.minVariantPrice.amount).toFixed(2)
+        : '...';
 
     if (variants && variants.length > 0) {
         return (
             <>
-                {variants.map((variant) => (
-                    <VariantCard key={variant.id} variant={variant} productTitle={title} productImgUrl={imgUrl} productUrl={url} />
+                {variants.map((variant, i) => (
+                    <VariantCard key={variant.id ?? i} variant={variant} productTitle={title} productImgUrl={imgUrl} productUrl={url} />
                 ))}
             </>
         );

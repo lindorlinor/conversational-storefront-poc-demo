@@ -78,7 +78,7 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
               return null; */
               if (!part.type.startsWith('tool-')) return null;
               const toolPart = part as { type: string; state: string; input: Record<string, unknown> };
-              if (toolPart.state === 'input-streaming') return null;
+              if (!toolPart.input) return null;
               const toolName = toolPart.type.slice('tool-'.length) as ComponentName;
               const Component = ComponentMap[toolName];
               if (!Component) return null;
