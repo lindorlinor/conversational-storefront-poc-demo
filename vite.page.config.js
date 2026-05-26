@@ -17,7 +17,7 @@ export default defineConfig({
     outDir: resolve(__dirname, "public"),
     emptyOutDir: false,
     rollupOptions: {
-      input: resolve(__dirname, "extension-src/page.tsx"),
+      input: resolve(__dirname, "storefront-ui/page.tsx"),
       output: {
         entryFileNames: "chat-page.js",
         format: "iife",

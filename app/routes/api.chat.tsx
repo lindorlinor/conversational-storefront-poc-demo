@@ -3,7 +3,7 @@ import { streamText, convertToModelMessages, stepCountIs } from 'ai'
 import { searchProductTool } from '../tools/search-product'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
-import { getSystemPrompt } from '../system-prompt.graphql';
+import { getSystemPrompt } from '../shopify/system-prompt.graphql';
 
 export const model = openai('gpt-4.1')
 console.log('[chat] model loaded:', model.modelId)
