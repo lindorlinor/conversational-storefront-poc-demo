@@ -5,6 +5,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
 
+import {getUItools}  from '../tools/buildUITools';
 export const model = openai('gpt-4.1')
 console.log('[chat] model loaded:', model.modelId)
 
@@ -37,7 +38,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const body = await request.json()
     const { messages } = body
-
+    console.log('tools available:', Object.keys(getUItools()))
     const result = streamText({
       system: systemPrompt,
       stopWhen: stepCountIs(3),
@@ -51,7 +52,7 @@ export async function action({ request }: ActionFunctionArgs) {
         }
       },
       model: model,
-      tools: { searchProductTool },
+      tools: { searchProductTool, ...getUItools() },
       messages: await convertToModelMessages(messages),
     })
 
