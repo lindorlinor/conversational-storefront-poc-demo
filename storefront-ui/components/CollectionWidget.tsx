@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Product } from "../models/types";
+import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 
 export interface CollectionSectionProps {
   title: string;
@@ -58,7 +59,7 @@ export function CollectionWidget({
           <div className="flex-1 grid grid-cols-3 gap-3 min-w-0">
             {visibleProducts.length > 0 ? (
               visibleProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} {...product} />
               ))
             ) : (
               Array.from({ length: VISIBLE }).map((_, i) => (
@@ -67,7 +68,6 @@ export function CollectionWidget({
             )}
           </div>
 
-          {/* freccia avanti */}
           <button
             onClick={() => canGoNext && setCarouselIndex((i) => i + 1)}
             disabled={!canGoNext}
@@ -84,40 +84,3 @@ export function CollectionWidget({
   );
 }
 
-// --- sub-componenti interni ---
-
-function ProductCard({ product }: { product: Product }) {
-  const price = product.priceRange?.minVariantPrice?.amount
-    ? `${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)} ${product.priceRange.minVariantPrice.currencyCode ?? ""}`
-    : null;
-
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col">
-      <div className="h-[120px] bg-gray-100 overflow-hidden">
-        {product.imgUrl ? (
-          <img src={product.imgUrl} alt={product.title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-            no image
-          </div>
-        )}
-      </div>
-
-      <div className="px-3 py-2.5 flex flex-col gap-1.5">
-        <p className="text-[13px] font-medium m-0 text-gray-900 truncate">{product.title}</p>
-        <div className="flex items-center justify-between">
-          {price && <span className="text-[13px] text-gray-500">{price}</span>}
-          <button className="text-[11px] px-2 py-1 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors">
-            Add to cart
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ProductCardSkeleton() {
-  return (
-    <div className="animate-pulse bg-gray-100 border border-gray-200 rounded-xl h-[180px]" />
-  );
-}

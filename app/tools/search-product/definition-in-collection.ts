@@ -8,15 +8,9 @@ export const searchProductInCollectionSchema = z.object({
   query: z.string().optional().describe(
     "Text to search for within the collection. Omit to return all products in the collection."
   ),
-  filters: z.object({
-    priceRange: z.object({
-      min: z.number().optional().describe('ONLY set if the user explicitly mentions a minimum price.'),
-      max: z.number().optional().describe('ONLY set if the user explicitly mentions a maximum price.'),
-    }).optional(),
-    availability: z.boolean().optional().describe(
-      'ONLY set if the user explicitly asks for available or unavailable products.'
-    ),
-  }).optional().describe('Structured filters. Only include fields the user explicitly requested.'),
+  onlyAvailable: z.boolean().optional().describe(
+    'Set to true ONLY if the user explicitly asks for available products only.'
+  ),
   limit: z.number().int().min(1).max(100).optional().describe(
     'Number of products to return. Defaults to 10.'
   ),

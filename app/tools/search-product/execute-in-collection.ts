@@ -24,25 +24,14 @@ const GRAPHQL_QUERY = `
           id
           title
           handle
-          description
           url: onlineStoreUrl
+          imgUrl: featuredImage { url }
           priceRange {
             minVariantPrice { amount currencyCode }
-            maxVariantPrice { amount currencyCode }
-          }
-          featuredImage { url altText }
-          variants(first: 10) {
-            nodes {
-              id
-              title
-              price { amount }
-              image { url }
-            }
           }
         }
         pageInfo {
           hasNextPage
-          endCursor
         }
       }
     }
@@ -54,21 +43,15 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductInCollectionTool: EXECUTE START`)
 
-  const { collectionHandle, filters, limit = 10, sortKey, reverse } = args
+  const { collectionHandle, onlyAvailable, limit = 10, sortKey, reverse } = args
 
   const shop = process.env.SHOPIFY_SHOP
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
 
   const productFilters: Record<string, unknown>[] = []
 
-  // availability: ignora false (default del modello), applica solo se true
-  if (filters?.availability === true) {
+  if (onlyAvailable === true) {
     productFilters.push({ available: true })
-  }
-  // priceRange: ignora se entrambi sono 0 (default del modello)
-  const { min, max } = filters?.priceRange ?? {}
-  if (min || max) {
-    productFilters.push({ price: { min, max } })
   }
 
   const response = await fetch(
@@ -107,9 +90,6 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
   console.log(`⏱ [2] searchProductInCollectionTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
   return {
     products: collection.products.nodes,
-    pagination: {
-      hasNextPage: collection.products.pageInfo.hasNextPage,
-      cursor: collection.products.pageInfo.endCursor,
-    },
+    hasNextPage: collection.products.pageInfo.hasNextPage,
   }
 }
