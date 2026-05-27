@@ -19,7 +19,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         <title>Chat</title>
       </head>
       <body style="margin:0">
-        <div id="chat-page-root"></div>
+        <div id="chat-page-root" data-app-origin="${appOrigin}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
         <script src="${appOrigin}/chat-page.js" defer></script>
       </body>

@@ -4,17 +4,22 @@ import { DefaultChatTransport } from "ai";
 import { ComponentMap } from "./registry-mapper";
 import { ComponentName} from "../app/components-schema/registry";
 import { ChatInput } from "./components/chat-input/ChatInput";
+import Title from "./components/title";
 
 export function ChatPage({ apiUrl }: { apiUrl: string }) {
+  const parsed = new URL(apiUrl, window.location.href);
+  const apiBase = parsed.pathname; // e.g. '/apps/chatbot'
+  const shop = parsed.searchParams.get("shop") ?? "";
+
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
   });
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      <h1 className="px-5 py-3 border-b border-gray-200 font-semibold text-3xl">
-        Chat
-      </h1>
+      <div className="flex justify-center items-center px-5 py-6 border-b border-gray-200 text-center">
+        <Title apiBase={apiBase} shop={shop} />
+      </div>
 
       <div className="flex justify-center px-5 py-4 border-b border-gray-200">
         <div className="w-1/2">
