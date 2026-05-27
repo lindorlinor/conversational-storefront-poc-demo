@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages, stepCountIs } from 'ai'
-import { searchProductTool, fetchCollectionTool } from '../tools'
+import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool } from '../tools'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
@@ -95,7 +95,7 @@ export async function action({ request }: ActionFunctionArgs) {
         }
       },
       model: model,
-      tools: { searchProductTool, fetchCollectionTool, ...getUItools() },
+      tools: { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, ...getUItools() },
       messages: await convertToModelMessages(messages),
     })
 
