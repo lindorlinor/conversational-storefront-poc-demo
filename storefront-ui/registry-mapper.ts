@@ -1,5 +1,6 @@
 import { ProductList } from "./components/ProductList";
 import { CollectionWidget } from "./components/CollectionWidget";
+import { ProductHero } from "./components/ProductHero";
 import type { ComponentType } from "react";
 
 import type { ComponentName } from "../app/components-schema/registry";
@@ -10,4 +11,5 @@ import type { ComponentName } from "../app/components-schema/registry";
 export const ComponentMap: Record<ComponentName, ComponentType<any>> = {
     ProductList,
     CollectionWidget,
+    ProductHero,
 }

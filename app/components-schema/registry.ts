@@ -3,7 +3,7 @@ import { z } from "zod";
 
 
 // definizione dei nomi dei componenti
-export type ComponentName = "ProductList" | "CollectionWidget";
+export type ComponentName = "ProductList" | "CollectionWidget" | "ProductHero";
 
 type ComponentSchema =  {
     schema: z.ZodObject<any>;
@@ -19,9 +19,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         title: z.string(),
         url: z.string(),
         imgUrl: z.string().nullable().describe("l'url dell'immagine potrebbe non essere presente per alcuni prodotti"),
-        priceRange: z.object({
-          minVariantPrice: z.object({ amount: z.string(), currencyCode: z.string() }),
-        }),
+        price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable(),
         variants: z.array(z.object({
           id: z.string(),
           title: z.string(),
@@ -44,12 +42,26 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         title: z.string().optional(),
         url: z.string().optional(),
         imgUrl: z.string().nullable().optional(),
-        priceRange: z.object({
-          minVariantPrice: z.object({ amount: z.string(), currencyCode: z.string() }),
-        }).optional(),
+        price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
       })).optional().describe("Prodotti da mostrare nel carosello"),
     }),
     description: "Displays a collection section with an optional cover image and a product carousel. Always use this to present a collection — coverImageUrl is optional and can be omitted if not available.",
+  },
+  ProductHero: {
+    schema: z.object({
+      id: z.string().optional(),
+      handle: z.string().optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      url: z.string().optional(),
+      imgUrl: z.string().nullable().optional(),
+      images: z.array(z.object({
+        url: z.string(),
+        altText: z.string().optional(),
+      })).optional().describe("All product images for the gallery carousel."),
+      price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
+    }),
+    description: "Displays a full product hero with image gallery, price and a link to the shop. Use this when the user asks for details about a single specific product.",
   },
 };
 
