@@ -25,7 +25,7 @@ const GRAPHQL_QUERY = `
           title
           handle
           url: onlineStoreUrl
-          imgUrl: featuredImage { url }
+          featuredImage { url altText }
           priceRange {
             minVariantPrice { amount currencyCode }
           }
@@ -88,8 +88,16 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
   }
 
   console.log(`⏱ [2] searchProductInCollectionTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const products = collection.products.nodes.map((node: any) => ({
+    ...node,
+    imgUrl: node.featuredImage?.url ?? null,
+    price: node.priceRange?.minVariantPrice ?? null,
+  }))
+
   return {
-    products: collection.products.nodes,
+    collectionHandle,
+    products,
     hasNextPage: collection.products.pageInfo.hasNextPage,
   }
 }

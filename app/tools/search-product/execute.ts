@@ -34,6 +34,9 @@ const GRAPHQL_QUERY = `
             maxVariantPrice { amount currencyCode }
           }
           featuredImage { url altText }
+          images(first: 10) {
+            nodes { url altText }
+          }
           variants(first: 10) {
             nodes {
               id
@@ -118,9 +121,17 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   const search = data.data.search
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const products = search.nodes.map((node: any) => ({
+    ...node,
+    imgUrl: node.featuredImage?.url ?? null,
+    images: node.images?.nodes ?? [],
+    price: node.priceRange?.minVariantPrice ?? null,
+  }))
+
   console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
   return {
-    products: search.nodes,
+    products,
     pagination: {
       hasNextPage: search.pageInfo.hasNextPage,
       cursor: search.pageInfo.endCursor,

@@ -6,13 +6,17 @@ export type Variant = {
     url?: string;
 }
 
+export type ProductImage = { url: string; altText?: string }
+
 export type Product = {
     id?: string;
     handle?: string;
     title?: string;
+    description?: string;
     imgUrl?: string;
+    images?: ProductImage[];
     url?: string;
-    priceRange?: { minVariantPrice?: { amount?: string; currencyCode?: string } };
+    price?: { amount?: string; currencyCode?: string };
     variants?: Variant[];
 }
 
