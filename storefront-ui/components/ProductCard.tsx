@@ -43,10 +43,24 @@ const VariantCard = ({ variant, productTitle, productImgUrl, productUrl }: { var
     );
 }
 
+export function ProductCardSkeleton() {
+    return (
+        <div className="animate-pulse rounded-lg overflow-hidden border border-gray-200 w-full">
+            <div className="aspect-square bg-gray-200" />
+            <div className="p-3 flex flex-col gap-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4" />
+                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                <div className="h-8 bg-gray-200 rounded w-1/3 self-end" />
+            </div>
+        </div>
+    );
+}
+
 const ProductCard = (product: Product) => {
     const { title, url, imgUrl, priceRange, variants } = product;
 
-    if (!title) return null;
+    const imgUrlPartial = !!imgUrl && (() => { try { new URL(imgUrl); return false; } catch { return true; } })();
+    if (imgUrlPartial) return <ProductCardSkeleton />;
 
     const price = priceRange?.minVariantPrice?.amount
         ? parseFloat(priceRange.minVariantPrice.amount).toFixed(2)

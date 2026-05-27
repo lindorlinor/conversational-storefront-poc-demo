@@ -49,7 +49,7 @@ const GRAPHQL_QUERY = `
 `
 
 export async function searchProductExecute(args: SearchProductArgs) {
-  // console.log('[searchProductTool] called with args:', JSON.stringify(args))
+  console.log('[searchProductTool] called with args:', JSON.stringify(args))
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
   const { filters, metafield_filters, limit = 10 } = args
