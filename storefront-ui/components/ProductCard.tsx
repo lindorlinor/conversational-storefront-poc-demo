@@ -57,13 +57,13 @@ export function ProductCardSkeleton() {
 }
 
 const ProductCard = (product: Product) => {
-    const { title, url, imgUrl, priceRange, variants } = product;
+    const { title, url, imgUrl, price: productPrice, variants } = product;
 
     const imgUrlPartial = !!imgUrl && (() => { try { new URL(imgUrl); return false; } catch { return true; } })();
     if (imgUrlPartial) return <ProductCardSkeleton />;
 
-    const price = priceRange?.minVariantPrice?.amount
-        ? parseFloat(priceRange.minVariantPrice.amount).toFixed(2)
+    const price = productPrice?.amount
+        ? parseFloat(productPrice.amount).toFixed(2)
         : '...';
 
     if (variants && variants.length > 0) {
