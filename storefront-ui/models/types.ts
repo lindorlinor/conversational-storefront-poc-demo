@@ -15,3 +15,11 @@ export type Product = {
     priceRange?: { minVariantPrice?: { amount?: string; currencyCode?: string } };
     variants?: Variant[];
 }
+
+export type Collection = {
+    id?: string;
+    handle?: string;
+    title?: string;
+    description?: string;
+    image?: { url?: string; altText?: string };
+}
