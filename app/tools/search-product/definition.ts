@@ -33,8 +33,14 @@ export const searchProductSchema = z.object({
         )
         .optional()
         .describe('Filter by custom product metafields. Use only when the user mentions an attribute that maps to a known metafield.'),
-    limit: z.number().int().min(1).max(50).optional().describe(
+    limit: z.number().int().min(1).max(100).optional().describe(
         'Number of products to return. Use only if the user specifies a quantity (e.g. "show me 3 products"). Defaults to 10.'
+    ),
+    sortKey: z.enum(['RELEVANCE', 'PRICE', 'TITLE', 'PRODUCT_TYPE']).optional().describe(
+        'Sort results by this field. Use PRICE when the user asks for cheapest/most expensive. Defaults to RELEVANCE.'
+    ),
+    reverse: z.boolean().optional().describe(
+        'Reverse the sort order. Use true with sortKey PRICE to get most expensive first, false to get cheapest first.'
     ),
 });
 

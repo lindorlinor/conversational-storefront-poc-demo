@@ -10,6 +10,8 @@ const GRAPHQL_QUERY = `
     $first: Int!
     $after: String
     $filters: [ProductFilter!]
+    $sortKey: SearchSortKeys = RELEVANCE
+    $reverse: Boolean = false
   ) {
     search(
       query: $query
@@ -17,6 +19,8 @@ const GRAPHQL_QUERY = `
       after: $after
       productFilters: $filters
       types: [PRODUCT]
+      sortKey: $sortKey
+      reverse: $reverse
     ) {
       nodes {
         ... on Product {
@@ -52,7 +56,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
   console.log('[searchProductTool] called with args:', JSON.stringify(args))
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
-  const { filters, metafield_filters, limit = 10 } = args
+  const { filters, metafield_filters, limit = 10, sortKey, reverse } = args
 
   const shop = process.env.SHOPIFY_SHOP
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
@@ -96,6 +100,8 @@ export async function searchProductExecute(args: SearchProductArgs) {
           query: args.query ?? '*',
           first: limit,
           filters: productFilters.length > 0 ? productFilters : undefined,
+          sortKey: sortKey ?? 'RELEVANCE',
+          reverse: reverse ?? false,
         },
       }),
     },
