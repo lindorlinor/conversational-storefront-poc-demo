@@ -26,7 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Index() {
   const { content } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<{ ok: boolean; error?: string }>();
-  const textFieldRef = useRef<HTMLElementTagNameMap["s-text-field"]>(null);
+  const textFieldRef = useRef<HTMLTextAreaElement>(null);
   const [prompt, setPrompt] = useState(content);
 
   const isSaving = fetcher.state !== "idle";
@@ -43,10 +43,13 @@ export default function Index() {
   return (
     <s-page heading="Conversational Storefront">
       <s-section>
-        <s-text-field
+        <label htmlFor="system-prompt" style={{ display: "block", marginBottom: "4px", fontWeight: 500 }}>System prompt</label>
+        <textarea
+          id="system-prompt"
           ref={textFieldRef}
-          label="System prompt"
-          value={prompt}
+          defaultValue={prompt}
+          rows={15}
+          style={{ width: "100%", fontFamily: "monospace", fontSize: "13px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc", resize: "vertical", boxSizing: "border-box" }}
         />
         <button onClick={handleSave} type="button" disabled={isSaving}>
           {isSaving ? "Salvataggio..." : "Salva"}
