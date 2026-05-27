@@ -84,6 +84,20 @@ export async function action({ request }: ActionFunctionArgs) {
           const fillMs = start ? Date.now() - start : -1
           console.log(`[4] ProductList: SCHEMA COMPLETE — schema fill time: ${fillMs}ms`)
         }
+        if (c.type === 'tool-input-start' && c.toolName === 'CollectionWidget') {
+          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
+          console.log(`\n[3] CollectionWidget: STREAMING START — model decision time: ${decisionMs}ms`)
+        }
+        if (c.type === 'tool-result' && c.toolName === 'CollectionWidget') {
+          console.log(`[4] CollectionWidget: SCHEMA COMPLETE`)
+        }
+        if (c.type === 'tool-input-start' && c.toolName === 'ProductHero') {
+          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
+          console.log(`\n[3] ProductHero: STREAMING START — model decision time: ${decisionMs}ms`)
+        }
+        if (c.type === 'tool-result' && c.toolName === 'ProductHero') {
+          console.log(`[4] ProductHero: SCHEMA COMPLETE`)
+        }
       },
       onStepFinish: ({ toolCalls, response }) => {
         if (toolCalls.length > 0) {

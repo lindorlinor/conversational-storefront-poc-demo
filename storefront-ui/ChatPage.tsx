@@ -28,7 +28,8 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
         </div>
       </div>
 
-      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1">
+      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1 items-center">
+        <div className="w-[80%] flex flex-col gap-3">
         {messages
           .filter((message) => message.role === "assistant")
           .map((message) => (
@@ -40,6 +41,7 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
             ...
           </div>
         )}
+        </div>
       </div>
 
     </div>
