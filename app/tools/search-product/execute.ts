@@ -64,14 +64,15 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   const productFilters: Record<string, unknown>[] = []
 
-  if (filters?.availability !== undefined) {
-    productFilters.push({ available: filters.availability })
+  if (filters?.availability === true) {
+    productFilters.push({ available: true })
   }
-  if (filters?.priceRange) {
+  const { min, max } = filters?.priceRange ?? {}
+  if (min || max) {
     productFilters.push({
       price: {
-        min: filters.priceRange.min,
-        max: filters.priceRange.max,
+        min,
+        max,
       },
     })
   }

@@ -55,7 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const result = streamText({
       system: systemPrompt,
-      stopWhen: stepCountIs(3),
+      stopWhen: stepCountIs(5),
       onChunk: ({ chunk }) => {
         const c = chunk as { type: string; toolName?: string; toolCallId?: string }
         if (c.type === 'tool-input-start' && c.toolName === 'searchProductTool') {

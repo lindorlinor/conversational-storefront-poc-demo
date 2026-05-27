@@ -42,6 +42,9 @@ export const searchProductSchema = z.object({
     reverse: z.boolean().optional().describe(
         'Reverse the sort order. Use true with sortKey PRICE to get most expensive first, false to get cheapest first.'
     ),
+    collectionHandle: z.string().optional().describe(
+        'If set, restricts the search to products within this collection handle. Use when the user mentions a specific collection or category name.'
+    ),
 });
 
 
