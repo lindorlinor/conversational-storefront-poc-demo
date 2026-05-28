@@ -32,6 +32,7 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
         <div className="w-[80%] flex flex-col gap-3">
         {messages
           .filter((message) => message.role === "assistant")
+          .slice(-1)
           .map((message) => (
             console.log("Rendering message:", message),
             <Section key={message.id} message={message} />
