@@ -102,7 +102,7 @@ const ProductCard = (product: Product) => {
                 >
                     <s-box>
                         <s-heading>{title}</s-heading>
-                        <s-text>{price} EUR</s-text>
+                        <s-text>{price} {productPrice?.currencyCode}</s-text>
                     </s-box>
                     <s-button href={url} accessibilityLabel={`View ${title}`}>
                         View

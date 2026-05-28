@@ -122,14 +122,20 @@ export async function searchProductExecute(args: SearchProductArgs) {
   const search = data.data.search
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const products = search.nodes.map((node: any) => ({
-    ...node,
-    imgUrl: node.featuredImage?.url ?? null,
-    images: node.images?.nodes ?? [],
-    price: node.priceRange?.minVariantPrice ?? null,
-  }))
+  const products = search.nodes.map((node: any) => {
+    const rawVariants: { title: string }[] = node.variants?.nodes ?? []
+    const hasRealVariants = !(rawVariants.length === 1 && rawVariants[0].title === 'Default Title')
+    return {
+      ...node,
+      imgUrl: node.featuredImage?.url ?? null,
+      images: node.images?.nodes ?? [],
+      price: node.priceRange?.minVariantPrice ?? null,
+      variants: hasRealVariants ? rawVariants : [],
+    }
+  })
 
-  console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
+  const resultJson = JSON.stringify({ products, pagination: { hasNextPage: search.pageInfo.hasNextPage, cursor: search.pageInfo.endCursor } })
+  console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API) | result size: ${resultJson.length} chars (~${Math.round(resultJson.length / 4)} tokens)`)
   return {
     products,
     pagination: {
