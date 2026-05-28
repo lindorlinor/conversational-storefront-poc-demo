@@ -99,6 +99,9 @@ export async function action({ request }: ActionFunctionArgs) {
           console.log(`[4] ProductHero: SCHEMA COMPLETE`)
         }
       },
+      onFinish: ({ usage }) => {
+        console.log(`\n📊 token usage — input: ${usage.inputTokens}, output: ${usage.outputTokens}, total: ${(usage.inputTokens ?? 0) + (usage.outputTokens ?? 0)}`)
+      },
       onStepFinish: ({ toolCalls, response }) => {
         if (toolCalls.length > 0) {
           // console.log('[chat] tool calls:', JSON.stringify(toolCalls, null, 2))

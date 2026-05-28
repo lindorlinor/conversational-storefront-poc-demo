@@ -134,8 +134,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
     }
   })
 
-  const resultJson = JSON.stringify({ products, pagination: { hasNextPage: search.pageInfo.hasNextPage, cursor: search.pageInfo.endCursor } })
-  console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API) | result size: ${resultJson.length} chars (~${Math.round(resultJson.length / 4)} tokens)`)
+  console.log(`⏱ [2] searchProductTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
   return {
     products,
     pagination: {
