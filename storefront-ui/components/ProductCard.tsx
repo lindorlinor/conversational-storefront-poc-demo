@@ -1,47 +1,5 @@
-import { Product, Variant } from "../models/types";
+import { Product } from "../models/types";
 import { variantUrl } from "../utils/url";
-
-const VariantCard = ({ variant, productTitle, productImgUrl,productUrl, currencyCode}: { variant: Variant; productTitle?: string; productImgUrl?: string; productUrl?: string; currencyCode?: string }) => {
-    const price = variant.price?.amount ? parseFloat(variant.price.amount).toFixed(2) : '...';
-    const imgUrl = variant.image?.url ?? productImgUrl ?? '';
-    const url = variant.id && productUrl ? variantUrl(productUrl, variant.id) : productUrl ?? '';
-
-    return (
-        <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
-            <s-box
-                border="base"
-                borderRadius="base"
-                overflow="hidden"
-                maxInlineSize="216px"
-            >
-                <s-clickable href={url}>
-                    <s-image
-                        aspectRatio="1/1"
-                        objectFit="cover"
-                        alt={productTitle}
-                        src={imgUrl}
-                    />
-                </s-clickable>
-                <s-divider />
-                <s-grid
-                    gridTemplateColumns="1fr auto"
-                    background="base"
-                    padding="small"
-                    gap="small"
-                    alignItems="center"
-                >
-                    <s-box>
-                        <s-heading>{productTitle}</s-heading>
-                        <s-text>{variant.title} — {price} {currencyCode}</s-text>
-                    </s-box>
-                    <s-button href={url} accessibilityLabel={`View ${productTitle}`}>
-                        View
-                    </s-button>
-                </s-grid>
-            </s-box>
-        </s-grid>
-    );
-}
 
 export function ProductCardSkeleton() {
     return (
@@ -62,54 +20,45 @@ const ProductCard = (product: Product) => {
     const imgUrlPartial = !!imgUrl && (() => { try { new URL(imgUrl); return false; } catch { return true; } })();
     if (imgUrlPartial) return <ProductCardSkeleton />;
 
-    const price = productPrice?.amount
-        ? parseFloat(productPrice.amount).toFixed(2)
-        : '...';
+    const currencyCode = productPrice?.currencyCode;
 
-    if (variants && variants.length > 0) {
-        return (
-            <>
-                {variants.map((variant, i) => (
-                    <VariantCard key={variant.id ?? i} variant={variant} productTitle={title} productImgUrl={imgUrl} productUrl={url} currencyCode={productPrice?.currencyCode}/>
-                ))}
-            </>
-        );
-    }
+    const cards = variants && variants.length > 0
+        ? variants.map((variant, i) => ({
+            key: variant.id ?? i,
+            imgUrl: variant.image?.url ?? imgUrl ?? '',
+            url: variant.id && url ? variantUrl(url, variant.id) : url ?? '',
+            price: variant.price?.amount ? parseFloat(variant.price.amount).toFixed(2) : '...',
+            variantTitle: variant.title,
+        }))
+        : [{
+            key: 'product',
+            imgUrl: imgUrl ?? '',
+            url: url ?? '',
+            price: productPrice?.amount ? parseFloat(productPrice.amount).toFixed(2) : '...',
+            variantTitle: undefined,
+        }];
 
     return (
-        <s-grid justifyItems="center" alignItems="center" minBlockSize="300px">
-            <s-box
-                border="base"
-                borderRadius="base"
-                overflow="hidden"
-                maxInlineSize="216px"
-            >
-                <s-clickable href={url}>
-                    <s-image
-                        aspectRatio="1/1"
-                        objectFit="cover"
-                        alt={title}
-                        src={imgUrl}
-                    />
-                </s-clickable>
-                <s-divider />
-                <s-grid
-                    gridTemplateColumns="1fr auto"
-                    background="base"
-                    padding="small"
-                    gap="small"
-                    alignItems="center"
-                >
-                    <s-box>
-                        <s-heading>{title}</s-heading>
-                        <s-text>{price} {productPrice?.currencyCode}</s-text>
+        <>
+            {cards.map(({ key, imgUrl: cardImgUrl, url: cardUrl, price, variantTitle }) => (
+                <s-grid key={key} justifyItems="center" alignItems="center" minBlockSize="300px">
+                    <s-box border="base" borderRadius="base" overflow="hidden" maxInlineSize="216px">
+                        <s-clickable href={cardUrl}>
+                            <s-image aspectRatio="1/1" objectFit="cover" alt={title} src={cardImgUrl} />
+                        </s-clickable>
+                        <s-divider />
+                        <s-grid gridTemplateColumns="1fr auto" background="base" padding="small" gap="small" alignItems="center">
+                            <s-box>
+                                <s-heading>{title}</s-heading>
+                                <s-text>{variantTitle && `${variantTitle} — `}{price} {currencyCode}</s-text>
+                            </s-box>
+                            <s-button href={cardUrl} accessibilityLabel={`View ${title}`}>View</s-button>
+                        </s-grid>
                     </s-box>
-                    <s-button href={url} accessibilityLabel={`View ${title}`}>
-                        View
-                    </s-button>
                 </s-grid>
-            </s-box>
-        </s-grid>
+            ))}
+        </>
     );
 }
+
 export default ProductCard
