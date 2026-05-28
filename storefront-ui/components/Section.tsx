@@ -29,7 +29,6 @@ function Section({ message }: SectionProps) {
               key={i}
               toolName={toolName}
               input={toolPart.input}
-              state={toolPart.state}
             />
           );
         }
