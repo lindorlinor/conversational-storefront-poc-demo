@@ -3,7 +3,7 @@ import { z } from "zod";
 
 
 // definizione dei nomi dei componenti
-export type ComponentName = "ProductList" | "CollectionWidget" | "ProductHero";
+export type ComponentName = "show_product_list" | "show_collection_widget" | "show_product_hero";
 
 type ComponentSchema =  {
     schema: z.ZodObject<any>;
@@ -11,7 +11,7 @@ type ComponentSchema =  {
 }
 
 export const registry: Record<ComponentName, ComponentSchema> = {
-  ProductList: {
+  show_product_list: {
     schema: z.object({
       products: z.array(z.object({
         id: z.string(),
@@ -31,7 +31,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
     }),
     description: "Displays a list of Shopify product cards. Use this after calling searchProductsTool to show the results. Pass the entire products array from the tool output.",
   },
-  CollectionWidget: {
+  show_collection_widget: {
     schema: z.object({
       title: z.string().describe("Nome della collezione"),
       description: z.string().describe("Breve descrizione della collezione"),
@@ -47,7 +47,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
     }),
     description: "Displays a collection section with an optional cover image and a product carousel. Always use this to present a collection — coverImageUrl is optional and can be omitted if not available.",
   },
-  ProductHero: {
+  show_product_hero: {
     schema: z.object({
       id: z.string().optional(),
       handle: z.string().optional(),
