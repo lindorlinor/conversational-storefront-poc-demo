@@ -128,7 +128,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const products = search.nodes.map((node: any) => {
-    const rawVariants: { title: string }[] = node.variants?.nodes ?? []
+    const rawVariants: { id: string; title: string }[] = node.variants?.nodes ?? []
     const hasRealVariants = !(rawVariants.length === 1 && rawVariants[0].title === 'Default Title')
     return {
       ...node,
@@ -136,6 +136,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
       images: node.images?.nodes ?? [],
       price: node.priceRange?.minVariantPrice ?? null,
       variants: hasRealVariants ? rawVariants : [],
+      defaultVariantId: !hasRealVariants ? rawVariants[0]?.id : undefined,
     }
   })
 
