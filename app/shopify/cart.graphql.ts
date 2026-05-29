@@ -28,7 +28,6 @@ export const CART_QUERY = `
 `
 
 
-// intanto metto della cera nel mio carrello hihihi
 
 export const CART_LINES_ADD_MUTATION = `
   mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {

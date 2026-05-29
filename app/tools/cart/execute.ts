@@ -1,14 +1,17 @@
 import { fetchCart, cartLinesAdd } from '../../shopify/utils'
 
-const TEST_VARIANT_ID = 'gid://shopify/ProductVariant/61828386455922'
-
-export async function addToCartExecute({ rawCartId }: { rawCartId: string }) {
-    const cart = await fetchCart(rawCartId)
-    
-    if (!cart) {
-        return { error: 'Carrello non trovato' }
+export async function addToCartExecute({ rawCartId, variantId, quantity = 1 }: { rawCartId: string | null, variantId: string, quantity?: number }) {
+    if (!rawCartId){
+        return { error: 'Nessun carrello trovato' }
     }
 
-    const updatedCart = await cartLinesAdd(rawCartId, TEST_VARIANT_ID, 1)
+    const cart = await fetchCart(rawCartId)
+    
+    if (!cart){
+        return { error: 'Carrello non trovato o scaduto' }
+    }
+
+    const updatedCart = await cartLinesAdd(rawCartId, variantId, quantity)
+    
     return { cart: updatedCart }
 }
