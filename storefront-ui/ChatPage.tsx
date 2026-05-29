@@ -1,4 +1,5 @@
 import { useChat } from "@ai-sdk/react";
+import { getCartId } from "./utils/storefront";
 import { DefaultChatTransport } from "ai";
 import { ChatInput } from "./components/chat-input/ChatInput";
 import Title from "./components/title";
@@ -9,8 +10,10 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
   const apiBase = parsed.pathname; // e.g. '/apps/chatbot'
   const shop = parsed.searchParams.get("shop") ?? "";
 
+  const cartId = getCartId()
+
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: apiUrl }),
+    transport: new DefaultChatTransport({ api: apiUrl, body: { cartId } }),
   });
 
   return (
