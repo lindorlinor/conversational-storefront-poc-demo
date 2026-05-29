@@ -1,5 +1,5 @@
 import { Product } from "../models/types";
-import { variantUrl } from "../utils/url";
+import { variantUrl } from "../utils/storefront";
 
 export function ProductCardSkeleton() {
     return (
