@@ -60,8 +60,15 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         altText: z.string().optional(),
       })).optional().describe("All product images for the gallery carousel."),
       price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
+      variants: z.array(z.object({
+        id: z.string().optional(),
+        title: z.string(),
+        price: z.object({ amount: z.string() }).optional(),
+        image: z.object({ url: z.string() }).optional(),
+      })).optional().describe("Product variants (e.g. size, age group). Pass them so the user can switch between variants interactively."),
+      selectedVariantTitle: z.string().optional().describe("Title of the variant to pre-select on load. Use this when the user has expressed a preference for a specific variant (e.g. asked for a product 'for kids' → set this to the matching variant title such as '3-8 years'). Must exactly match one of the titles in the variants array."),
     }),
-    description: "Displays a full product hero with image gallery, price and a link to the shop. Use this when the user asks for details about a single specific product.",
+    description: "Displays a full product hero with image gallery, price and a link to the shop. Use this when the user asks for details about a single specific product. If the product has variants (e.g. sizes, age groups), pass them and set selectedVariantTitle if the user expressed a preference.",
   },
 };
 
