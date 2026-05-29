@@ -33,6 +33,15 @@ export const searchProductSchema = z.object({
         )
         .optional()
         .describe('Filter by custom product metafields. Use only when the user mentions an attribute that maps to a known metafield.'),
+    variant_option_filters: z
+    .array(
+        z.object({
+            name: z.string(),
+            value: z.string(),
+        }),
+    )
+    .optional()
+    .describe('Filter by variant options. Use when the user asks for products by age, size, color or other variant attributes. E.g. name: "age", value: "3-8 years"'),
     limit: z.number().int().min(1).max(100).optional().describe(
         'Number of products to return. Use only if the user specifies a quantity (e.g. "show me 3 products"). Defaults to 10.'
     ),
@@ -51,11 +60,11 @@ export const searchProductSchema = z.object({
 export const searchProductDefinition = tool({
     description: `Search for products in the store.
         Use this tool when the user wants to find, browse, or filter products.
-        After obtaining results, call a ProductCard tool once for each product to display it visually.
+        After obtaining results, you can call a widget tool to display it visually.
 
         IMPORTANT rules:
         - Only include filters the user explicitly mentioned. Do NOT guess or default filter values.
         - Do NOT set priceRange, availability, or categories unless the user specifically asks for them.
-        - If the user just says a product name (e.g. "wax"), only set query and leave all filters unset.`,
+        - If the user just says a product name, only set query and leave all filters unset.`,
     inputSchema: searchProductSchema,
 });

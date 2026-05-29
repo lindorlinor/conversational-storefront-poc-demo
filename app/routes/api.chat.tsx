@@ -111,7 +111,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const shop = new URL(request.url).searchParams.get('shop') ?? '';
     const { admin } = await unauthenticated.admin(shop);
     const systemPrompt = await getSystemPrompt(admin);
-    // console.log('[chat action] system prompt:', systemPrompt);
+    console.log('[chat action] system prompt:', systemPrompt);
 
     const body = await request.json()
     const { messages } = body
