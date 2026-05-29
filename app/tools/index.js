@@ -6,6 +6,9 @@ import { fetchCollectionExecute } from './fetch-collection/execute';
 import { searchProductInCollectionDefinition } from './search-product/definition-in-collection';
 import { searchProductInCollectionExecute } from './search-product/execute-in-collection';
 
+
+import { addToCartDefinition } from './cart/definition';
+import { addToCartExecute } from './cart/execute';
 export const searchProductTool = tool({
   ...searchProductDefinition,
   execute: searchProductExecute,
@@ -20,4 +23,12 @@ export const searchProductInCollectionTool = tool({
   ...searchProductInCollectionDefinition,
   execute: searchProductInCollectionExecute,
 });
+
+
+export const addToCartTool = (rawId) => tool({
+  ...addToCartDefinition,
+  execute: (params) => addToCartExecute({ ...params, rawCartId: rawId }),
+});
+
+
 

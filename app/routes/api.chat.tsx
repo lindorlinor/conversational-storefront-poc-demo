@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages, stepCountIs, wrapLanguageModel, type LanguageModelMiddleware } from 'ai'
-import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool } from '../tools'
+import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool } from '../tools'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
@@ -108,13 +108,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   try {
+
     const shop = new URL(request.url).searchParams.get('shop') ?? '';
     const { admin } = await unauthenticated.admin(shop);
     const systemPrompt = await getSystemPrompt(admin);
     console.log('[chat action] system prompt:', systemPrompt);
 
     const body = await request.json()
-    const { messages } = body
+    const { messages, cartId } = body
+    console.log('[cart] cartId dal body:', cartId)
 
     const t0 = Date.now()
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === 'user')
@@ -193,7 +195,7 @@ export async function action({ request }: ActionFunctionArgs) {
         }
       },
       model: model,
-      tools: { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, ...getUItools() },
+      tools: { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool: addToCartTool(cartId), ...getUItools() },
       messages: await convertToModelMessages(messages),
     })
 
