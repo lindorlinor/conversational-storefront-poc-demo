@@ -99,6 +99,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         <div id="chat-page-root" data-app-origin="${appOrigin}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
         <script src="${appOrigin}/chat-page.js" defer></script>
+        <script>window.addEventListener('load', function() { ConversationalStorefront.init(); });</script>
       </body>
     </html>`;
   return new Response(html, {

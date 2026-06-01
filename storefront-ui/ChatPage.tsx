@@ -1,11 +1,11 @@
 import { useChat } from "@ai-sdk/react";
-import { getCartId } from "./utils/storefront";
+import { getCartId as defaultGetCartId } from "./utils/storefront";
 import { DefaultChatTransport } from "ai";
 import { ChatInput } from "./components/chat-input/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
 
-export function ChatPage({ apiUrl }: { apiUrl: string }) {
+export function ChatPage({ apiUrl, getCartId = defaultGetCartId }: { apiUrl: string; getCartId?: () => string | null; }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname; // e.g. '/apps/chatbot'
   const shop = parsed.searchParams.get("shop") ?? "";

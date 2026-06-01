@@ -1,5 +1,6 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 import { ChatPage } from "./ChatPage";
+import { getCartId as defaultGetCartId } from "./utils/storefront";
 import rawStyles from "./page.css?inline";
 
 const styleEl = document.createElement("style");
@@ -9,8 +10,28 @@ styleEl.textContent = rawStyles.replace(
 );
 document.head.appendChild(styleEl);
 
-const container = document.getElementById("chat-page-root");
-if (container) {
-  const apiUrl = `/apps/chatbot${window.location.search}`;
-  createRoot(container).render(<ChatPage apiUrl={apiUrl} />);
+interface InitOptions {
+  apiUrl?: string;
+  getCartId?: () => string | null;
 }
+
+declare global {
+  interface Window {
+    ConversationalStorefront: { init: (options?: InitOptions) => void };
+  }
+}
+
+let root: Root | null = null;
+
+window.ConversationalStorefront = {
+  init({ apiUrl, getCartId }: InitOptions = {}) {
+    const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
+    const resolvedGetCartId = getCartId ?? defaultGetCartId;
+
+    const container = document.getElementById("chat-page-root");
+    if (!container) return;
+
+    if (!root) root = createRoot(container);
+    root.render(<ChatPage apiUrl={resolvedApiUrl} getCartId={resolvedGetCartId} />);
+  },
+};
