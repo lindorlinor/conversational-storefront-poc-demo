@@ -32,5 +32,7 @@ export async function cartLinesAdd(cartId: string, variantId: string, quantity: 
         cartId: `gid://shopify/Cart/${cartId}`,
         lines: [{ merchandiseId: variantId, quantity }],
     })
-    return data.data.cartLinesAdd.cart
+    console.log('[cartLinesAdd] variantId:', variantId)
+    console.log('[cartLinesAdd] risposta API:', JSON.stringify(data))
+    return data.data.cartLinesAdd?.cart ?? null
 }

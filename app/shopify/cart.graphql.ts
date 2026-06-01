@@ -38,6 +38,10 @@ export const CART_LINES_ADD_MUTATION = `
           totalAmount { amount currencyCode }
         }
       }
+      userErrors {
+        field
+        message
+      }
     }
   }
 `
