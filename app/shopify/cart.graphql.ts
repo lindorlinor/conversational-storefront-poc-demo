@@ -29,6 +29,23 @@ export const CART_QUERY = `
 
 
 
+export const CART_CREATE_MUTATION = `
+  mutation cartCreate($lines: [CartLineInput!]) {
+    cartCreate(input: { lines: $lines }) {
+      cart {
+        id
+        cost {
+          totalAmount { amount currencyCode }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`
+
 export const CART_LINES_ADD_MUTATION = `
   mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
     cartLinesAdd(cartId: $cartId, lines: $lines) {

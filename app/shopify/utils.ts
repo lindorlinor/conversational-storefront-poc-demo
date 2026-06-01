@@ -1,4 +1,4 @@
-import { CART_QUERY, CART_LINES_ADD_MUTATION } from "./cart.graphql";
+import { CART_QUERY, CART_CREATE_MUTATION, CART_LINES_ADD_MUTATION } from "./cart.graphql";
 
 const STOREFRONT_API_VERSION = '2025-01'
 
@@ -24,6 +24,16 @@ export async function fetchCart(rawCartId: string) {
     return data.data.cart;
 }
 
+
+export async function createCart(variantId: string, quantity: number = 1) {
+    const shop = process.env.SHOPIFY_SHOP!
+    const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
+    const data = await storefrontFetch(shop, token, CART_CREATE_MUTATION, {
+        lines: [{ merchandiseId: variantId, quantity }],
+    })
+    console.log('[createCart] risposta API:', JSON.stringify(data))
+    return data.data.cartCreate?.cart ?? null
+}
 
 export async function cartLinesAdd(cartId: string, variantId: string, quantity: number = 1) {
     const shop = process.env.SHOPIFY_SHOP!
