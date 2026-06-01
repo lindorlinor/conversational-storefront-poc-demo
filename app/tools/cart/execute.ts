@@ -1,10 +1,6 @@
 import { fetchCart, cartLinesAdd, createCart } from '../../shopify/utils'
 
-export async function addToCartExecute({ rawCartId, variantId, availableForSale, quantity = 1 }: { rawCartId: string | null, variantId: string, availableForSale: boolean, quantity?: number }) {
-    if (!availableForSale) {
-        return { error: 'Prodotto non disponibile per l\'acquisto online' }
-    }
-
+export async function addToCartExecute({ rawCartId, variantId, quantity = 1 }: { rawCartId: string | null, variantId: string, quantity?: number }) {
     if (!rawCartId) {
         const newCart = await createCart(variantId, quantity)
         if (!newCart) return { error: 'Impossibile creare il carrello' }
