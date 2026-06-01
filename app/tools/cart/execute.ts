@@ -1,4 +1,4 @@
-import { fetchCart, cartLinesAdd, createCart } from '../../shopify/utils'
+import { fetchCart, cartLinesAdd, createCart } from '../../../storefront-ui/utils/utils'
 
 export async function addToCartExecute({ rawCartId, variantId, quantity = 1 }: { rawCartId: string | null, variantId: string, quantity?: number }) {
     if (!rawCartId) {

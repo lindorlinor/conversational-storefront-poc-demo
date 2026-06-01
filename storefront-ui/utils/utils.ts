@@ -7,7 +7,7 @@ function storefrontFetch(shop: string, token: string, query: string, variables: 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Shopify-Storefront-Private-Token': token,
+            'X-Shopify-Storefront-Access-Token': token,
         },
         body: JSON.stringify({ query, variables }),
     }).then(r => r.json());
@@ -15,7 +15,7 @@ function storefrontFetch(shop: string, token: string, query: string, variables: 
 
 export async function fetchCart(rawCartId: string) {
     const shop = process.env.SHOPIFY_SHOP!
-    const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
+    const token = process.env.SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN!
     const cartId = `gid://shopify/Cart/${rawCartId}`
     console.log('[fetchCart] rawCartId ricevuto:', rawCartId)
     console.log('[fetchCart] cartId GID costruito:', cartId)
@@ -27,7 +27,7 @@ export async function fetchCart(rawCartId: string) {
 
 export async function createCart(variantId: string, quantity: number = 1) {
     const shop = process.env.SHOPIFY_SHOP!
-    const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
+    const token = process.env.SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN!
     const data = await storefrontFetch(shop, token, CART_CREATE_MUTATION, {
         lines: [{ merchandiseId: variantId, quantity }],
     })
@@ -37,7 +37,7 @@ export async function createCart(variantId: string, quantity: number = 1) {
 
 export async function cartLinesAdd(cartId: string, variantId: string, quantity: number = 1) {
     const shop = process.env.SHOPIFY_SHOP!
-    const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!
+    const token = process.env.SHOPIFY_PUBLIC_STOREFRONT_ACCESS_TOKEN!
     const data = await storefrontFetch(shop, token, CART_LINES_ADD_MUTATION, {
         cartId: `gid://shopify/Cart/${cartId}`,
         lines: [{ merchandiseId: variantId, quantity }],
