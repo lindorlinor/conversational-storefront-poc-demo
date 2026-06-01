@@ -41,6 +41,7 @@ const GRAPHQL_QUERY = `
             nodes {
               id
               title
+              quantityAvailable
               price { amount }
               image { url }
             }
@@ -129,9 +130,20 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   const search = data.data.search
 
+  const availabilityFilter = filters?.availability
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const products = search.nodes.map((node: any) => {
-    const rawVariants: { id: string; title: string }[] = node.variants?.nodes ?? []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let rawVariants: { id: string; title: string; quantityAvailable: number }[] = node.variants?.nodes ?? []
+
+    if (availabilityFilter === true) {
+      rawVariants = rawVariants.filter(v => v.quantityAvailable > 0)
+    } else if (availabilityFilter === false) {
+      // quantityAvailable === -1 significa stock illimitato (es. gift card), quindi lo escludo dal "non disponibile"
+      rawVariants = rawVariants.filter(v => v.quantityAvailable === 0)
+    }
+
     const hasRealVariants = !(rawVariants.length === 1 && rawVariants[0].title === 'Default Title')
     return {
       ...node,
