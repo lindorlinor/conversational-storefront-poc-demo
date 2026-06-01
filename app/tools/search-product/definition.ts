@@ -9,16 +9,20 @@ export const searchProductSchema = z.object({
         .object({
             priceRange: z
                 .object({
-                    min: z.number().optional().describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
-                    max: z.number().optional().describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
+                    min: z.number().nullable().describe(
+                        'Minimum price explicitly mentioned by the user. Set to null if not mentioned.'
+                    ),
+                    max: z.number().nullable().describe(
+                        'Maximum price explicitly mentioned by the user. Set to null if not mentioned.'
+                    ),
                 })
-                .optional()
-                .describe('ONLY set if the user explicitly mentions a price, budget, or price range.'),
-            availability: z.boolean().optional().describe(
-                'ONLY set if the user explicitly asks for available (true) or unavailable (false) products. Do NOT include this field otherwise.'
+                .nullable()
+                .describe('Set to null if the user does not mention a price or budget.'),
+            availability: z.boolean().nullable().describe(
+                'Set to null if the user does not mention availability. Only set to true/false when the user uses words like "available", "in stock", "out of stock".'
             ),
             categories: z.array(z.string()).optional().describe(
-                'Product type categories. ONLY set if the user mentions a specific category. Leave as empty array or omit otherwise.'
+                'Product type categories. Omit entirely if the user does not mention a specific category.'
             ),
         })
         .optional()

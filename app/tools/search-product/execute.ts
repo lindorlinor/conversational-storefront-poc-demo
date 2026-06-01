@@ -67,19 +67,22 @@ export async function searchProductExecute(args: SearchProductArgs) {
 
   const productFilters: Record<string, unknown>[] = []
 
-  if (filters?.availability === true) {
-    productFilters.push({ available: true })
+  if (filters?.availability != null) {
+    productFilters.push({ available: filters.availability })
   }
-  const { min, max } = filters?.priceRange ?? {}
-  if (min || max) {
-    productFilters.push({
-      price: {
-        min,
-        max,
-      },
-    })
+  const priceRange = filters?.priceRange
+  if (priceRange != null) {
+    const { min, max } = priceRange
+    if (min != null || max != null) {
+      productFilters.push({
+        price: {
+          min: min ?? undefined,
+          max: max ?? undefined,
+        },
+      })
+    }
   }
-  if (filters?.categories) {
+  if (filters?.categories != null) {
     for (const cat of filters.categories) {
       productFilters.push({ productType: cat })
     }
