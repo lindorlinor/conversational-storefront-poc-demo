@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { Product, Variant } from "../models/types";
+import { addToCartExecute } from "../utils/utils";
+import { getCartId, setCartId } from "../utils/storefront";
 
 type ProductHeroProps = Product & { selectedVariantTitle?: string };
 
@@ -8,6 +10,8 @@ export function ProductHero({ title, description, images = [], price, url, varia
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(initialVariant);
   const [imageIndex, setImageIndex] = useState(0);
+  const [isAdding, setIsAdding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const displayImages = selectedVariant?.image?.url ? [{ url: selectedVariant.image.url, altText: selectedVariant.title }] : images;
 
@@ -16,6 +20,31 @@ export function ProductHero({ title, description, images = [], price, url, varia
   const handleVariantSelect = (variant: Variant) => {
     setSelectedVariant(variant);
     setImageIndex(0);
+  };
+
+  const handleAddToCart = async () => {
+    console.log('selectedVariant:', selectedVariant);
+    const variantId = selectedVariant?.id ?? variants[0]?.id;
+    if (!variantId || isAdding) return;
+
+    try {
+      setIsAdding(true);
+      setError(null);
+
+      const result = await addToCartExecute({
+        rawCartId: getCartId(),
+        variantId,
+        quantity: 1,
+      });
+
+      if ("newCartId" in result && result.newCartId) {
+        setCartId(result.newCartId);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Impossibile aggiungere al carrello");
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const canNext = imageIndex < displayImages.length - 1;
@@ -43,15 +72,19 @@ export function ProductHero({ title, description, images = [], price, url, varia
           </div>
         )}
 
-        <button className="flex items-center justify-between w-full px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded">
+        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="flex items-center justify-between w-full px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded disabled:opacity-50 disabled:cursor-not-allowed">
           <span>Add to cart</span>
           {formattedPrice && (
             <div className="flex items-center gap-2">
-              <span>{formattedPrice}</span>
+              <span>{isAdding ? "..." : formattedPrice}</span>
               <span className="text-base leading-none">+</span>
             </div>
           )}
         </button>
+
+        {error && (
+          <p className="text-xs text-red-600 leading-relaxed">{error}</p>
+        )}
 
         {description && (
           <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
