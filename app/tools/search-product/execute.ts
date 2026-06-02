@@ -60,7 +60,7 @@ export async function searchProductExecute(args: SearchProductArgs) {
   console.log('[searchProductTool] called with args:', JSON.stringify(args))
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
-  const { filters, metafield_filters, variant_option_filters, category_filters, limit = 10, sortKey, reverse } = args
+  const { filters, metafield_filters, variant_option_filters, category_filters, taxonomy_filters, limit = 10, sortKey, reverse } = args
 
   const shop = process.env.SHOPIFY_SHOP
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
@@ -101,6 +101,11 @@ export async function searchProductExecute(args: SearchProductArgs) {
   if (category_filters) {
     for (const cf of category_filters) {
       productFilters.push({ category: { id: cf.id } })
+    }
+  }
+  if (taxonomy_filters) {
+    for (const tf of taxonomy_filters) {
+      productFilters.push({ taxonomyMetafield: { namespace: 'shopify', key: tf.key, value: tf.value } })
     }
   }
 

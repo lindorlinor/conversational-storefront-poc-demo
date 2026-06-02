@@ -54,6 +54,15 @@ export const searchProductSchema = z.object({
     )
     .optional()
     .describe('Filter by Shopify taxonomy category ID. Use when the user asks for products belonging to a specific category (e.g. snowboards, boots). Each entry is a CategoryFilter with an id field.'),
+    taxonomy_filters: z
+    .array(
+        z.object({
+            key: z.string(),
+            value: z.string(),
+        }),
+    )
+    .optional()
+    .describe('Filter by Shopify standard taxonomy metafields (namespace is always "shopify"). Keys are standardized by Shopify (e.g. "color-pattern", "size", "material"). Values are Shopify taxonomy GIDs (e.g. "gid://shopify/TaxonomyValue/1").'),
     limit: z.number().int().min(1).max(100).optional().describe(
         'Number of products to return. Use only if the user specifies a quantity (e.g. "show me 3 products"). Defaults to 10.'
     ),
