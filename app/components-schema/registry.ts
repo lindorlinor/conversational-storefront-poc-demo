@@ -45,8 +45,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
       })).optional().describe("Prodotti da mostrare nel carosello"),
     }),
-    description: "Displays a collection section with an optional cover image and a product carousel. Always use this to present a collection — coverImageUrl is optional and can be omitted if not available.",
-  },
+    description: "Displays a Shopify collection with its cover image and a product carousel. ONLY call this tool after fetchCollectionTool or searchProductInCollectionTool — products must come from an actual Shopify collection. Do NOT use this to group thematic products: use show_product_list instead."  },
   show_product_hero: {
     schema: z.object({
       id: z.string().optional(),
