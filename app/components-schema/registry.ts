@@ -3,7 +3,7 @@ import { z } from "zod";
 
 
 // definizione dei nomi dei componenti
-export type ComponentName = "show_product_list" | "show_collection_widget" | "show_product_hero";
+export type ComponentName = "show_product_list" | "show_collection_widget" | "show_product_hero" | "show_variant_selector";
 
 type ComponentSchema =  {
     schema: z.ZodObject<any>;
@@ -69,6 +69,28 @@ export const registry: Record<ComponentName, ComponentSchema> = {
       selectedVariantTitle: z.string().optional().describe("Title of the variant to pre-select on load. Use this when the user has expressed a preference for a specific variant (e.g. asked for a product 'for kids' → set this to the matching variant title such as '3-8 years'). Must exactly match one of the titles in the variants array."),
     }),
     description: "Displays a full product hero with image gallery, price and a link to the shop. Use this when the user asks for details about a single specific product. If the product has variants (e.g. sizes, age groups), pass them and set selectedVariantTitle if the user expressed a preference.",
+  },
+  show_variant_selector: {
+    schema: z.object({
+      title: z.string().optional(),
+      description: z.string().nullable().describe("Product description. Pass null if not available — do not invent one."),
+      url: z.string().optional(),
+      imgUrl: z.string().nullable().optional(),
+      images: z.array(z.object({
+        url: z.string(),
+        altText: z.string().optional(),
+      })).optional().describe("Product images for the gallery."),
+      price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
+      variants: z.array(z.object({
+        id: z.string().optional(),
+        title: z.string(),
+        price: z.object({ amount: z.string() }).optional(),
+        image: z.object({ url: z.string() }).optional(),
+        available: z.boolean().optional().describe("false if the variant is out of stock — renders with a strikethrough and is not selectable."),
+      })).optional().describe("All available variants (e.g. sizes, colors). Mark out-of-stock ones with available: false."),
+      variantLabel: z.string().optional().describe("Human-readable name of the variant dimension, e.g. 'Taglia', 'Colore', 'Materiale'. Defaults to 'Variante'."),
+    }),
+    description: "Shows an interactive variant picker that lets the user choose a variant and add the product to the cart. Use this ONLY when the user explicitly asks to add a product to the cart AND there are multiple variants (e.g. sizes) but the user has not specified which one — never use it just to display product details.",
   },
 };
 
