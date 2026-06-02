@@ -46,6 +46,14 @@ export const searchProductSchema = z.object({
     )
     .optional()
     .describe('Filter by variant options. Use when the user asks for products by age, size, color or other variant attributes. E.g. name: "age", value: "3-8 years"'),
+    category_filters: z
+    .array(
+        z.object({
+            id: z.string(),
+        }),
+    )
+    .optional()
+    .describe('Filter by Shopify taxonomy category ID. Use when the user asks for products belonging to a specific category (e.g. snowboards, boots). Each entry is a CategoryFilter with an id field.'),
     limit: z.number().int().min(1).max(100).optional().describe(
         'Number of products to return. Use only if the user specifies a quantity (e.g. "show me 3 products"). Defaults to 10.'
     ),
