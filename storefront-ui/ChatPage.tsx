@@ -63,7 +63,7 @@ export function ChatPage({ apiUrl, getCartId = defaultGetCartId, setCartId = def
       </div>
 
       <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1 items-center">
-        <div className="w-[80%] flex flex-col gap-3">
+        <div className="w-[95%] flex flex-col gap-3">
         {messages
           .filter((message) => message.role === "assistant")
           .slice(-1)
