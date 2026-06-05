@@ -78,6 +78,7 @@ export default function StyleConfiguration() {
     setTheme(t => ({ ...t, [key]: value }));
 
   const isSaving = fetcher.state !== "idle";
+  const isDirty = ALL_KEYS.some(k => theme[k] !== (saved[k] ?? ""));
   const saveError = fetcher.data?.ok === false ? fetcher.data.error : null;
 
   const handleSave = () => {
@@ -131,8 +132,8 @@ export default function StyleConfiguration() {
         <button
           type="button"
           onClick={handleSave}
-          disabled={isSaving}
-          style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: isSaving ? "default" : "pointer", opacity: isSaving ? 0.5 : 1 }}
+          disabled={isSaving || !isDirty}
+          style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isSaving || !isDirty) ? "default" : "pointer", opacity: (isSaving || !isDirty) ? 0.5 : 1 }}
         >
           {isSaving ? "Salvataggio..." : "Salva"}
         </button>
