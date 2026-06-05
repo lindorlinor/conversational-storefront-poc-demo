@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
+import { getThemeConfig } from "../shopify/theme.graphql";
 
 type ThemeKey =
   | "color-widget-bg" | "color-widget-surface" | "color-widget-surface-alt"
@@ -38,13 +40,18 @@ const EMPTY_THEME = Object.fromEntries(ALL_KEYS.map(k => [k, ""])) as Record<The
 const HEX6 = /^#[0-9a-fA-F]{6}$/;
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await authenticate.admin(request);
-  // TODO: caricare i valori dal metaobject Shopify
-  return {};
+  const { admin } = await authenticate.admin(request);
+  const config = await getThemeConfig(admin);
+  return { saved: config?.variant_selector ?? {} };
 };
 
 export default function StyleConfiguration() {
-  const [theme, setTheme] = useState<Record<ThemeKey, string>>(EMPTY_THEME);
+  const { saved } = useLoaderData<typeof loader>();
+  const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
+
+  useEffect(() => {
+    setTheme({ ...EMPTY_THEME, ...saved });
+  }, [saved]);
 
   const set = (key: ThemeKey, value: string) =>
     setTheme(t => ({ ...t, [key]: value }));
