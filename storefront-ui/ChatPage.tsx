@@ -11,7 +11,6 @@ import { ProductList } from "./components/ProductList";
 import { ProductHero } from "./components/ProductHero";
 import { CollectionWidget } from "./components/CollectionWidget";
 import { VariantSelector } from "./components/VariantSelector";
-import WidgetRenderer from "./components/WidgetRenderer";
 
 const _IMG_TEE    = "https://placehold.co/400x400/e2e8f0/64748b?text=Tee";
 const _IMG_HOODIE = "https://placehold.co/400x400/fef3c7/92400e?text=Hoodie";
@@ -189,43 +188,15 @@ export function ChatPage({ apiUrl, getCartId = defaultGetCartId, setCartId = def
         <div className="w-[95%] flex flex-col gap-10 py-10 border-t border-dashed border-gray-200 mt-4">
           <p className="text-[10px] font-mono text-center text-gray-300 uppercase tracking-[0.25em]">components preview</p>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ChatInput</span>
-            <div className="w-1/2">
-              <ChatInput onSend={() => {}} />
-            </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ChatInput (disabled)</span>
-            <div className="w-1/2">
-              <ChatInput onSend={() => {}} disabled />
-            </div>
-          </div>
 
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-mono text-gray-400">Section</span>
             <Section message={PREVIEW_SECTION_MESSAGE} />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ProductCardSkeleton</span>
-            <div className="grid grid-cols-3 gap-4 w-[70%] mx-auto">
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-              <ProductCardSkeleton />
-            </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ProductCard (single, no variants)</span>
-            <ProductCard {...PREVIEW_PRODUCT_1} />
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ProductList (skeleton)</span>
-            <ProductList />
-          </div>
 
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-mono text-gray-400">ProductList</span>
@@ -247,10 +218,6 @@ export function ChatPage({ apiUrl, getCartId = defaultGetCartId, setCartId = def
             <VariantSelector {...PREVIEW_VARIANT_PRODUCT} />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">WidgetRenderer (show_product_hero)</span>
-            <WidgetRenderer toolName="show_product_hero" input={PREVIEW_PRODUCT_HERO as Record<string, unknown>} />
-          </div>
         </div>
       </div>
 
