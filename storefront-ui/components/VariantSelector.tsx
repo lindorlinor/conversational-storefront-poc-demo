@@ -88,19 +88,19 @@ export function VariantSelector({
             {canPrev && (
               <button
                 onClick={() => setImageIndex((i) => i - 1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-muted hover:opacity-50 transition-opacity"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-widget-bg/80 backdrop-blur-sm border border-widget-border rounded-full flex items-center justify-center hover:bg-widget-bg transition-colors shadow-sm"
                 aria-label="Immagine precedente"
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                ←
               </button>
             )}
             {canNext && (
               <button
                 onClick={() => setImageIndex((i) => i + 1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-muted hover:opacity-50 transition-opacity"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-widget-bg/80 backdrop-blur-sm border border-widget-border rounded-full flex items-center justify-center hover:bg-widget-bg transition-colors shadow-sm"
                 aria-label="Immagine successiva"
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                →
               </button>
             )}
             {displayImages.length > 1 && (
