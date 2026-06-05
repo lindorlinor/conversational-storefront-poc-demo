@@ -15,7 +15,7 @@ export type ThemeConfig = {
 export async function getThemeConfig(admin: AdminApiContext): Promise<{ id: string; theme: ThemeConfig } | null> {
   const res = await admin.graphql(`
     query {
-      metaobjects(type: "${THEME_TYPE}", first: 10) {
+      metaobjects(type: "${THEME_TYPE}", first: 10, query: "status:active") {
         nodes {
           id
           updatedAt
@@ -54,6 +54,7 @@ export async function createThemeConfig(admin: AdminApiContext, config: ThemeCon
           type: THEME_TYPE,
           handle: `theme-${Date.now()}`,
           fields: [{ key: "theme_config", value: JSON.stringify(config) }],
+          capabilities: { publishable: { status: "ACTIVE" } },
         },
       },
     },
