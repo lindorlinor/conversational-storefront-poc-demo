@@ -97,7 +97,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     try {
       const { admin } = await unauthenticated.admin(shop);
       const config = await getThemeConfig(admin);
-      if (config) themeCss = buildThemeCss(config);
+      if (config) themeCss = buildThemeCss(config.theme);
     } catch {
       // tema non disponibile, il widget usa i valori di default del CSS
     }
