@@ -8,28 +8,34 @@ import { getThemeConfig, createThemeConfig } from "../shopify/theme.graphql";
 
 // todo pensare a modo per creare errore a compile time se manca una chiave o se ne aggiunge una nuova (rispetto @theme in page.css -> tutto deve corrispondere)
 type ThemeKey =
-  | "color-widget-bg" | "color-widget-surface"
+  | "color-widget-bg" | "color-widget-card" | "color-widget-surface"
   | "color-widget-text" | "color-widget-text-secondary" | "color-widget-text-muted"
   | "color-widget-border"
   | "color-widget-accent" | "color-widget-accent-fg"
   | "color-widget-error"
-  | "radius-widget-base";
+  | "radius-widget-base"
+  | "color-widget-section-1" | "color-widget-section-2"
+  | "color-widget-page-from" | "color-widget-page-to";
 
 const COLOR_KEYS = new Set<ThemeKey>([
-  "color-widget-bg", "color-widget-surface",
+  "color-widget-bg", "color-widget-card", "color-widget-surface",
   "color-widget-text", "color-widget-text-secondary", "color-widget-text-muted",
   "color-widget-border",
   "color-widget-accent", "color-widget-accent-fg",
   "color-widget-error",
+  "color-widget-section-1", "color-widget-section-2",
+  "color-widget-page-from", "color-widget-page-to",
 ]);
 
 const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
-  { heading: "Sfondi",         keys: ["color-widget-bg", "color-widget-surface"] },
+  { heading: "Sfondi",         keys: ["color-widget-bg", "color-widget-card", "color-widget-surface"] },
   { heading: "Testi",          keys: ["color-widget-text", "color-widget-text-secondary", "color-widget-text-muted"] },
   { heading: "Bordi",          keys: ["color-widget-border"] },
   { heading: "Accent",         keys: ["color-widget-accent", "color-widget-accent-fg"] },
   { heading: "Errore",         keys: ["color-widget-error"] },
   { heading: "Arrotondamento", keys: ["radius-widget-base"] },
+  { heading: "Sezioni",        keys: ["color-widget-section-1", "color-widget-section-2"] },
+  { heading: "Sfondo pagina",  keys: ["color-widget-page-from", "color-widget-page-to"] },
 ];
 
 const ALL_KEYS = SECTIONS.flatMap(s => s.keys);
