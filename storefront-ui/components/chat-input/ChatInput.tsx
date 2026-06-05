@@ -21,7 +21,7 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 rounded-full border border-widget-border bg-widget-bg px-4 py-2 shadow-sm transition-colors focus-within:border-widget-accent"
+      className="flex items-center gap-2 rounded-widget-base border border-widget-border bg-widget-bg px-4 py-2 shadow-sm transition-colors focus-within:border-widget-accent"
     >
       <input
         type="text"
@@ -35,7 +35,7 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
       <button
         type="submit"
         disabled={disabled}
-        className="flex-shrink-0 cursor-pointer rounded-full bg-widget-accent p-2 text-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
+        className="flex-shrink-0 cursor-pointer rounded-widget-base bg-widget-accent p-2 text-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
