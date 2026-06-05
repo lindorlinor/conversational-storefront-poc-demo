@@ -4,6 +4,7 @@ import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, 
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
+import { getThemeConfig, buildThemeCss } from '../shopify/theme.graphql';
 
 import {getUItools}  from '../tools/buildUITools';
 
@@ -87,13 +88,28 @@ export const model = wrapLanguageModel({
 })
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const appOrigin = new URL(request.url).origin.replace(/^http:/, 'https:');
+  const url = new URL(request.url);
+  const appOrigin = url.origin.replace(/^http:/, 'https:');
+  const shop = url.searchParams.get('shop') ?? '';
+
+  let themeCss = '';
+  if (shop) {
+    try {
+      const { admin } = await unauthenticated.admin(shop);
+      const config = await getThemeConfig(admin);
+      if (config) themeCss = buildThemeCss(config);
+    } catch {
+      // tema non disponibile, il widget usa i valori di default del CSS
+    }
+  }
+
   const html = `<!DOCTYPE html>
     <html lang="it">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Chat</title>
+        ${themeCss ? `<style>${themeCss}</style>` : ''}
       </head>
       <body style="margin:0">
         <div id="chat-page-root" data-app-origin="${appOrigin}"></div>
