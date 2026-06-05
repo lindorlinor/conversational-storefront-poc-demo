@@ -6,17 +6,16 @@ import { DefaultChatTransport } from "ai";
 import { ChatInput } from "./components/chat-input/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
-import ProductCard, { ProductCardSkeleton } from "./components/ProductCard";
 import { ProductList } from "./components/ProductList";
 import { ProductHero } from "./components/ProductHero";
 import { CollectionWidget } from "./components/CollectionWidget";
 import { VariantSelector } from "./components/VariantSelector";
 
-const _IMG_TEE    = "https://placehold.co/400x400/e2e8f0/64748b?text=Tee";
-const _IMG_HOODIE = "https://placehold.co/400x400/fef3c7/92400e?text=Hoodie";
-const _IMG_JACKET = "https://placehold.co/400x400/dbeafe/1e40af?text=Jacket";
-const _IMG_CAP    = "https://placehold.co/400x400/f0fdf4/166534?text=Cap";
-const _IMG_COLL   = "https://placehold.co/400x400/fdf4ff/7e22ce?text=Collection";
+const _IMG_TEE    = "https://placehold.co/400x400/e2e8f0/64748b?text=Pupu";
+const _IMG_HOODIE = "https://placehold.co/400x400/fef3c7/92400e?text=Caca";
+const _IMG_JACKET = "https://placehold.co/400x400/dbeafe/1e40af?text=Gugu";
+const _IMG_CAP    = "https://placehold.co/400x400/f0fdf4/166534?text=Gaga";
+const _IMG_COLL   = "https://placehold.co/400x400/fdf4ff/7e22ce?text=PupuCaca";
 
 const PREVIEW_PRODUCT_1 = {
   id: "gid://shopify/Product/1",
@@ -154,12 +153,12 @@ export function ChatPage({ apiUrl, getCartId = defaultGetCartId, setCartId = def
   }, [messages])
 
   return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="flex justify-center items-center px-5 py-6 border-b border-gray-200 text-center">
+    <div className="flex flex-col h-screen bg-gradient-to-b from-widget-page-from to-widget-page-to">
+      <div className="flex justify-center items-center px-5 py-6 text-center">
         <Title apiBase={apiBase} shop={shop} />
       </div>
 
-      <div className="flex justify-center px-5 py-4 border-b border-gray-200">
+      <div className="flex justify-center px-5 py-4">
         <div className="w-1/2">
           <ChatInput
             onSend={(text) => sendMessage({ text })}
@@ -168,57 +167,55 @@ export function ChatPage({ apiUrl, getCartId = defaultGetCartId, setCartId = def
         </div>
       </div>
 
-      <div className="overflow-y-auto px-5 py-4 flex flex-col gap-3 flex-1 items-center">
-        <div className="w-[95%] flex flex-col gap-3">
-        {messages
-          .filter((message) => message.role === "assistant")
-          .slice(-1)
-          .map((message) => (
-            console.log("Rendering message:", message),
-            <Section key={message.id} message={message} />
-          ))}
-        {(status === "streaming" || status === "submitted") && (
-          <div className="self-start bg-gray-100 px-4 py-2.5 rounded-lg text-base text-gray-400">
-            ...
+      <div className="overflow-y-auto flex flex-col flex-1">
+
+        {/* messaggi — area centrata */}
+        <div className="px-5 py-4 flex flex-col gap-3 items-center">
+          <div className="w-[80%] flex flex-col gap-3">
+            {messages
+              .filter((message) => message.role === "assistant")
+              .slice(-1)
+              .map((message) => (
+                console.log("Rendering message:", message),
+                <Section key={message.id} message={message} />
+              ))}
+            {(status === "streaming" || status === "submitted") && (
+              <div className="self-start bg-widget-surface px-4 py-2.5 rounded-lg text-base text-widget-text-muted">
+                ...
+              </div>
+            )}
           </div>
-        )}
         </div>
 
-        {/* ── Components Preview ── */}
-        <div className="w-[95%] flex flex-col gap-10 py-10 border-t border-dashed border-gray-200 mt-4">
-          <p className="text-[10px] font-mono text-center text-gray-300 uppercase tracking-[0.25em]">components preview</p>
+        <div className="flex flex-col">
 
+          <Section message={PREVIEW_SECTION_MESSAGE} />
 
+          <Section>
+            <div className="w-[80%] mx-auto">
+              <ProductList products={[PREVIEW_PRODUCT_1, PREVIEW_PRODUCT_2, PREVIEW_PRODUCT_3]} />
+            </div>
+          </Section>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">Section</span>
-            <Section message={PREVIEW_SECTION_MESSAGE} />
-          </div>
+          <Section>
+            <div className="w-[80%] mx-auto">
+              <ProductHero {...PREVIEW_PRODUCT_HERO} />
+            </div>
+          </Section>
 
+          <Section>
+            <div className="w-[80%] mx-auto">
+              <CollectionWidget {...PREVIEW_COLLECTION} />
+            </div>
+          </Section>
 
-
-
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ProductList</span>
-            <ProductList products={[PREVIEW_PRODUCT_1, PREVIEW_PRODUCT_2, PREVIEW_PRODUCT_3]} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">ProductHero</span>
-            <ProductHero {...PREVIEW_PRODUCT_HERO} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">CollectionWidget</span>
-            <CollectionWidget {...PREVIEW_COLLECTION} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-mono text-gray-400">VariantSelector</span>
-            <VariantSelector {...PREVIEW_VARIANT_PRODUCT} />
-          </div>
-
+          <Section>
+            <div className="w-[80%] mx-auto">
+              <VariantSelector {...PREVIEW_VARIANT_PRODUCT} />
+            </div>
+          </Section>
         </div>
+
       </div>
 
     </div>

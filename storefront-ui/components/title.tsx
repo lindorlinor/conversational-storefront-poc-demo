@@ -17,7 +17,7 @@ export default function Title({ apiBase = "", shop = "" }: TitleProps) {
   }, [apiBase, shop]);
 
   return (
-    <h1 className={`text-4xl transition-opacity duration-700 ease-in-out ${title ? "opacity-100" : "opacity-0"}`}>
+    <h1 className={`text-4xl text-widget-text transition-opacity duration-700 ease-in-out ${title ? "opacity-100" : "opacity-0"}`}>
       {title ?? ""}
     </h1>
   );

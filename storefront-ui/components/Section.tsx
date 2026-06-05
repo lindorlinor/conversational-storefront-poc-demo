@@ -1,41 +1,47 @@
 import type { UIMessage } from "@ai-sdk/react";
 import type { ComponentName } from "../../app/components-schema/registry";
 import WidgetRenderer from "./WidgetRenderer";
+import type { ReactNode } from "react";
 
 interface SectionProps {
-  message: UIMessage;
+  message?: UIMessage;
+  children?: ReactNode;
 }
 
-function Section({ message }: SectionProps) {
+function Section({ message, children }: SectionProps) {
   return (
-    <div className="section">
-      {message.parts.map((part: UIMessage["parts"][number], i: number) => {
+    <section className="section">
+      <div className="border-b border-widget-border pb-4">
+        {children}
 
-        // testo dell'LLM
-        if (part.type === "text") {
-          return <p key={i} className="section-text">{part.text}</p>;
-        }
+        {message?.parts.map((part: UIMessage["parts"][number], i: number) => {
 
-        // widget dal registry
-        if (part.type.startsWith("tool-")) {
-          const toolPart = part as {
-            type: string;
-            state: string;
-            input: Record<string, unknown>;
-          };
-          const toolName = toolPart.type.slice("tool-".length) as ComponentName;
-          return (
-            <WidgetRenderer
-              key={i}
-              toolName={toolName}
-              input={toolPart.input}
-            />
-          );
-        }
+          // testo dell'LLM
+          if (part.type === "text") {
+            return <p key={i} className="section-text">{part.text}</p>;
+          }
 
-        return null;
-      })}
-    </div>
+          // widget dal registry
+          if (part.type.startsWith("tool-")) {
+            const toolPart = part as {
+              type: string;
+              state: string;
+              input: Record<string, unknown>;
+            };
+            const toolName = toolPart.type.slice("tool-".length) as ComponentName;
+            return (
+              <WidgetRenderer
+                key={i}
+                toolName={toolName}
+                input={toolPart.input}
+              />
+            );
+          }
+
+          return null;
+        })}
+      </div>
+    </section>
   );
 }
 

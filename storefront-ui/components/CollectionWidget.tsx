@@ -24,7 +24,7 @@ export function CollectionWidget({
   const visibleProducts = products.slice(carouselIndex, carouselIndex + VISIBLE);
 
   return (
-    <div className="flex gap-8 py-8 border-b border-gray-200">
+    <div className="flex gap-8 py-8">
 
       {/* colonna sinistra — testo */}
       <div className="flex-shrink-0 w-[220px] flex flex-col gap-3">

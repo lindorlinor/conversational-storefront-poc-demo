@@ -55,7 +55,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
     : null;
 
   return (
-    <div className="flex gap-8 py-8 border-b border-widget-border">
+    <div className="flex gap-8 py-8">
 
       {/* colonna sinistra 40% — info prodotto */}
       <div className="w-[40%] flex flex-col gap-4">

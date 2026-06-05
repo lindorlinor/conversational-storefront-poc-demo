@@ -73,7 +73,7 @@ export function VariantSelector({
   const ctaDisabled = isAdding || !selected?.id;
 
   return (
-    <div className="flex bg-widget-bg overflow-hidden max-w-[70rem] mx-auto">
+    <div className="flex bg-widget-card overflow-hidden max-w-[70rem] mx-auto">
 
       {/* Gallery */}
       <div className="relative w-[35%] flex-none bg-widget-surface flex items-center justify-center p-6 min-h-[360px]">

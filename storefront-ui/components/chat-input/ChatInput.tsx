@@ -21,7 +21,7 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 shadow-sm transition-colors focus-within:border-blue-400"
+      className="flex items-center gap-2 rounded-full border border-widget-border bg-widget-bg px-4 py-2 shadow-sm transition-colors focus-within:border-widget-accent"
     >
       <input
         type="text"
@@ -29,13 +29,13 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
         onChange={(e) => setValue(e.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm text-gray-700 outline-none"
+        className="flex-1 bg-transparent text-sm text-widget-text outline-none"
       />
 
       <button
         type="submit"
         disabled={disabled}
-        className="flex-shrink-0 cursor-pointer rounded-full bg-blue-500 p-2 text-white transition hover:bg-blue-600 disabled:cursor-default disabled:opacity-40"
+        className="flex-shrink-0 cursor-pointer rounded-full bg-widget-accent p-2 text-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
