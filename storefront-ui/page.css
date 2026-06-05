@@ -1,2 +1,50 @@
 @config "../tailwind.page.config.js";
 @import "tailwindcss";
+
+
+
+@theme {
+
+
+    /* variabili per variantSelector */
+  --color-widget-bg:             #ffffff;
+  --color-widget-surface:        #f9fafb;
+  --color-widget-surface-alt:    #f3f4f6;
+
+  --color-widget-text:           #111827;
+  --color-widget-text-secondary: #6b7280;
+  --color-widget-text-muted:     #9ca3af;
+  --color-widget-text-icon:      #374151;
+
+  --color-widget-border:         #e5e7eb;
+  --color-widget-border-input:   #d1d5db;
+
+  --color-widget-accent:         #111827;
+  --color-widget-accent-hover:   #000000;
+  --color-widget-accent-fg:      #ffffff;
+
+  --color-widget-disabled-bg:    #e5e7eb;
+  --color-widget-disabled-fg:    #9ca3af;
+
+  --color-widget-error:          #dc2626;
+
+  --radius-widget-base:          0px;
+  --radius-widget-full:          9999px;
+
+  --text-widget-label:           0.6875rem;
+  --text-widget-caption:         0.75rem;
+  --text-widget-body:            0.875rem;
+  --text-widget-ui:              1rem;
+  --text-widget-title:           1.5rem;
+
+  --size-widget-dot-w:           0.5rem;
+  --size-widget-dot-h:           0.5rem;
+}
+
+@utility w-widget-dot {
+  width: var(--size-widget-dot-w);
+}
+
+@utility h-widget-dot {
+  height: var(--size-widget-dot-h);
+}
