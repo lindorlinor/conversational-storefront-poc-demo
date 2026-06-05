@@ -8,32 +8,28 @@ import { getThemeConfig, createThemeConfig } from "../shopify/theme.graphql";
 
 // todo pensare a modo per creare errore a compile time se manca una chiave o se ne aggiunge una nuova (rispetto @theme in page.css -> tutto deve corrispondere)
 type ThemeKey =
-  | "color-widget-bg" | "color-widget-surface" | "color-widget-surface-alt"
-  | "color-widget-text" | "color-widget-text-secondary" | "color-widget-text-muted" | "color-widget-text-icon"
-  | "color-widget-border" | "color-widget-border-input"
-  | "color-widget-accent" | "color-widget-accent-hover" | "color-widget-accent-fg"
-  | "color-widget-disabled-bg" | "color-widget-disabled-fg" | "color-widget-error"
-  | "radius-widget-base" | "radius-widget-full"
-  | "text-widget-label" | "text-widget-caption" | "text-widget-body" | "text-widget-ui" | "text-widget-title"
-  | "size-widget-dot-w" | "size-widget-dot-h";
+  | "color-widget-bg" | "color-widget-surface"
+  | "color-widget-text" | "color-widget-text-secondary" | "color-widget-text-muted"
+  | "color-widget-border"
+  | "color-widget-accent" | "color-widget-accent-fg"
+  | "color-widget-error"
+  | "radius-widget-base";
 
 const COLOR_KEYS = new Set<ThemeKey>([
-  "color-widget-bg", "color-widget-surface", "color-widget-surface-alt",
-  "color-widget-text", "color-widget-text-secondary", "color-widget-text-muted", "color-widget-text-icon",
-  "color-widget-border", "color-widget-border-input",
-  "color-widget-accent", "color-widget-accent-hover", "color-widget-accent-fg",
-  "color-widget-disabled-bg", "color-widget-disabled-fg", "color-widget-error",
+  "color-widget-bg", "color-widget-surface",
+  "color-widget-text", "color-widget-text-secondary", "color-widget-text-muted",
+  "color-widget-border",
+  "color-widget-accent", "color-widget-accent-fg",
+  "color-widget-error",
 ]);
 
 const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
-  { heading: "Sfondi",              keys: ["color-widget-bg", "color-widget-surface", "color-widget-surface-alt"] },
-  { heading: "Testi",               keys: ["color-widget-text", "color-widget-text-secondary", "color-widget-text-muted", "color-widget-text-icon"] },
-  { heading: "Bordi",               keys: ["color-widget-border", "color-widget-border-input"] },
-  { heading: "Accent",              keys: ["color-widget-accent", "color-widget-accent-hover", "color-widget-accent-fg"] },
-  { heading: "Stati",               keys: ["color-widget-disabled-bg", "color-widget-disabled-fg", "color-widget-error"] },
-  { heading: "Arrotondamento",      keys: ["radius-widget-base", "radius-widget-full"] },
-  { heading: "Tipografia",          keys: ["text-widget-label", "text-widget-caption", "text-widget-body", "text-widget-ui", "text-widget-title"] },
-  { heading: "Indicatori galleria", keys: ["size-widget-dot-w", "size-widget-dot-h"] },
+  { heading: "Sfondi",         keys: ["color-widget-bg", "color-widget-surface"] },
+  { heading: "Testi",          keys: ["color-widget-text", "color-widget-text-secondary", "color-widget-text-muted"] },
+  { heading: "Bordi",          keys: ["color-widget-border"] },
+  { heading: "Accent",         keys: ["color-widget-accent", "color-widget-accent-fg"] },
+  { heading: "Errore",         keys: ["color-widget-error"] },
+  { heading: "Arrotondamento", keys: ["radius-widget-base"] },
 ];
 
 const ALL_KEYS = SECTIONS.flatMap(s => s.keys);

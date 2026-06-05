@@ -76,7 +76,7 @@ export function VariantSelector({
     <div className="flex bg-widget-bg overflow-hidden max-w-[70rem] mx-auto">
 
       {/* Gallery */}
-      <div className="relative w-[35%] flex-none bg-gradient-to-b from-widget-surface to-widget-surface-alt flex items-center justify-center p-6 min-h-[360px]">
+      <div className="relative w-[35%] flex-none bg-widget-surface flex items-center justify-center p-6 min-h-[360px]">
         {displayImages.length > 0 ? (
           <>
             <img
@@ -88,7 +88,7 @@ export function VariantSelector({
             {canPrev && (
               <button
                 onClick={() => setImageIndex((i) => i - 1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-icon hover:opacity-50 transition-opacity"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-muted hover:opacity-50 transition-opacity"
                 aria-label="Immagine precedente"
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
@@ -97,7 +97,7 @@ export function VariantSelector({
             {canNext && (
               <button
                 onClick={() => setImageIndex((i) => i + 1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-icon hover:opacity-50 transition-opacity"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-widget-text-muted hover:opacity-50 transition-opacity"
                 aria-label="Immagine successiva"
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
@@ -109,7 +109,7 @@ export function VariantSelector({
                   <button
                     key={i}
                     onClick={() => setImageIndex(i)}
-                    className={`w-widget-dot h-widget-dot rounded-widget-full transition-colors ${i === imageIndex ? "bg-widget-accent" : "bg-widget-text-muted"}`}
+                    className={`w-2 h-2 rounded-full transition-colors ${i === imageIndex ? "bg-widget-accent" : "bg-widget-text-muted"}`}
                     aria-label={`Immagine ${i + 1}`}
                   />
                 ))}
@@ -117,27 +117,27 @@ export function VariantSelector({
             )}
           </>
         ) : (
-          <div className="text-widget-text-muted text-widget-body">Nessuna immagine</div>
+          <div className="text-widget-text-muted text-sm">Nessuna immagine</div>
         )}
       </div>
 
       {/* Detail */}
       <div className="flex-1 flex flex-col justify-center px-10 py-8 gap-0">
         {title && (
-          <h2 className="text-widget-title font-bold uppercase tracking-tight text-widget-text mb-3 leading-tight">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-widget-text mb-3 leading-tight">
             {title}
           </h2>
         )}
         {description && (
-          <p className="text-widget-body text-widget-text-secondary leading-relaxed mb-5 max-w-prose">{description}</p>
+          <p className="text-sm text-widget-text-secondary leading-relaxed mb-5 max-w-prose">{description}</p>
         )}
 
         {/* Variant selector */}
         {variants.length > 0 && (
           <div className="border-t border-widget-border pt-5">
             <div className="flex items-baseline justify-between gap-3 mb-1">
-              <span className="text-widget-caption font-bold uppercase tracking-widest text-widget-text">{variantLabel}</span>
-              <span className="text-widget-body text-widget-text-secondary">
+              <span className="text-xs font-bold uppercase tracking-widest text-widget-text">{variantLabel}</span>
+              <span className="text-sm text-widget-text-secondary">
                 {selected ? (
                   <>Selezionata: <b className="text-widget-text font-bold">{selected.title}</b></>
                 ) : (
@@ -148,8 +148,8 @@ export function VariantSelector({
 
             {/* Hint */}
             {!selected && (
-              <p className="text-widget-caption flex items-center gap-2 mb-4 text-widget-text-muted">
-                <span className="inline-flex items-center justify-center w-[18px] h-[18px] border-[1.5px] rounded-widget-full text-widget-label font-bold flex-none border-current">
+              <p className="text-xs flex items-center gap-2 mb-4 text-widget-text-muted">
+                <span className="inline-flex items-center justify-center w-[18px] h-[18px] border-[1.5px] rounded-full text-[11px] font-bold flex-none border-current">
                   1
                 </span>
                 {`Scegli ${variantLabel.toLowerCase()} per continuare`}
@@ -169,12 +169,12 @@ export function VariantSelector({
                     aria-pressed={isSelected}
                     aria-label={`${variantLabel} ${v.title}${!isAvailable ? " — esaurito" : ""}`}
                     className={[
-                      "min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-widget-ui font-semibold flex items-center justify-center transition-all duration-100",
+                      "min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-base font-semibold flex items-center justify-center transition-all duration-100",
                       isSelected
                         ? "bg-widget-accent text-widget-accent-fg border-widget-accent"
                         : isAvailable
-                        ? "bg-widget-bg text-widget-text border-widget-border-input hover:border-widget-accent active:scale-95 cursor-pointer"
-                        : "bg-widget-bg text-widget-disabled-fg border-widget-border cursor-not-allowed [background-image:linear-gradient(to_top_right,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px)),linear-gradient(to_top_left,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px))]",
+                        ? "bg-widget-bg text-widget-text border-widget-border hover:border-widget-accent active:scale-95 cursor-pointer"
+                        : "bg-widget-bg text-widget-text-muted border-widget-border cursor-not-allowed [background-image:linear-gradient(to_top_right,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px)),linear-gradient(to_top_left,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px))]",
                     ].join(" ")}
                   >
                     {v.title}
@@ -189,8 +189,8 @@ export function VariantSelector({
         <div className="mt-5 pt-5 border-t border-widget-border flex items-end gap-5">
           {formattedPrice && (
             <div className="flex flex-col gap-0.5 flex-none">
-              <span className="text-widget-label font-bold uppercase tracking-widest text-widget-text-muted">Prezzo</span>
-              <span className="text-widget-title font-bold tracking-tight text-widget-text">{formattedPrice}</span>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-widget-text-muted">Prezzo</span>
+              <span className="text-2xl font-bold tracking-tight text-widget-text">{formattedPrice}</span>
             </div>
           )}
 
@@ -198,10 +198,10 @@ export function VariantSelector({
             onClick={handleAddToCart}
             disabled={ctaDisabled}
             className={[
-              "flex-1 h-14 relative overflow-hidden rounded-widget-base flex items-center justify-center gap-3 font-bold text-widget-body tracking-wide transition-all",
+              "flex-1 h-14 relative overflow-hidden rounded-widget-base flex items-center justify-center gap-3 font-bold text-sm tracking-wide transition-all",
               ctaDisabled
-                ? "bg-widget-disabled-bg text-widget-disabled-fg cursor-not-allowed"
-                : "bg-widget-accent text-widget-accent-fg hover:bg-widget-accent-hover active:translate-y-px cursor-pointer",
+                ? "bg-widget-surface text-widget-text-muted cursor-not-allowed"
+                : "bg-widget-accent text-widget-accent-fg hover:bg-black active:translate-y-px cursor-pointer",
             ].join(" ")}
           >
             {/* default label */}
@@ -229,10 +229,10 @@ export function VariantSelector({
           </button>
         </div>
 
-        {error && <p className="mt-2 text-widget-caption text-widget-error">{error}</p>}
+        {error && <p className="mt-2 text-xs text-widget-error">{error}</p>}
 
         {url && (
-          <a href={url} className="mt-4 text-widget-caption text-widget-text-muted hover:text-widget-text-icon transition-colors self-start">
+          <a href={url} className="mt-4 text-xs text-widget-text-muted hover:text-widget-text transition-colors self-start">
             vedi nel negozio →
           </a>
         )}
