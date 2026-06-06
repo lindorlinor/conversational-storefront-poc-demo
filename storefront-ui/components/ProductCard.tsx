@@ -4,8 +4,8 @@ import { variantUrl } from "../utils/storefront";
 export function ProductCardSkeleton() {
     return (
         <div className="animate-pulse flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-base overflow-hidden border border-widget-border">
-            <div className="aspect-square bg-widget-surface" />
-            <div className="p-3 flex flex-col gap-2 border-t border-widget-border">
+            <div className="aspect-square bg-widget-card-image border border-widget-card-image-border" />
+            <div className="p-3 flex flex-col gap-2">
                 <div className="h-4 bg-widget-surface rounded w-3/4" />
                 <div className="h-3 bg-widget-surface rounded w-1/2" />
                 <div className="h-8 bg-widget-surface rounded w-1/3 self-end mt-1" />
@@ -45,14 +45,14 @@ const ProductCard = (product: Product) => {
                     key={key}
                     className="flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-base overflow-hidden border border-widget-border bg-widget-card"
                 >
-                    <a href={cardUrl} className="block aspect-square overflow-hidden bg-widget-surface group">
+                    <a href={cardUrl} className="block aspect-square overflow-hidden bg-widget-card-image border border-widget-card-image-border group">
                         <img
                             src={cardImgUrl}
                             alt={title ?? ''}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                     </a>
-                    <div className="border-t border-widget-border p-3 flex flex-col gap-1">
+                    <div className="p-3 flex flex-col gap-1">
                         <p className="m-0 text-sm font-semibold text-widget-text leading-snug line-clamp-2">{title}</p>
                         {variantTitle && (
                             <p className="m-0 text-xs text-widget-text-secondary">{variantTitle}</p>

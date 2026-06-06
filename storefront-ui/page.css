@@ -4,9 +4,11 @@
 
 
 @theme {
-  --color-widget-bg:             #ffffff;
-  --color-widget-card:           #ffffff;
-  --color-widget-surface:        #f9fafb;
+  --color-widget-bg:                  #ffffff;
+  --color-widget-card:                #ffffff;
+  --color-widget-surface:             #f9fafb;
+  --color-widget-card-image:          #f9fafb;
+  --color-widget-card-image-border:   #e5e7eb;
 
   --color-widget-text:           #111827;
   --color-widget-text-secondary: #6b7280;

@@ -11,6 +11,7 @@ type ThemeKey =
   | "color-widget-bg" | "color-widget-card" | "color-widget-surface"
   | "color-widget-text" | "color-widget-text-secondary" | "color-widget-text-muted"
   | "color-widget-border"
+  | "color-widget-card-image" | "color-widget-card-image-border"
   | "color-widget-accent" | "color-widget-accent-fg"
   | "color-widget-error"
   | "radius-widget-base"
@@ -23,6 +24,7 @@ const COLOR_KEYS = new Set<ThemeKey>([
   "color-widget-bg", "color-widget-card", "color-widget-surface",
   "color-widget-text", "color-widget-text-secondary", "color-widget-text-muted",
   "color-widget-border",
+  "color-widget-card-image", "color-widget-card-image-border",
   "color-widget-accent", "color-widget-accent-fg",
   "color-widget-error",
   "color-widget-section-1", "color-widget-section-2",
@@ -33,6 +35,7 @@ const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
   { heading: "Sfondi",         keys: ["color-widget-bg", "color-widget-card", "color-widget-surface"] },
   { heading: "Testi",          keys: ["color-widget-text", "color-widget-text-secondary", "color-widget-text-muted"] },
   { heading: "Bordi",          keys: ["color-widget-border"] },
+  { heading: "Card immagine",  keys: ["color-widget-card-image", "color-widget-card-image-border"] },
   { heading: "Accent",         keys: ["color-widget-accent", "color-widget-accent-fg"] },
   { heading: "Errore",         keys: ["color-widget-error"] },
   { heading: "Arrotondamento", keys: ["radius-widget-base"] },

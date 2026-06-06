@@ -10,8 +10,8 @@ const PRODUCTS_1 = [
     url: "/products/the-complete-snowboard",
     price: { amount: "699.95", currencyCode: "USD" },
     variants: [
-      { id: "61828386226546", title: "Ice",      price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1780334187" } },
-      { id: "61828386259314", title: "Dawn",     price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_372ff415-c120-44f1-b534-764c9d5477af.png?v=1780334420" } },
+      { id: "61828386226546", title: "Ice",      price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_dade4534-7e56-49ff-8692-3160f5dbd0de.png?v=1780752955" } },
+      { id: "61828386259314", title: "Dawn",     price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_372ff415-c120-44f1-b534-764c9d5477af.png?v=1780752152" } },
       { id: "61828386292082", title: "Powder",   price: { amount: "599.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_70aa84cc-0fbd-42fc-8bef-00ec1a07f1fb.png?v=1780334518" } },
       { id: "61828386324850", title: "Electric", price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.png?v=1780334109" } },
       { id: "61828386357618", title: "Sunset",   price: { amount: "699.95" }, image: { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_9797fb8d-5bcb-4b8c-9031-4243ff68a467.png?v=1780334586" } },
@@ -67,7 +67,7 @@ const GIFT_CARD = {
 const COLLECTION = {
   title: "Snowboards & Gear",
   description: "Una selezione di tavole e attrezzatura per ogni stile di riding.",
-  coverImageUrl: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1780334187",
+  coverImageUrl: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_dade4534-7e56-49ff-8692-3160f5dbd0de.png?v=1780752955",
   products: [
     { id: "2", title: "The Hidden Snowboard",       url: "/products/the-hidden-snowboard",       imgUrl: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_c8ff0b5d-c712-429a-be00-b29bd55cbc9d.jpg?v=1777976347",    price: { amount: "749.95",  currencyCode: "USD" } },
     { id: "6", title: "The Minimal Snowboard",      url: "/products/the-minimal-snowboard",      imgUrl: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/make-contrast-widh-the-background_a4d3d8db-1c0f-4360-b53a-0a1f1ab08c55.png?v=1780411054", price: { amount: "885.95", currencyCode: "USD" } },
@@ -80,8 +80,8 @@ const VARIANT_SELECTOR = {
   id: "13", title: "The Complete Snowboard",
   description: "Tavola da snowboard completa, disponibile in 5 colorazioni.",
   images: [
-    { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1780334187", altText: "Ice" },
-    { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_372ff415-c120-44f1-b534-764c9d5477af.png?v=1780334420", altText: "Dawn" },
+    { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_dade4534-7e56-49ff-8692-3160f5dbd0de.png?v=1780752955", altText: "Ice" },
+    { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_372ff415-c120-44f1-b534-764c9d5477af.png?v=1780752152", altText: "Dawn" },
     { url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/Main_70aa84cc-0fbd-42fc-8bef-00ec1a07f1fb.png?v=1780334518", altText: "Powder" },
   ],
   url: "/products/the-complete-snowboard",

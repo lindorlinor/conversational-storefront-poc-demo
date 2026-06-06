@@ -98,7 +98,7 @@ export function ChatPage({
           )}
         </div>
 
-        <PreviewSection /> {/* DEBUG — rimuovi per produzione */}
+        {/* <PreviewSection / */}
 
       </div>
     </div>
