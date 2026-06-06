@@ -3,12 +3,12 @@ import { variantUrl } from "../utils/storefront";
 
 export function ProductCardSkeleton() {
     return (
-        <div className="animate-pulse rounded-lg overflow-hidden border border-gray-200 w-full">
-            <div className="aspect-square bg-gray-200" />
-            <div className="p-3 flex flex-col gap-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4" />
-                <div className="h-3 bg-gray-200 rounded w-1/2" />
-                <div className="h-8 bg-gray-200 rounded w-1/3 self-end" />
+        <div className="animate-pulse flex-shrink-0 w-[216px] rounded-widget-base overflow-hidden border border-widget-border">
+            <div className="aspect-square bg-widget-surface" />
+            <div className="p-3 flex flex-col gap-2 border-t border-widget-border">
+                <div className="h-4 bg-widget-surface rounded w-3/4" />
+                <div className="h-3 bg-widget-surface rounded w-1/2" />
+                <div className="h-8 bg-widget-surface rounded w-1/3 self-end mt-1" />
             </div>
         </div>
     );
@@ -41,21 +41,34 @@ const ProductCard = (product: Product) => {
     return (
         <>
             {cards.map(({ key, imgUrl: cardImgUrl, url: cardUrl, price, variantTitle }) => (
-                <s-grid key={key} justifyItems="center" alignItems="center" minBlockSize="300px">
-                    <s-box border="base" borderRadius="base" overflow="hidden" maxInlineSize="216px">
-                        <s-clickable href={cardUrl}>
-                            <s-image aspectRatio="1/1" objectFit="cover" alt={title} src={cardImgUrl} />
-                        </s-clickable>
-                        <s-divider />
-                        <s-grid gridTemplateColumns="1fr auto" background="base" padding="small" gap="small" alignItems="center">
-                            <s-box>
-                                <s-heading>{title}</s-heading>
-                                <s-text>{variantTitle && `${variantTitle} — `}{price} {currencyCode}</s-text>
-                            </s-box>
-                            <s-button href={cardUrl} accessibilityLabel={`View ${title}`}>View</s-button>
-                        </s-grid>
-                    </s-box>
-                </s-grid>
+                <div
+                    key={key}
+                    className="flex-shrink-0 w-[216px] rounded-widget-base overflow-hidden border border-widget-border bg-widget-card"
+                >
+                    <a href={cardUrl} className="block aspect-square overflow-hidden bg-widget-surface group">
+                        <img
+                            src={cardImgUrl}
+                            alt={title ?? ''}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                    </a>
+                    <div className="border-t border-widget-border p-3 flex flex-col gap-1">
+                        <p className="m-0 text-sm font-semibold text-widget-text leading-snug line-clamp-2">{title}</p>
+                        {variantTitle && (
+                            <p className="m-0 text-xs text-widget-text-secondary">{variantTitle}</p>
+                        )}
+                        <div className="flex items-center justify-between mt-2">
+                            <span className="text-sm font-bold text-widget-text-secondary">{price} {currencyCode}</span>
+                            <a
+                                href={cardUrl}
+                                className="rounded-widget-base text-xs px-3 py-1.5 bg-widget-accent text-widget-accent-fg font-medium no-underline"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
             ))}
         </>
     );

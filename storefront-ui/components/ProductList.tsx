@@ -7,8 +7,8 @@ const PLACEHOLDER_COUNT = 3;
 export function ProductList({ products }: { products?: Product[] }) {
   if (!products?.length) {
     return (
-      <div className="mx-auto w-full">
-        <div className="grid grid-cols-3 justify-items-center gap-4">
+      <div className="w-full overflow-x-auto">
+        <div className="flex gap-3 flex-nowrap pb-2 w-max">
           {Array.from({ length: PLACEHOLDER_COUNT }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -18,8 +18,8 @@ export function ProductList({ products }: { products?: Product[] }) {
   }
 
   return (
-    <div className="mx-auto w-[70%]">
-      <div className="grid grid-cols-3 justify-items-center gap-4">
+    <div className="w-full overflow-x-auto py-8">
+      <div className="flex gap-3 flex-nowrap pb-2 w-max">
         {products.map((p, i) => (
           <ProductCard key={p.id ?? i} {...p} />
         ))}

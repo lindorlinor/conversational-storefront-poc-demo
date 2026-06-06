@@ -37,7 +37,7 @@ export function CollectionWidget({
 
         {/* immagine copertina */}
         {coverImageUrl && (
-          <div className="flex-shrink-0 w-[180px] h-[180px] rounded-xl bg-gray-100 border border-gray-200 overflow-hidden">
+          <div className="flex-shrink-0 w-[216px] aspect-square rounded-widget-base bg-widget-surface border border-widget-border overflow-hidden">
             <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
@@ -56,14 +56,18 @@ export function CollectionWidget({
             </button>
           )}
 
-          <div className="flex-1 grid grid-cols-3 gap-3 min-w-0">
+          <div className="flex gap-3">
             {visibleProducts.length > 0 ? (
               visibleProducts.map((product) => (
-                <ProductCard key={product.id} {...product} />
+                <div key={product.id} className="flex-shrink-0 w-[216px]">
+                  <ProductCard {...product} />
+                </div>
               ))
             ) : (
               Array.from({ length: VISIBLE }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
+                <div key={i} className="flex-shrink-0 w-[216px]">
+                  <ProductCardSkeleton />
+                </div>
               ))
             )}
           </div>
