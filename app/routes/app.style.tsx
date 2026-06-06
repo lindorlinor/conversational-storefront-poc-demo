@@ -14,6 +14,7 @@ type ThemeKey =
   | "color-widget-accent" | "color-widget-accent-fg"
   | "color-widget-error"
   | "radius-widget-base"
+  | "size-widget-card"
   | "color-widget-section-1" | "color-widget-section-2"
   | "color-widget-page-from" | "color-widget-page-to";
 
@@ -34,6 +35,7 @@ const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
   { heading: "Accent",         keys: ["color-widget-accent", "color-widget-accent-fg"] },
   { heading: "Errore",         keys: ["color-widget-error"] },
   { heading: "Arrotondamento", keys: ["radius-widget-base"] },
+  { heading: "Dimensioni",     keys: ["size-widget-card"] },
   { heading: "Sezioni",        keys: ["color-widget-section-1", "color-widget-section-2"] },
   { heading: "Sfondo pagina",  keys: ["color-widget-page-from", "color-widget-page-to"] },
 ];

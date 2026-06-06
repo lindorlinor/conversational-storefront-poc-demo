@@ -37,7 +37,7 @@ export function CollectionWidget({
 
         {/* immagine copertina */}
         {coverImageUrl && (
-          <div className="flex-shrink-0 w-[216px] aspect-square rounded-widget-base bg-widget-surface border border-widget-border overflow-hidden">
+          <div className="flex-shrink-0 w-[var(--size-widget-card)] aspect-square rounded-widget-base bg-widget-surface border border-widget-border overflow-hidden">
             <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
@@ -59,13 +59,13 @@ export function CollectionWidget({
           <div className="flex gap-3">
             {visibleProducts.length > 0 ? (
               visibleProducts.map((product) => (
-                <div key={product.id} className="flex-shrink-0 w-[216px]">
+                <div key={product.id} className="flex-shrink-0 w-[var(--size-widget-card)]">
                   <ProductCard {...product} />
                 </div>
               ))
             ) : (
               Array.from({ length: VISIBLE }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-[216px]">
+                <div key={i} className="flex-shrink-0 w-[var(--size-widget-card)]">
                   <ProductCardSkeleton />
                 </div>
               ))

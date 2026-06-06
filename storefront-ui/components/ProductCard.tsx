@@ -3,7 +3,7 @@ import { variantUrl } from "../utils/storefront";
 
 export function ProductCardSkeleton() {
     return (
-        <div className="animate-pulse flex-shrink-0 w-[216px] rounded-widget-base overflow-hidden border border-widget-border">
+        <div className="animate-pulse flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-base overflow-hidden border border-widget-border">
             <div className="aspect-square bg-widget-surface" />
             <div className="p-3 flex flex-col gap-2 border-t border-widget-border">
                 <div className="h-4 bg-widget-surface rounded w-3/4" />
@@ -43,7 +43,7 @@ const ProductCard = (product: Product) => {
             {cards.map(({ key, imgUrl: cardImgUrl, url: cardUrl, price, variantTitle }) => (
                 <div
                     key={key}
-                    className="flex-shrink-0 w-[216px] rounded-widget-base overflow-hidden border border-widget-border bg-widget-card"
+                    className="flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-base overflow-hidden border border-widget-border bg-widget-card"
                 >
                     <a href={cardUrl} className="block aspect-square overflow-hidden bg-widget-surface group">
                         <img
