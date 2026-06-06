@@ -22,6 +22,7 @@
   --radius-widget-base:          0px;
 
   --size-widget-card:            216px;
+  --color-widget-scroll-fade:    rgba(255, 255, 255, 0.85);
 
   --color-widget-page-from:      #ffffff;
   --color-widget-page-to:        #ffffff;
@@ -31,7 +32,7 @@
 }
 
 .section {
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0;
   border-radius: var(--radius-widget-base);
   border-bottom: 1px solid var(--color-widget-border);
 }

@@ -15,6 +15,7 @@ type ThemeKey =
   | "color-widget-error"
   | "radius-widget-base"
   | "size-widget-card"
+  | "color-widget-scroll-fade"
   | "color-widget-section-1" | "color-widget-section-2"
   | "color-widget-page-from" | "color-widget-page-to";
 
@@ -36,6 +37,7 @@ const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
   { heading: "Errore",         keys: ["color-widget-error"] },
   { heading: "Arrotondamento", keys: ["radius-widget-base"] },
   { heading: "Dimensioni",     keys: ["size-widget-card"] },
+  { heading: "Scroll fade",    keys: ["color-widget-scroll-fade"] },
   { heading: "Sezioni",        keys: ["color-widget-section-1", "color-widget-section-2"] },
   { heading: "Sfondo pagina",  keys: ["color-widget-page-from", "color-widget-page-to"] },
 ];
