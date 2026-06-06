@@ -15,34 +15,33 @@ export function CollectionWidget({
   coverImageUrl,
   products = [],
 }: CollectionSectionProps) {
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(3);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const updateArrows = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 0);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
 
   useEffect(() => {
-    const el = containerRef.current;
+    const el = scrollRef.current;
     if (!el) return;
-    const GAP = 12; // gap-3
-
-    const compute = () => {
-      const raw = getComputedStyle(document.documentElement)
-        .getPropertyValue("--size-widget-card")
-        .trim();
-      const cardPx = parseFloat(raw) || 216;
-      const n = Math.max(1, Math.floor((el.clientWidth + GAP) / (cardPx + GAP)));
-      setVisibleCount(n);
-    };
-
-    compute();
-    const ro = new ResizeObserver(compute);
+    updateArrows();
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    const ro = new ResizeObserver(updateArrows);
     ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
+    return () => { el.removeEventListener("scroll", updateArrows); ro.disconnect(); };
+  }, [products]);
 
-  const canGoNext = carouselIndex + visibleCount < products.length;
-  const canGoPrev = carouselIndex > 0;
-
-  const visibleProducts = products.slice(carouselIndex, carouselIndex + visibleCount);
+  const scrollBy = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--size-widget-card").trim()) || 216;
+    el.scrollBy({ left: dir === "right" ? cardPx + 12 : -(cardPx + 12), behavior: "smooth" });
+  };
 
   return (
     <div className="flex gap-8 py-8">
@@ -53,29 +52,30 @@ export function CollectionWidget({
         <p className="font-widget-secondary text-sm leading-relaxed text-gray-500 m-0">{description}</p>
       </div>
 
-      {/* colonna destra — immagine di copertina + carosello prodotti */}
+      {/* colonna destra — immagine di copertina + scroll prodotti */}
       <div className="flex-1 flex gap-3 min-w-0">
 
-        {/* immagine copertina */}
         {coverImageUrl && (
           <div className="flex-shrink-0 w-[var(--size-widget-card)] aspect-square rounded-widget-base bg-widget-surface border border-widget-border overflow-hidden">
             <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
 
-        {/* carosello prodotti */}
         <div className="flex-1 min-w-0 relative">
-
-          <div ref={containerRef} className="overflow-hidden">
-            <div className="flex gap-3">
-              {visibleProducts.length > 0 ? (
-                visibleProducts.map((product) => (
+          <div
+            ref={scrollRef}
+            className="overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <div className="flex gap-3 flex-nowrap">
+              {products.length > 0 ? (
+                products.map((product) => (
                   <div key={product.id} className="flex-shrink-0 w-[var(--size-widget-card)]">
                     <ProductCard {...product} />
                   </div>
                 ))
               ) : (
-                Array.from({ length: visibleCount }).map((_, i) => (
+                Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex-shrink-0 w-[var(--size-widget-card)]">
                     <ProductCardSkeleton />
                   </div>
@@ -84,28 +84,21 @@ export function CollectionWidget({
             </div>
           </div>
 
-          {canGoPrev && (
+          {canLeft && (
             <button
-              onClick={() => setCarouselIndex((i) => i - 1)}
+              onClick={() => scrollBy("left")}
               className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
               style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
               aria-label="Prodotti precedenti"
-            >
-              ←
-            </button>
+            >←</button>
           )}
-
           <button
-            onClick={() => canGoNext && setCarouselIndex((i) => i + 1)}
-            disabled={!canGoNext}
-            className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${
-              canGoNext ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"
-            }`}
+            onClick={() => scrollBy("right")}
+            disabled={!canRight}
+            className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canRight ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
             style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
             aria-label="Prodotti successivi"
-          >
-            →
-          </button>
+          >→</button>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ const PRODUCTS_2 = [
 const GIFT_CARD = {
   id: "9", title: "Gift Card",
   description: "This is a gift card for the store",
-  images: [{ url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/gift_card.png?v=1777976348", altText: "Gift card" }],
+  images: Array.from({ length: 4 }, (_, i) => ({ url: "https://cdn.shopify.com/s/files/1/0975/9437/6562/files/gift_card.png?v=1777976348", altText: `Gift card ${i + 1}` })),
   url: "/products/gift-card",
   price: { amount: "10.00", currencyCode: "USD" },
   variants: [

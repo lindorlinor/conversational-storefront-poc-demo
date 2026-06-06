@@ -3,10 +3,11 @@ import { useState } from "react";
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
-  const [value, setValue] = useState("");
+export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInputProps) {
   const [placeholder, setPlaceholder] = useState("Scrivi un messaggio...");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,7 +16,7 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
     if (!text) return;
     onSend(text);
     setPlaceholder(text);
-    setValue("");
+    onChange("");
   };
 
   return (
@@ -26,10 +27,10 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
       <input
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm text-widget-text outline-none"
+        className="font-widget-secondary flex-1 bg-transparent text-sm text-widget-text-secondary outline-none"
       />
 
       <button

@@ -76,33 +76,30 @@ export function VariantSelector({
     <div className="flex bg-widget-card overflow-hidden max-w-[70rem] mx-auto">
 
       {/* Gallery */}
-      <div className="relative w-[35%] flex-none bg-widget-surface flex items-center justify-center p-6 min-h-[360px]">
+      <div className="relative w-[45%] flex-none bg-widget-surface flex items-center justify-center p-4 min-h-[480px]">
         {displayImages.length > 0 ? (
           <>
             <img
               key={`${selected?.title ?? ""}-${imageIndex}`}
               src={displayImages[imageIndex].url}
               alt={displayImages[imageIndex].altText ?? title}
-              className="max-w-full max-h-72 object-contain"
+              className="max-w-full max-h-[440px] object-contain"
             />
             {canPrev && (
               <button
                 onClick={() => setImageIndex((i) => i - 1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-widget-bg/80 backdrop-blur-sm border border-widget-border rounded-full flex items-center justify-center hover:bg-widget-bg transition-colors shadow-sm"
+                className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
+                style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
                 aria-label="Immagine precedente"
-              >
-                ←
-              </button>
+              >←</button>
             )}
-            {canNext && (
-              <button
-                onClick={() => setImageIndex((i) => i + 1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-widget-bg/80 backdrop-blur-sm border border-widget-border rounded-full flex items-center justify-center hover:bg-widget-bg transition-colors shadow-sm"
-                aria-label="Immagine successiva"
-              >
-                →
-              </button>
-            )}
+            <button
+              onClick={() => setImageIndex((i) => i + 1)}
+              disabled={!canNext}
+              className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canNext ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
+              style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
+              aria-label="Immagine successiva"
+            >→</button>
             {displayImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {displayImages.map((_, i) => (
@@ -188,8 +185,8 @@ export function VariantSelector({
         {/* Buy bar */}
         <div className="mt-5 pt-5 border-t border-widget-border flex items-end gap-5">
           {formattedPrice && (
-            <div className="flex flex-col gap-0.5 flex-none">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-widget-text-muted">Prezzo</span>
+            <div className="font-widget-secondary flex flex-col gap-0.5 flex-none">
+              <span className=" text-[11px] font-bold uppercase tracking-widest text-widget-text-muted">Prezzo</span>
               <span className="text-2xl font-bold tracking-tight text-widget-text">{formattedPrice}</span>
             </div>
           )}

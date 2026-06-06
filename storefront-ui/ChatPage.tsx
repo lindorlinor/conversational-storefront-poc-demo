@@ -1,5 +1,5 @@
 import { useChat } from "@ai-sdk/react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import {
   getCartId as defaultGetCartId,
   setCartId as defaultSetCartId,
@@ -53,6 +53,8 @@ export function ChatPage({
   setCartIdRef.current = setCartId;
 
   const processedToolCalls = useRef(new Set<string>());
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl, body: { cartId } }),
@@ -62,22 +64,25 @@ export function ChatPage({
     syncNewCartId(messages, processedToolCalls.current, setCartIdRef.current);
   }, [messages]);
 
+  const disabled = status === "streaming" || status === "submitted";
+
   return (
     <div className="font-widget-primary flex flex-col h-screen bg-gradient-to-b from-widget-page-from to-widget-page-to">
-      <div className="flex justify-center items-center px-5 py-6 text-center">
+
+      <div className={`flex justify-center items-center px-5 text-center transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 opacity-0 py-0" : "max-h-40 opacity-100 py-6"}`}>
         <Title apiBase={apiBase} shop={shop} />
       </div>
 
-      <div className="flex justify-center px-5 py-4">
+      <div className={`flex justify-center px-5 transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 opacity-0 py-0 pointer-events-none" : "max-h-40 opacity-100 py-4"}`}>
         <div className="w-1/2">
-          <ChatInput
-            onSend={(text) => sendMessage({ text })}
-            disabled={status === "streaming" || status === "submitted"}
-          />
+          <ChatInput value={inputValue} onChange={setInputValue} onSend={(text) => { sendMessage({ text }); setInputValue(""); }} disabled={disabled} />
         </div>
       </div>
 
-      <div className="overflow-y-auto flex flex-col flex-1">
+      <div
+        className="overflow-y-auto flex flex-col flex-1"
+        onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 50)}
+      >
 
         <div className="flex flex-col">
           {messages
@@ -101,6 +106,11 @@ export function ChatPage({
         <PreviewSection />
 
       </div>
+
+      <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-1/2 z-50 transition-all duration-300 ${isScrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}>
+        <ChatInput value={inputValue} onChange={setInputValue} onSend={(text) => { sendMessage({ text }); setInputValue(""); }} disabled={disabled} />
+      </div>
+
     </div>
   );
 }
