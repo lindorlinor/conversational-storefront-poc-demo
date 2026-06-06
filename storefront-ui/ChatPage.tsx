@@ -98,7 +98,7 @@ export function ChatPage({
           )}
         </div>
 
-        {/* <PreviewSection / */}
+        <PreviewSection />
 
       </div>
     </div>

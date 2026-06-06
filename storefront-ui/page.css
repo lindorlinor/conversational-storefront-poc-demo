@@ -31,12 +31,16 @@
 
   --color-widget-section-1:      transparent;
   --color-widget-section-2:      transparent;
+  --color-widget-section-border:   transparent;
 }
 
-.section {
-  padding: 0.75rem 0;
-  border-radius: var(--radius-widget-base);
-  border-bottom: 1px solid var(--color-widget-border);
+.section::after {
+  content: '';
+  display: block;
+  width: 80%;
+  height: 1px;
+  margin: 0.75rem auto 0;
+  background: var(--color-widget-section-border);
 }
 
 .section:nth-child(odd) {
@@ -47,8 +51,3 @@
   background-color: var(--color-widget-section-2);
 }
 
-.section-text {
-  color: var(--color-widget-text);
-  font-size: 0.875rem;
-  line-height: 1.6;
-}

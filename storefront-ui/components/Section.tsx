@@ -10,7 +10,7 @@ interface SectionProps {
 
 function Section({ message, children }: SectionProps) {
   return (
-    <section className="section">
+    <section className="section pt-3 rounded-widget-base">
       <div className="w-[80%] mx-auto pb-4">
         {children}
 
@@ -18,7 +18,7 @@ function Section({ message, children }: SectionProps) {
 
           // testo dell'LLM
           if (part.type === "text") {
-            return <p key={i} className="section-text">{part.text}</p>;
+            return <p key={i} className="text-sm leading-relaxed text-widget-text">{part.text}</p>;
           }
 
           // widget dal registry
