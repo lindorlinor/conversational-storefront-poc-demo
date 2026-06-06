@@ -103,11 +103,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
   }
 
+  // si ho importato i font face direttamente solo per poter avere piu varietà nella personalizzazione del tema, a logica si possono vedere solo quelli del proprio store quindi non dovrebbero esserci problemi
   const html = `<!DOCTYPE html>
     <html lang="it">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css2?family=Jomolhari&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <title>Chat</title>
         ${themeCss ? `<style>${themeCss}</style>` : ''}
       </head>

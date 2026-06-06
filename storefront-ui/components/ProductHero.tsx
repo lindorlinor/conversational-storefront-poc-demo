@@ -65,14 +65,14 @@ export function ProductHero({ title, description, images = [], price, url, varia
         {variants.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {variants.map((v) => (
-              <button key={v.id ?? v.title} onClick={() => handleVariantSelect(v)} className={`px-3 py-1.5 text-xs font-medium rounded-widget-base border transition-colors ${ selectedVariant?.title === v.title ? "bg-widget-accent text-widget-accent-fg border-widget-accent" : "bg-widget-bg text-widget-text-secondary border-widget-border hover:border-widget-accent"}`} >
+              <button key={v.id ?? v.title} onClick={() => handleVariantSelect(v)} className={`font-widget-secondary px-3 py-1.5 text-xs font-medium rounded-widget-base border transition-colors ${ selectedVariant?.title === v.title ? "bg-widget-accent text-widget-accent-fg border-widget-accent" : "bg-widget-bg text-widget-text-secondary border-widget-border hover:border-widget-accent"}`} >
                 {v.title}
               </button>
             ))}
           </div>
         )}
 
-        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="flex items-center justify-between w-full px-3 py-2 bg-widget-accent text-widget-accent-fg text-sm font-medium rounded-widget-base disabled:opacity-50 disabled:cursor-not-allowed">
+        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="font-widget-secondary flex items-center justify-between w-full px-3 py-2 bg-widget-accent text-widget-accent-fg text-sm font-medium rounded-widget-base disabled:opacity-50 disabled:cursor-not-allowed">
           <span>Add to cart</span>
           {formattedPrice && (
             <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
         )}
 
         {description && (
-          <p className="text-xs text-widget-text-secondary leading-relaxed">{description}</p>
+          <p className="font-widget-secondary text-xs text-widget-text-secondary leading-relaxed">{description}</p>
         )}
 
         {url && (

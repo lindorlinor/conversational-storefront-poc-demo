@@ -63,7 +63,7 @@ export function ChatPage({
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-widget-page-from to-widget-page-to">
+    <div className="font-widget-primary flex flex-col h-screen bg-gradient-to-b from-widget-page-from to-widget-page-to">
       <div className="flex justify-center items-center px-5 py-6 text-center">
         <Title apiBase={apiBase} shop={shop} />
       </div>

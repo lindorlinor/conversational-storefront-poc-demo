@@ -18,7 +18,7 @@ function Section({ message, children }: SectionProps) {
 
           // testo dell'LLM
           if (part.type === "text") {
-            return <p key={i} className="text-sm leading-relaxed text-widget-text">{part.text}</p>;
+            return <p key={i} className="font-widget-secondary text-sm leading-relaxed text-widget-text">{part.text}</p>;
           }
 
           // widget dal registry

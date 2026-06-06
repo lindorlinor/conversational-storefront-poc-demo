@@ -29,6 +29,9 @@
   --color-widget-page-from:      #ffffff;
   --color-widget-page-to:        #ffffff;
 
+  --font-widget-primary:          system-ui, sans-serif;
+  --font-widget-secondary:         system-ui, sans-serif;
+
   --color-widget-section-1:      transparent;
   --color-widget-section-2:      transparent;
   --color-widget-section-border:   transparent;

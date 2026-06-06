@@ -55,13 +55,13 @@ const ProductCard = (product: Product) => {
                     <div className="p-3 flex flex-col gap-1">
                         <p className="m-0 text-sm font-semibold text-widget-text leading-snug line-clamp-2">{title}</p>
                         {variantTitle && (
-                            <p className="m-0 text-xs text-widget-text-secondary">{variantTitle}</p>
+                            <p className="font-widget-secondary m-0 text-xs text-widget-text-secondary">{variantTitle}</p>
                         )}
                         <div className="flex items-center justify-between mt-2">
-                            <span className="text-sm font-bold text-widget-text-secondary">{price} {currencyCode}</span>
+                            <span className="font-widget-secondary text-sm font-bold text-widget-text-secondary">{price} {currencyCode}</span>
                             <a
                                 href={cardUrl}
-                                className="rounded-widget-base text-xs px-3 py-1.5 bg-widget-accent text-widget-accent-fg font-medium no-underline"
+                                className="font-widget-secondary rounded-widget-base text-xs px-3 py-1.5 bg-widget-accent text-widget-accent-fg font-medium no-underline"
                                 style={{ textDecoration: 'none' }}
                             >
                                 View

@@ -19,7 +19,8 @@ type ThemeKey =
   | "color-widget-scroll-fade"
   | "color-widget-section-1" | "color-widget-section-2"
   | "color-widget-section-border"
-  | "color-widget-page-from" | "color-widget-page-to";
+  | "color-widget-page-from" | "color-widget-page-to"
+  | "font-widget-primary" | "font-widget-secondary";
 
 const COLOR_KEYS = new Set<ThemeKey>([
   "color-widget-bg", "color-widget-card", "color-widget-surface",
@@ -44,6 +45,7 @@ const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
   { heading: "Scroll fade",    keys: ["color-widget-scroll-fade"] },
   { heading: "Sezioni",        keys: ["color-widget-section-1", "color-widget-section-2"] },
   { heading: "Sfondo pagina",  keys: ["color-widget-page-from", "color-widget-page-to"] },
+  { heading: "Font",           keys: ["font-widget-primary", "font-widget-secondary"] },
 ];
 
 const ALL_KEYS = SECTIONS.flatMap(s => s.keys);

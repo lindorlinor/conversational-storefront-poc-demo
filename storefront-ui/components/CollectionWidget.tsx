@@ -50,7 +50,7 @@ export function CollectionWidget({
       {/* colonna sinistra — testo */}
       <div className="flex-shrink-0 w-[220px] flex flex-col gap-3">
         <h2 className="text-[22px] font-medium m-0 text-gray-900">{title}</h2>
-        <p className="text-sm leading-relaxed text-gray-500 m-0">{description}</p>
+        <p className="font-widget-secondary text-sm leading-relaxed text-gray-500 m-0">{description}</p>
       </div>
 
       {/* colonna destra — immagine di copertina + carosello prodotti */}

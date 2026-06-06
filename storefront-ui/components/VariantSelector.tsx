@@ -129,7 +129,7 @@ export function VariantSelector({
           </h2>
         )}
         {description && (
-          <p className="text-sm text-widget-text-secondary leading-relaxed mb-5 max-w-prose">{description}</p>
+          <p className="font-widget-secondary text-sm text-widget-text-secondary leading-relaxed mb-5 max-w-prose">{description}</p>
         )}
 
         {/* Variant selector */}
@@ -169,7 +169,7 @@ export function VariantSelector({
                     aria-pressed={isSelected}
                     aria-label={`${variantLabel} ${v.title}${!isAvailable ? " — esaurito" : ""}`}
                     className={[
-                      "min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-base font-semibold flex items-center justify-center transition-all duration-100",
+                      "font-widget-secondary min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-base font-semibold flex items-center justify-center transition-all duration-100",
                       isSelected
                         ? "bg-widget-accent text-widget-accent-fg border-widget-accent"
                         : isAvailable
