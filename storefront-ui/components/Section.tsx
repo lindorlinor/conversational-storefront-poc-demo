@@ -11,7 +11,7 @@ interface SectionProps {
 function Section({ message, children }: SectionProps) {
   return (
     <section className="section">
-      <div className="pb-4">
+      <div className="w-[80%] mx-auto pb-4">
         {children}
 
         {message?.parts.map((part: UIMessage["parts"][number], i: number) => {
