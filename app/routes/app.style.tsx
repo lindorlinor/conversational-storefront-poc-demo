@@ -8,6 +8,8 @@ import { extract, render } from "designlang/api";
 import { generateText, Output } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
+import { mkdir, appendFile } from "node:fs/promises";
+import path from "node:path";
 
 
 // todo pensare a modo per creare errore a compile time se manca una chiave o se ne aggiunge una nuova (rispetto @theme in page.css -> tutto deve corrispondere)
@@ -63,6 +65,17 @@ const themeSchemaShape = Object.fromEntries(
 
 const themeSchema = z.object(themeSchemaShape);
 
+// ho bisogno di loggare le estrazioni per verificare se fa schifo il modello, l'estrazione oppure la combinazione di entrambi lol
+async function logExtraction(url: string, tokens: string) {
+  const logsDir = path.join(process.cwd(), "logs");
+  await mkdir(logsDir, { recursive: true });
+  await appendFile(
+    path.join(logsDir, "extractions.jsonl"),
+    JSON.stringify({ timestamp: new Date().toISOString(), url, tokens: JSON.parse(tokens) }) + "\n",
+    "utf-8",
+  );
+}
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
 
@@ -82,6 +95,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     try {
       const design = await extract(url);
       const tokens = render("dtcg", design) as string;
+
+      await logExtraction(url, tokens);
 
       const { output } = await generateText({
         model: openai("gpt-5-nano"),
