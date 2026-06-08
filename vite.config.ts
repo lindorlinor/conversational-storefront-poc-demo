@@ -53,7 +53,14 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 0,
   },
+  ssr: {
+    // playwright (usato da designlang per l'estrazione) porta con sé binari nativi
+    // (chromium-bidi, fsevents) che esbuild non può bundlare lato server: vanno
+    // tenuti come moduli esterni e risolti a runtime da Node.
+    external: ["playwright", "playwright-core", "fsevents"],
+  },
   optimizeDeps: {
     include: ["@shopify/app-bridge-react"],
+    exclude: ["designlang", "playwright", "playwright-core", "fsevents"],
   },
 }) satisfies UserConfig;
