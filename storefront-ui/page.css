@@ -1,2 +1,56 @@
 @config "../tailwind.page.config.js";
 @import "tailwindcss";
+
+
+
+@theme {
+  --color-widget-bg:                  #ffffff;
+  --color-widget-card:                #ffffff;
+  --color-widget-surface:             #f9fafb;
+  --color-widget-card-image:          #f9fafb;
+  --color-widget-card-image-border:   #e5e7eb;
+
+  --color-widget-text:           #111827;
+  --color-widget-text-secondary: #6b7280;
+  --color-widget-text-muted:     #9ca3af;
+
+  --color-widget-border:         #e5e7eb;
+
+  --color-widget-accent:         #111827;
+  --color-widget-accent-fg:      #ffffff;
+
+  --color-widget-error:          #dc2626;
+
+  --radius-widget-base:          0px;
+
+  --size-widget-card:            216px;
+  --color-widget-scroll-fade:    rgba(255, 255, 255, 0.85);
+
+  --color-widget-page-from:      #ffffff;
+  --color-widget-page-to:        #ffffff;
+
+  --font-widget-primary:          system-ui, sans-serif;
+  --font-widget-secondary:         system-ui, sans-serif;
+
+  --color-widget-section-1:      transparent;
+  --color-widget-section-2:      transparent;
+  --color-widget-section-border:   transparent;
+}
+
+.section::after {
+  content: '';
+  display: block;
+  width: 80%;
+  height: 1px;
+  margin: 0.75rem auto 0;
+  background: var(--color-widget-section-border);
+}
+
+.section:nth-child(odd) {
+  background-color: var(--color-widget-section-1);
+}
+
+.section:nth-child(even) {
+  background-color: var(--color-widget-section-2);
+}
+

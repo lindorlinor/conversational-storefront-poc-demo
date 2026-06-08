@@ -3,10 +3,11 @@ import { useState } from "react";
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
-  const [value, setValue] = useState("");
+export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInputProps) {
   const [placeholder, setPlaceholder] = useState("Scrivi un messaggio...");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,27 +16,27 @@ export function ChatInput({ onSend, disabled = false }: ChatInputProps) {
     if (!text) return;
     onSend(text);
     setPlaceholder(text);
-    setValue("");
+    onChange("");
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-2 shadow-sm transition-colors focus-within:border-blue-400"
+      className="flex items-center gap-2 rounded-widget-base border border-widget-border bg-widget-bg px-4 py-2 shadow-sm transition-colors focus-within:border-widget-accent"
     >
       <input
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm text-gray-700 outline-none"
+        className="font-widget-secondary flex-1 bg-transparent text-sm text-widget-text-secondary outline-none"
       />
 
       <button
         type="submit"
         disabled={disabled}
-        className="flex-shrink-0 cursor-pointer rounded-full bg-blue-500 p-2 text-white transition hover:bg-blue-600 disabled:cursor-default disabled:opacity-40"
+        className="flex-shrink-0 cursor-pointer rounded-widget-base bg-widget-accent p-2 text-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -73,43 +73,40 @@ export function VariantSelector({
   const ctaDisabled = isAdding || !selected?.id;
 
   return (
-    <div className="flex bg-white overflow-hidden max-w-[70rem] mx-auto">
+    <div className="flex bg-widget-card overflow-hidden max-w-[70rem] mx-auto">
 
       {/* Gallery */}
-      <div className="relative w-[35%] flex-none bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-6 min-h-[360px]">
+      <div className="relative w-[45%] flex-none bg-widget-surface flex items-center justify-center p-4 min-h-[480px]">
         {displayImages.length > 0 ? (
           <>
             <img
               key={`${selected?.title ?? ""}-${imageIndex}`}
               src={displayImages[imageIndex].url}
               alt={displayImages[imageIndex].altText ?? title}
-              className="max-w-full max-h-72 object-contain"
+              className="max-w-full max-h-[440px] object-contain"
             />
             {canPrev && (
               <button
                 onClick={() => setImageIndex((i) => i - 1)}
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-700 hover:opacity-50 transition-opacity"
+                className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
+                style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
                 aria-label="Immagine precedente"
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-              </button>
+              >←</button>
             )}
-            {canNext && (
-              <button
-                onClick={() => setImageIndex((i) => i + 1)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-700 hover:opacity-50 transition-opacity"
-                aria-label="Immagine successiva"
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-              </button>
-            )}
+            <button
+              onClick={() => setImageIndex((i) => i + 1)}
+              disabled={!canNext}
+              className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canNext ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
+              style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
+              aria-label="Immagine successiva"
+            >→</button>
             {displayImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {displayImages.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setImageIndex(i)}
-                    className={`w-2 h-2 rounded-full transition-colors ${i === imageIndex ? "bg-gray-900" : "bg-gray-400"}`}
+                    className={`w-2 h-2 rounded-full transition-colors ${i === imageIndex ? "bg-widget-accent" : "bg-widget-text-muted"}`}
                     aria-label={`Immagine ${i + 1}`}
                   />
                 ))}
@@ -117,29 +114,29 @@ export function VariantSelector({
             )}
           </>
         ) : (
-          <div className="text-gray-400 text-sm">Nessuna immagine</div>
+          <div className="text-widget-text-muted text-sm">Nessuna immagine</div>
         )}
       </div>
 
       {/* Detail */}
       <div className="flex-1 flex flex-col justify-center px-10 py-8 gap-0">
         {title && (
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-gray-900 mb-3 leading-tight">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-widget-text mb-3 leading-tight">
             {title}
           </h2>
         )}
         {description && (
-          <p className="text-sm text-gray-500 leading-relaxed mb-5 max-w-prose">{description}</p>
+          <p className="font-widget-secondary text-sm text-widget-text-secondary leading-relaxed mb-5 max-w-prose">{description}</p>
         )}
 
         {/* Variant selector */}
         {variants.length > 0 && (
-          <div className="border-t border-gray-200 pt-5">
+          <div className="border-t border-widget-border pt-5">
             <div className="flex items-baseline justify-between gap-3 mb-1">
-              <span className="text-xs font-bold uppercase tracking-widest text-gray-900">{variantLabel}</span>
-              <span className="text-sm text-gray-500">
+              <span className="text-xs font-bold uppercase tracking-widest text-widget-text">{variantLabel}</span>
+              <span className="text-sm text-widget-text-secondary">
                 {selected ? (
-                  <>Selezionata: <b className="text-gray-900 font-bold">{selected.title}</b></>
+                  <>Selezionata: <b className="text-widget-text font-bold">{selected.title}</b></>
                 ) : (
                   "Nessuna selezione"
                 )}
@@ -148,7 +145,7 @@ export function VariantSelector({
 
             {/* Hint */}
             {!selected && (
-              <p className="text-xs flex items-center gap-2 mb-4 text-gray-400">
+              <p className="text-xs flex items-center gap-2 mb-4 text-widget-text-muted">
                 <span className="inline-flex items-center justify-center w-[18px] h-[18px] border-[1.5px] rounded-full text-[11px] font-bold flex-none border-current">
                   1
                 </span>
@@ -169,12 +166,12 @@ export function VariantSelector({
                     aria-pressed={isSelected}
                     aria-label={`${variantLabel} ${v.title}${!isAvailable ? " — esaurito" : ""}`}
                     className={[
-                      "min-w-[58px] h-[54px] px-3.5 border-[1.5px] text-base font-semibold flex items-center justify-center transition-all duration-100",
+                      "font-widget-secondary min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-base font-semibold flex items-center justify-center transition-all duration-100",
                       isSelected
-                        ? "bg-gray-900 text-white border-gray-900"
+                        ? "bg-widget-accent text-widget-accent-fg border-widget-accent"
                         : isAvailable
-                        ? "bg-white text-gray-900 border-gray-300 hover:border-gray-900 active:scale-95 cursor-pointer"
-                        : "bg-white text-gray-400 border-gray-200 cursor-not-allowed [background-image:linear-gradient(to_top_right,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px)),linear-gradient(to_top_left,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px))]",
+                        ? "bg-widget-bg text-widget-text border-widget-border hover:border-widget-accent active:scale-95 cursor-pointer"
+                        : "bg-widget-bg text-widget-text-muted border-widget-border cursor-not-allowed [background-image:linear-gradient(to_top_right,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px)),linear-gradient(to_top_left,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px))]",
                     ].join(" ")}
                   >
                     {v.title}
@@ -186,11 +183,11 @@ export function VariantSelector({
         )}
 
         {/* Buy bar */}
-        <div className="mt-5 pt-5 border-t border-gray-200 flex items-end gap-5">
+        <div className="mt-5 pt-5 border-t border-widget-border flex items-end gap-5">
           {formattedPrice && (
-            <div className="flex flex-col gap-0.5 flex-none">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Prezzo</span>
-              <span className="text-2xl font-bold tracking-tight text-gray-900">{formattedPrice}</span>
+            <div className="font-widget-secondary flex flex-col gap-0.5 flex-none">
+              <span className=" text-[11px] font-bold uppercase tracking-widest text-widget-text-muted">Prezzo</span>
+              <span className="text-2xl font-bold tracking-tight text-widget-text">{formattedPrice}</span>
             </div>
           )}
 
@@ -198,10 +195,10 @@ export function VariantSelector({
             onClick={handleAddToCart}
             disabled={ctaDisabled}
             className={[
-              "flex-1 h-14 relative overflow-hidden flex items-center justify-center gap-3 font-bold text-sm tracking-wide transition-all",
+              "flex-1 h-14 relative overflow-hidden rounded-widget-base flex items-center justify-center gap-3 font-bold text-sm tracking-wide transition-all",
               ctaDisabled
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-gray-900 text-white hover:bg-black active:translate-y-px cursor-pointer",
+                ? "bg-widget-surface text-widget-text-muted cursor-not-allowed"
+                : "bg-widget-accent text-widget-accent-fg hover:bg-black active:translate-y-px cursor-pointer",
             ].join(" ")}
           >
             {/* default label */}
@@ -229,10 +226,10 @@ export function VariantSelector({
           </button>
         </div>
 
-        {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-xs text-widget-error">{error}</p>}
 
         {url && (
-          <a href={url} className="mt-4 text-xs text-gray-400 hover:text-gray-700 transition-colors self-start">
+          <a href={url} className="mt-4 text-xs text-widget-text-muted hover:text-widget-text transition-colors self-start">
             vedi nel negozio →
           </a>
         )}
