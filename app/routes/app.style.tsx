@@ -4,6 +4,10 @@ import { useLoaderData, useFetcher } from "react-router";
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { getThemeConfig, createThemeConfig } from "../shopify/theme.graphql";
+import { extract, render } from "designlang/api";
+import { generateText, Output } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
 
 
 // todo pensare a modo per creare errore a compile time se manca una chiave o se ne aggiunge una nuova (rispetto @theme in page.css -> tutto deve corrispondere)
@@ -53,6 +57,12 @@ const EMPTY_THEME = Object.fromEntries(ALL_KEYS.map(k => [k, ""])) as Record<The
 
 const HEX6 = /^#[0-9a-fA-F]{6}$/;
 
+const themeSchemaShape = Object.fromEntries(
+  ALL_KEYS.map(key => [key, z.string().nullable()]),
+) as Record<ThemeKey, z.ZodNullable<z.ZodString>>;
+
+const themeSchema = z.object(themeSchemaShape);
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
 
@@ -65,6 +75,30 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const action = async ({ request }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
+  const intent = formData.get("intent") as string;
+
+  if (intent === "extract") {
+    const url = formData.get("url") as string;
+    try {
+      const design = await extract(url);
+      const tokens = render("dtcg", design) as string;
+
+      const { output } = await generateText({
+        model: openai("gpt-4.1-nano"),
+        output: Output.object({ schema: themeSchema }),
+        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:\n${tokens}\n\nMappalo sulle variabili CSS del widget. Restituisci solo i valori che riesci a mappare con confidenza.`,
+      });
+
+      const theme = Object.fromEntries(
+        Object.entries(output).filter(([, v]) => v !== null && v !== ""),
+      ) as Record<ThemeKey, string>;
+
+      return Response.json({ ok: true, theme });
+    } catch (e) {
+      return Response.json({ ok: false, error: (e as Error).message }, { status: 500 });
+    }
+  }
+
   const raw = formData.get("theme") as string;
   try {
     const variant_selector = JSON.parse(raw) as Record<string, string>;
@@ -78,7 +112,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function StyleConfiguration() {
   const { saved } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<{ ok: boolean; error?: string }>();
-  const extractFetcher = useFetcher<{ ok: boolean; url?: string; tokens?: string }>();
+  const extractFetcher = useFetcher<{ ok: boolean; error?: string; theme?: Record<ThemeKey, string> }>();
 
   // con empty theme intendo un tema con tutte le chiavi ma valori vuoti, in questo modo è più semplice fare l'override solo di alcune proprietà senza dover gestire i casi in cui mancano
   const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
@@ -107,10 +141,16 @@ export default function StyleConfiguration() {
 
   const handleExtract = () => {
     extractFetcher.submit(
-      { url },
-      { method: "POST", action: "/api/extract-design" },
+      { intent: "extract", url },
+      { method: "POST" },
     );
   };
+
+  useEffect(() => {
+    if (extractFetcher.data?.ok && extractFetcher.data.theme) {
+      setTheme(t => ({ ...t, ...extractFetcher.data!.theme }));
+    }
+  }, [extractFetcher.data]);
 
   return (
     <s-page heading="Style configuration">
@@ -128,9 +168,12 @@ export default function StyleConfiguration() {
             {isExtracting ? "Estrazione..." : "Estrai design system"}
           </button>
         </div>
-          {extractFetcher.data?.ok && extractFetcher.data.tokens && (
-          <pre>
-            {JSON.stringify(JSON.parse(extractFetcher.data.tokens), null, 2)}
+        {extractFetcher.data?.ok === false && (
+          <p style={{ marginTop: 12, fontSize: 13, color: "#dc2626" }}>{extractFetcher.data.error}</p>
+        )}
+        {extractFetcher.data?.ok && extractFetcher.data.theme && (
+          <pre style={{ marginTop: 12, padding: 12, background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 6, fontSize: 12, overflowX: "auto" }}>
+            {JSON.stringify(extractFetcher.data.theme, null, 2)}
           </pre>
         )}
 
