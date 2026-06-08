@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useFetcher } from "react-router";
 import { authenticate } from "../shopify.server";
@@ -84,9 +84,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const tokens = render("dtcg", design) as string;
 
       const { output } = await generateText({
-        model: openai("gpt-4.1-nano"),
+        model: openai("gpt-5-nano"),
         output: Output.object({ schema: themeSchema }),
-        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:\n${tokens}\n\nMappalo sulle variabili CSS del widget. Restituisci solo i valori che riesci a mappare con confidenza.`,
+        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:\n${tokens}\n\nMappalo sulle variabili CSS del widget.\n\nPer i colori, restituisci ESCLUSIVAMENTE uno di questi formati:\n- un valore esadecimale concreto nel formato #rrggbb (es. "#ffffff"), risolvendo eventuali riferimenti a variabili/token del sito al loro valore finale\n- la stringa "transparent" se il colore corrispondente nel sito è trasparente o assente\n- null se non riesci a mappare il valore con confidenza\n\nNon restituire MAI riferimenti CSS come var(--...), nomi di token, o altri costrutti: solo hex, "transparent" o null.\n\nPer le proprietà non di colore restituisci il valore CSS concreto (es. dimensioni in px/rem) o null.`,
       });
 
       const theme = Object.fromEntries(
@@ -118,8 +118,12 @@ export default function StyleConfiguration() {
   const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
   const [url, setUrl] = useState("");
 
+  // tema più recente ottenuto da un'estrazione: va riapplicato sopra "saved" quando il loader rivalida dopo l'action,
+  // altrimenti l'effect su "saved" sovrascriverebbe i valori appena estratti con quelli salvati nel DB
+  const extractedThemeRef = useRef<Record<ThemeKey, string> | null>(null);
+
   useEffect(() => {
-    setTheme({ ...EMPTY_THEME, ...saved });
+    setTheme({ ...EMPTY_THEME, ...saved, ...extractedThemeRef.current });
   }, [saved]);
 
   const set = (key: ThemeKey, value: string) =>
@@ -148,6 +152,7 @@ export default function StyleConfiguration() {
 
   useEffect(() => {
     if (extractFetcher.data?.ok && extractFetcher.data.theme) {
+      extractedThemeRef.current = extractFetcher.data.theme;
       setTheme(t => ({ ...t, ...extractFetcher.data!.theme }));
     }
   }, [extractFetcher.data]);
