@@ -78,7 +78,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function StyleConfiguration() {
   const { saved } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<{ ok: boolean; error?: string }>();
-  const extractFetcher = useFetcher<{ ok: boolean; url?: string; extracted?: { data: string } }>();
+  const extractFetcher = useFetcher<{ ok: boolean; url?: string; tokens?: string }>();
 
   // con empty theme intendo un tema con tutte le chiavi ma valori vuoti, in questo modo è più semplice fare l'override solo di alcune proprietà senza dover gestire i casi in cui mancano
   const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
@@ -128,8 +128,10 @@ export default function StyleConfiguration() {
             {isExtracting ? "Estrazione..." : "Estrai design system"}
           </button>
         </div>
-        {extractFetcher.data?.ok && (
-          <p>Estratto: {extractFetcher.data.extracted?.data}</p>
+          {extractFetcher.data?.ok && extractFetcher.data.tokens && (
+          <pre>
+            {JSON.stringify(JSON.parse(extractFetcher.data.tokens), null, 2)}
+          </pre>
         )}
 
       </s-section>
