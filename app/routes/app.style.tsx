@@ -78,6 +78,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function StyleConfiguration() {
   const { saved } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<{ ok: boolean; error?: string }>();
+  const extractFetcher = useFetcher<{ ok: boolean; url?: string; extracted?: { data: string } }>();
 
   // con empty theme intendo un tema con tutte le chiavi ma valori vuoti, in questo modo è più semplice fare l'override solo di alcune proprietà senza dover gestire i casi in cui mancano
   const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
@@ -102,6 +103,15 @@ export default function StyleConfiguration() {
     );
   };
 
+  const isExtracting = extractFetcher.state !== "idle";
+
+  const handleExtract = () => {
+    extractFetcher.submit(
+      { url },
+      { method: "POST", action: "/api/extract-design" },
+    );
+  };
+
   return (
     <s-page heading="Style configuration">
       <s-section>
@@ -114,10 +124,14 @@ export default function StyleConfiguration() {
           </label>
           <input
             id="generate-url" type="text" value={url} onChange={e => setUrl(e.target.value)} style={{ flex: 1, fontSize: 13, padding: "6px 10px", border: "1px solid #d1d5db", borderRadius: 4, outline: "none" }}/>
-          <button type="button" style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: "pointer" }}>
-            Estrai design system
+          <button type="button" onClick={handleExtract} disabled={isExtracting || !url} style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isExtracting || !url) ? "default" : "pointer", opacity: (isExtracting || !url) ? 0.5 : 1 }}>
+            {isExtracting ? "Estrazione..." : "Estrai design system"}
           </button>
         </div>
+        {extractFetcher.data?.ok && (
+          <p>Estratto: {extractFetcher.data.extracted?.data}</p>
+        )}
+
       </s-section>
 
       {SECTIONS.map(({ heading, keys }) => (
