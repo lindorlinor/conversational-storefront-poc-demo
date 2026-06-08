@@ -168,7 +168,7 @@ export function VariantSelector({
                     className={[
                       "font-widget-secondary min-w-[58px] h-[54px] px-3.5 border-[1.5px] rounded-widget-base text-base font-semibold flex items-center justify-center transition-all duration-100",
                       isSelected
-                        ? "bg-widget-accent text-widget-accent-fg border-widget-accent"
+                        ? "bg-widget-accent text-widget-accent-fg border-widget-accent-fg"
                         : isAvailable
                         ? "bg-widget-bg text-widget-text border-widget-border hover:border-widget-accent active:scale-95 cursor-pointer"
                         : "bg-widget-bg text-widget-text-muted border-widget-border cursor-not-allowed [background-image:linear-gradient(to_top_right,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px)),linear-gradient(to_top_left,transparent_calc(50%-1px),#d2d2d0_50%,transparent_calc(50%+1px))]",
@@ -195,10 +195,10 @@ export function VariantSelector({
             onClick={handleAddToCart}
             disabled={ctaDisabled}
             className={[
-              "flex-1 h-14 relative overflow-hidden rounded-widget-base flex items-center justify-center gap-3 font-bold text-sm tracking-wide transition-all",
+              "flex-1 h-14 relative overflow-hidden rounded-widget-base border flex items-center justify-center gap-3 font-bold text-sm tracking-wide transition-all",
               ctaDisabled
-                ? "bg-widget-surface text-widget-text-muted cursor-not-allowed"
-                : "bg-widget-accent text-widget-accent-fg hover:bg-black active:translate-y-px cursor-pointer",
+                ? "bg-widget-surface text-widget-text-muted border-widget-border cursor-not-allowed"
+                : "bg-widget-accent text-widget-accent-fg border-widget-accent-fg hover:bg-black active:translate-y-px cursor-pointer",
             ].join(" ")}
           >
             {/* default label */}

@@ -36,7 +36,7 @@ export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInp
       <button
         type="submit"
         disabled={disabled}
-        className="flex-shrink-0 cursor-pointer rounded-widget-base bg-widget-accent p-2 text-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
+        className="flex-shrink-0 cursor-pointer rounded-widget-base bg-widget-accent p-2 text-widget-accent-fg border border-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

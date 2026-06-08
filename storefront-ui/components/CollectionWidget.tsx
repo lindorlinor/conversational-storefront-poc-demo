@@ -56,7 +56,7 @@ export function CollectionWidget({
       <div className="flex-1 flex gap-3 min-w-0">
 
         {coverImageUrl && (
-          <div className="flex-shrink-0 w-[var(--size-widget-card)] aspect-square rounded-widget-base bg-widget-surface border border-widget-border overflow-hidden">
+          <div className="flex-shrink-0 w-[var(--size-widget-card)] aspect-square rounded-widget-card bg-widget-surface border border-widget-border overflow-hidden">
             <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
           </div>
         )}
@@ -89,7 +89,6 @@ export function CollectionWidget({
               onClick={() => scrollBy("left")}
               className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
               style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
-              aria-label="Prodotti precedenti"
             >←</button>
           )}
           <button
@@ -97,7 +96,6 @@ export function CollectionWidget({
             disabled={!canRight}
             className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canRight ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
             style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
-            aria-label="Prodotti successivi"
           >→</button>
         </div>
       </div>

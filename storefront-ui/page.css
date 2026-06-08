@@ -22,6 +22,7 @@
   --color-widget-error:          #dc2626;
 
   --radius-widget-base:          0px;
+  --radius-widget-card:          0px;
 
   --size-widget-card:            216px;
   --color-widget-scroll-fade:    rgba(255, 255, 255, 0.85);

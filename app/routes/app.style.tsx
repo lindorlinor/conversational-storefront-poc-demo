@@ -21,6 +21,7 @@ type ThemeKey =
   | "color-widget-accent" | "color-widget-accent-fg"
   | "color-widget-error"
   | "radius-widget-base"
+  | "radius-widget-card"
   | "size-widget-card"
   | "color-widget-scroll-fade"
   | "color-widget-section-1" | "color-widget-section-2"
@@ -46,7 +47,7 @@ const SECTIONS: { heading: string; keys: ThemeKey[] }[] = [
   { heading: "Card immagine",  keys: ["color-widget-card-image", "color-widget-card-image-border"] },
   { heading: "Accent",         keys: ["color-widget-accent", "color-widget-accent-fg"] },
   { heading: "Errore",         keys: ["color-widget-error"] },
-  { heading: "Arrotondamento", keys: ["radius-widget-base"] },
+  { heading: "Arrotondamento", keys: ["radius-widget-base", "radius-widget-card"] },
   { heading: "Dimensioni",     keys: ["size-widget-card"] },
   { heading: "Scroll fade",    keys: ["color-widget-scroll-fade"] },
   { heading: "Sezioni",        keys: ["color-widget-section-1", "color-widget-section-2"] },
@@ -68,7 +69,8 @@ const THEME_DESCRIPTIONS: Record<ThemeKey, string> = {
   "color-widget-accent": "colore principale del brand, usato per CTA e bottoni primari",
   "color-widget-accent-fg": "testo sopra il colore accent, di solito bianco o nero",
   "color-widget-error": "colore usato per evidenziare errori, ad esempio nei form",
-  "radius-widget-base": "raggio di arrotondamento base, usato per card e bottoni",
+  "radius-widget-base": "raggio di arrotondamento base, usato per bottoni e altri elementi (non per le card prodotto)",
+  "radius-widget-card": "raggio di arrotondamento delle card prodotto, indipendente dal raggio base",
   "size-widget-card": "dimensione delle card dei prodotti",
   "color-widget-scroll-fade": "colore usato per l'effetto fade quando la sezione è scrollabile orizzontalmente. Può essere trasparente se non si vuole un effetto fade",
   "color-widget-section-1": "colore di sfondo alternativo usato per evidenziare le sezioni",
