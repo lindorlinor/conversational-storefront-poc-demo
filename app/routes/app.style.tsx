@@ -122,16 +122,29 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (intent === "extract") {
     const url = formData.get("url") as string;
+    const manualTokens = formData.get("manualTokens") as string | null;
     try {
-      const design = await extract(url);
-      const tokens = render("dtcg", design) as string;
-
-      await logExtraction(url, tokens);
+      let tokens: string;
+      if (manualTokens?.trim()) {
+        tokens = manualTokens.trim();
+      } else {
+        const design = await extract(url);
+        tokens = render("dtcg", design) as string;
+        await logExtraction(url, tokens);
+      }
 
       const { output } = await generateText({
         model: openai("gpt-5-nano"),
         output: Output.object({ schema: themeSchema }),
-        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:\n${tokens}\n\nMappalo sulle variabili CSS del widget.\n\nPer i colori, restituisci ESCLUSIVAMENTE uno di questi formati:\n- un valore esadecimale concreto nel formato #rrggbb (es. "#ffffff"), risolvendo eventuali riferimenti a variabili/token del sito al loro valore finale\n- la stringa "transparent" se il colore corrispondente nel sito è trasparente o assente\n- null se non riesci a mappare il valore con confidenza\n\nNon restituire MAI riferimenti CSS come var(--...), nomi di token, o altri costrutti: solo hex, "transparent" o null.\n\nPer le proprietà non di colore restituisci il valore CSS concreto (es. dimensioni in px/rem) o null.`,
+        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:
+        \n${tokens}\n\nMappalo sulle variabili CSS del widget.\n\n
+        Per i colori, restituisci ESCLUSIVAMENTE uno di questi formati:
+        \n- un valore esadecimale concreto nel formato #rrggbb (es. "#ffffff"), risolvendo eventuali riferimenti a variabili/token del sito al loro valore finale
+        \n- la stringa "transparent" se il colore corrispondente nel sito è trasparente o assente
+        \n- null se non riesci a mappare il valore con confidenza
+        \n\nNon restituire MAI riferimenti CSS come var(--...), nomi di token, o altri costrutti: solo hex, "transparent" o null.
+        \n\nPer le proprietà non di colore restituisci il valore CSS concreto (es. dimensioni in px/rem) o null.\n\n
+        Fai attenzione a non mettere valori che potrebbero causare problemi di accessibilità`,
       });
 
       const theme = Object.fromEntries(
@@ -162,6 +175,7 @@ export default function StyleConfiguration() {
   // con empty theme intendo un tema con tutte le chiavi ma valori vuoti, in questo modo è più semplice fare l'override solo di alcune proprietà senza dover gestire i casi in cui mancano
   const [theme, setTheme] = useState<Record<ThemeKey, string>>({ ...EMPTY_THEME, ...saved });
   const [url, setUrl] = useState("");
+  const [manualTokens, setManualTokens] = useState("");
 
   // tema più recente ottenuto da un'estrazione: va riapplicato sopra "saved" quando il loader rivalida dopo l'action,
   // altrimenti l'effect su "saved" sovrascriverebbe i valori appena estratti con quelli salvati nel DB
@@ -190,7 +204,7 @@ export default function StyleConfiguration() {
 
   const handleExtract = () => {
     extractFetcher.submit(
-      { intent: "extract", url },
+      { intent: "extract", url, manualTokens },
       { method: "POST" },
     );
   };
@@ -214,9 +228,22 @@ export default function StyleConfiguration() {
           </label>
           <input
             id="generate-url" type="text" value={url} onChange={e => setUrl(e.target.value)} style={{ flex: 1, fontSize: 13, padding: "6px 10px", border: "1px solid #d1d5db", borderRadius: 4, outline: "none" }}/>
-          <button type="button" onClick={handleExtract} disabled={isExtracting || !url} style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isExtracting || !url) ? "default" : "pointer", opacity: (isExtracting || !url) ? 0.5 : 1 }}>
-            {isExtracting ? "Estrazione..." : "Estrai design system"}
+          <button type="button" onClick={handleExtract} disabled={isExtracting || (!url && !manualTokens.trim())} style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isExtracting || (!url && !manualTokens.trim())) ? "default" : "pointer", opacity: (isExtracting || (!url && !manualTokens.trim())) ? 0.5 : 1 }}>
+            {isExtracting ? "Generazione..." : "Genera"}
           </button>
+        </div>
+        <div style={{ marginTop: 12 }}>
+          <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 6 }} htmlFor="manual-tokens">
+            JSON design tokens (opzionale — se valorizzato sostituisce l'estrazione dall'URL)
+          </label>
+          <textarea
+            id="manual-tokens"
+            value={manualTokens}
+            onChange={e => setManualTokens(e.target.value)}
+            placeholder={'{ "$type": "color", ... }'}
+            rows={8}
+            style={{ width: "100%", fontFamily: "monospace", fontSize: 12, padding: "8px 10px", border: "1px solid #d1d5db", borderRadius: 4, outline: "none", resize: "vertical", boxSizing: "border-box" }}
+          />
         </div>
         {extractFetcher.data?.ok === false && (
           <p style={{ marginTop: 12, fontSize: 13, color: "#dc2626" }}>{extractFetcher.data.error}</p>
