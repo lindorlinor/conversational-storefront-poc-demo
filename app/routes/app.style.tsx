@@ -66,8 +66,8 @@ const THEME_DESCRIPTIONS: Record<ThemeKey, string> = {
   "color-widget-border": "colore dei bordi dei widget",
   "color-widget-card-image": "colore di sfondo dietro le immagini dei prodotti. Usato soprattutto per i prodotti con immagini trasparenti.",
   "color-widget-card-image-border": "colore del bordo delle immagini dei prodotti. In particolare usato se il bordo della card non è presente",
-  "color-widget-accent": "colore principale del brand, usato per CTA e bottoni primari",
-  "color-widget-accent-fg": "testo sopra il colore accent, di solito bianco o nero",
+  "color-widget-accent": "colore di sfondo del pulsante 'Aggiungi al carrello' o equivalente CTA principale. REGOLA: guarda il colore fisico dello sfondo del pulsante nell'immagine — se il pulsante ha lo sfondo bianco metti #ffffff, se è verde metti il verde esatto, ecc. Non usare il colore del testo né colori del brand/logo: solo lo sfondo visibile del pulsante.",
+  "color-widget-accent-fg": "colore del testo sopra i pulsanti primari (accent). Se accent è chiaro/bianco usa un testo scuro (#111111 o simile), se accent è scuro usa bianco (#ffffff). Deve avere contrasto sufficiente con accent.",
   "color-widget-error": "colore usato per evidenziare errori, ad esempio nei form",
   "radius-widget-base": "raggio di arrotondamento base, usato per bottoni e altri elementi (non per le card prodotto)",
   "radius-widget-card": "raggio di arrotondamento delle card prodotto, indipendente dal raggio base",
@@ -123,20 +123,55 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (intent === "extract") {
     const url = formData.get("url") as string;
     const manualTokens = formData.get("manualTokens") as string | null;
+    const uploadedFiles = formData.getAll("files") as File[];
     try {
       let tokens: string;
       if (manualTokens?.trim()) {
         tokens = manualTokens.trim();
-      } else {
+      } else if (url) {
         const design = await extract(url);
         tokens = render("dtcg", design) as string;
         await logExtraction(url, tokens);
+      } else {
+        tokens = "";
+      }
+
+      console.log(`[extract] file ricevuti: ${uploadedFiles.length} (${uploadedFiles.map(f => `${f.name} ${f.type} ${f.size}B`).join(', ') || 'nessuno'})`);
+
+      const imageparts = await Promise.all(
+        uploadedFiles
+          .filter(f => f.size > 0 && f.type.startsWith("image/"))
+          .map(async f => {
+            const buffer = await f.arrayBuffer();
+            return {
+              type: "image" as const,
+              image: new Uint8Array(buffer),
+              mediaType: f.type as `image/${string}`,
+            };
+          })
+      );
+
+      console.log(`[extract] immagini passate al modello: ${imageparts.length}`);
+
+      if (imageparts.length > 0) {
+        const { text: debugText } = await generateText({
+          model: openai("gpt-4.1"),
+          messages: [{ role: "user", content: [...imageparts, { type: "text", text: "Guarda i pulsanti principali (es. add to cart, checkout, CTA) in questa immagine. Dimmi: 1) il colore esatto di sfondo del pulsante in esadecimale, 2) il colore esatto del testo del pulsante in esadecimale, 3) il raggio di arrotondamento approssimativo." }] }],
+        });
+        console.log(`[extract] debug vision: ${debugText}`);
       }
 
       const { output } = await generateText({
-        model: openai("gpt-5-nano"),
+        model: openai("gpt-4.1"),
         output: Output.object({ schema: themeSchema }),
-        prompt: `Dato questo JSON DTCG estratto dal sito del merchant:
+        system: `Sei un esperto di design system. Il tuo compito è mappare i token di design di un sito merchant sulle variabili CSS di un widget di chat e-commerce, replicando fedelmente lo stile visivo del sito.${imageparts.length > 0 ? " Sono stati allegati screenshot del sito: questi sono la tua fonte primaria di verità. Il tuo obiettivo è replicare l'aspetto del sito il più fedelmente possibile. Presta particolare attenzione ai pulsanti/CTA: rileva con precisione il colore di sfondo, il colore del testo e il raggio di arrotondamento esatti così come appaiono negli screenshot. Analizza anche sfondi, card, testi e bordi. I token JSON sono un supporto secondario: usali solo per dettagli non chiaramente visibili negli screenshot o per valori non cromatici. Se c'è qualsiasi contraddizione tra token e screenshot, l'immagine ha sempre priorità assoluta." : ""}`,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Dato questo JSON DTCG estratto dal sito del merchant:
         \n${tokens}\n\nMappalo sulle variabili CSS del widget.\n\n
         Per i colori, restituisci ESCLUSIVAMENTE uno di questi formati:
         \n- un valore esadecimale concreto nel formato #rrggbb (es. "#ffffff"), risolvendo eventuali riferimenti a variabili/token del sito al loro valore finale
@@ -144,7 +179,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         \n- null se non riesci a mappare il valore con confidenza
         \n\nNon restituire MAI riferimenti CSS come var(--...), nomi di token, o altri costrutti: solo hex, "transparent" o null.
         \n\nPer le proprietà non di colore restituisci il valore CSS concreto (es. dimensioni in px/rem) o null.\n\n
-        Fai attenzione a non mettere valori che potrebbero causare problemi di accessibilità`,
+        Fai attenzione a non mettere valori che potrebbero causare problemi di accessibilità.${imageparts.length > 0 ? "\n\nHo allegato screenshot del sito. IMPORTANTE: guarda il colore di sfondo dei pulsanti principali (add to cart, checkout, CTA) nell'immagine e usalo per color-widget-accent — ignora qualsiasi valore ricavato dai token JSON per questa variabile se contraddice ciò che vedi nell'immagine." : ""}`,
+              },
+              ...imageparts,
+            ],
+          },
+        ],
       });
 
       const theme = Object.fromEntries(
@@ -177,6 +217,8 @@ export default function StyleConfiguration() {
   const [url, setUrl] = useState("");
   const [manualTokens, setManualTokens] = useState("");
 
+  const [files, setFiles] = useState<FileList | null>(null);
+  const filesInputRef = useRef<HTMLInputElement | null>(null);
   // tema più recente ottenuto da un'estrazione: va riapplicato sopra "saved" quando il loader rivalida dopo l'action,
   // altrimenti l'effect su "saved" sovrascriverebbe i valori appena estratti con quelli salvati nel DB
   const extractedThemeRef = useRef<Record<ThemeKey, string> | null>(null);
@@ -203,10 +245,18 @@ export default function StyleConfiguration() {
   const isExtracting = extractFetcher.state !== "idle";
 
   const handleExtract = () => {
-    extractFetcher.submit(
-      { intent: "extract", url, manualTokens },
-      { method: "POST" },
-    );
+    const formData = new FormData();
+    formData.append("intent", "extract");
+    formData.append("url", url);
+    formData.append("manualTokens", manualTokens);
+    if (files) {
+      Array.from(files).forEach(f => formData.append("files", f));
+    }
+    extractFetcher.submit(formData, { method: "POST", encType: "multipart/form-data" });
+    setFiles(null);
+    if (filesInputRef.current) {
+      filesInputRef.current.value = "";
+    }
   };
 
   useEffect(() => {
@@ -228,9 +278,16 @@ export default function StyleConfiguration() {
           </label>
           <input
             id="generate-url" type="text" value={url} onChange={e => setUrl(e.target.value)} style={{ flex: 1, fontSize: 13, padding: "6px 10px", border: "1px solid #d1d5db", borderRadius: 4, outline: "none" }}/>
-          <button type="button" onClick={handleExtract} disabled={isExtracting || (!url && !manualTokens.trim())} style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isExtracting || (!url && !manualTokens.trim())) ? "default" : "pointer", opacity: (isExtracting || (!url && !manualTokens.trim())) ? 0.5 : 1 }}>
+          <label htmlFor="file-upload">
+            {
+              files?.length ? `${files.length} file${files.length > 1 ? "s" : ""} selected` : "Upload design file"
+            }
+          </label>
+          <input id="file-upload" type="file"  multiple ref={filesInputRef} className= "hidden" onChange={e => setFiles(e.target.files)} style={{ display: "none" }} />
+          <button type="button" onClick={handleExtract} disabled={isExtracting || (!url && !manualTokens.trim() && !files?.length)} style={{ padding: "8px 20px", background: "#111827", color: "#fff", border: "none", borderRadius: 6, fontSize: 14, fontWeight: 500, cursor: (isExtracting || (!url && !manualTokens.trim() && !files?.length)) ? "default" : "pointer", opacity: (isExtracting || (!url && !manualTokens.trim() && !files?.length)) ? 0.5 : 1 }}>
             {isExtracting ? "Generazione..." : "Genera"}
           </button>
+
         </div>
         <div style={{ marginTop: 12 }}>
           <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#374151", marginBottom: 6 }} htmlFor="manual-tokens">
