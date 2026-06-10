@@ -1,9 +1,126 @@
-<a
-  href="/apps/chatbot"
-  class="fixed bottom-6 right-6 z-[9999] flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-neutral-800 transition-colors no-underline"
->
+<button id="chatbot-launcher" type="button" aria-label="Apri chat">
   💬 Chat
-</a>
+</button>
+
+<iframe
+  id="chatbot-iframe"
+  src="/apps/chatbot"
+  title="Chat"
+></iframe>
+
+<style>
+  #chatbot-launcher {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    border-radius: 9999px;
+    background: #000;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  #chatbot-launcher:hover {
+    background: #262626;
+  }
+
+  #chatbot-iframe {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    z-index: 9999;
+    background: transparent;
+  }
+</style>
+
+<script>
+  (function () {
+    var iframe = document.getElementById('chatbot-iframe');
+    var launcher = document.getElementById('chatbot-launcher');
+    if (!iframe || !launcher) return;
+
+    launcher.addEventListener('click', function () {
+      launcher.style.display = 'none';
+      iframe.style.display = 'block';
+    });
+
+    window.addEventListener('message', function (event) {
+      if (event.data && event.data.type === 'conversational-storefront:close') {
+        iframe.style.display = 'none';
+        launcher.style.display = 'flex';
+      }
+    });
+
+    function injectFontFace(doc, cssText) {
+      var style = doc.createElement('style');
+      style.textContent = cssText;
+      doc.head.appendChild(style);
+    }
+
+    // risolve gli url(...) relativi di un blocco @font-face rispetto all'url del foglio di origine,
+    // altrimenti nell'iframe (documento diverso) verrebbero risolti rispetto alla sua base url
+    function resolveFontFaceUrls(cssText, baseHref) {
+      return cssText.replace(/url\((['"]?)([^'")]+)\1\)/g, function (match, quote, url) {
+        if (/^(?:[a-z]+:)?\/\//i.test(url) || url.indexOf('data:') === 0) return match;
+        try {
+          return 'url(' + quote + new URL(url, baseHref).href + quote + ')';
+        } catch (error) {
+          return match;
+        }
+      });
+    }
+
+    function extractFontFaceBlocks(cssText) {
+      return cssText.match(/@font-face\s*\{[^}]*\}/g) || [];
+    }
+
+    // url relativo: il browser lo risolve su mystore.myshopify.com, l'app proxy
+    // gira la richiesta a Remix e parent + iframe risultano same-origin
+    iframe.addEventListener('load', function () {
+      var doc;
+      try {
+        doc = iframe.contentDocument;
+      } catch (error) {
+        return;
+      }
+      if (!doc || !doc.head) return;
+
+      Array.from(document.styleSheets).forEach(function (sheet) {
+        // foglio accessibile (style inline o link same-origin): leggo le regole direttamente
+        try {
+          Array.from(sheet.cssRules || [])
+            .filter(function (rule) { return rule instanceof CSSFontFaceRule; })
+            .forEach(function (rule) { injectFontFace(doc, rule.cssText); });
+          return;
+        } catch (error) {
+          // cssRules non leggibile: link cross-origin senza attributo crossorigin, provo via fetch
+        }
+
+        if (!sheet.href) return;
+
+        fetch(sheet.href)
+          .then(function (res) { return res.text(); })
+          .then(function (cssText) {
+            extractFontFaceBlocks(cssText).forEach(function (block) {
+              injectFontFace(doc, resolveFontFaceUrls(block, sheet.href));
+            });
+          })
+          .catch(function () {});
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {
