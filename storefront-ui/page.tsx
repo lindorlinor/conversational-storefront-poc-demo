@@ -32,7 +32,7 @@ window.ConversationalStorefront = {
 
     // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
     const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
-    cart.init(cartId ?? null);
+    cart.init(cartId ?? null, resolvedApiUrl);
 
     if (!root) root = createRoot(container);
     root.render(<ChatPage apiUrl={resolvedApiUrl} />);

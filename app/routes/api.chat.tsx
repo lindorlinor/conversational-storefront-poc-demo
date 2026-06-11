@@ -136,9 +136,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
           // document.cookie legge/scrive il cookie cart dello store: qui facciamo
           // da "merchant di riferimento" (issue #79), il widget non tocca cookie
           window.addEventListener('load', function () {
+            // storefront headless: il parent passa il cartId nell'src dell'iframe
+            var fromQuery = new URLSearchParams(window.location.search).get('cartId');
             var m = document.cookie.match(/(?:^|;\\s*)cart=([^;]+)/);
             ConversationalStorefront.init({
-              cartId: m ? decodeURIComponent(m[1]) : null,
+              cartId: fromQuery || (m ? decodeURIComponent(m[1]) : null),
             });
           });
           window.addEventListener('conversational-storefront:cart-id-changed', function (e) {
