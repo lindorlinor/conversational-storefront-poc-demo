@@ -10,6 +10,26 @@ styleEl.textContent = rawStyles.replace(
 );
 document.head.appendChild(styleEl);
 
+
+/* injecetTheme usato per iniettare il CSS del tema del merchant. Viene chiamato da */
+function injectTheme(apiUrl: string): Promise<void> {
+  const u = new URL(apiUrl, window.location.href);
+  const themeUrl = u.origin + u.pathname.replace(/\/$/, "") + "/theme" + u.search;
+  return fetch(themeUrl)
+    .then((res) => (res.ok ? res.text() : ""))
+    .then((css) => {
+      if (!css) return;
+      // rimuove un tema iniettato da una init precedente (re-mount SPA)
+      const el = document.createElement("style");
+      el.dataset.conversationalStorefrontTheme = "";
+      el.textContent = css;
+      document.head.appendChild(el);
+    })
+    .catch(() => {
+      /* tema non disponibile: restano i default */
+    });
+}
+
 interface InitOptions {
   apiUrl?: string;
   // valore iniziale: il widget poi lo aggiorna da solo e segnala i cambiamenti
@@ -34,6 +54,12 @@ window.ConversationalStorefront = {
     // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
     const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
     cart.init(cartId ?? null, resolvedApiUrl);
+
+    /* nascosto perchè altrimenti flesha le persone */
+    container.style.opacity = "0";
+    injectTheme(resolvedApiUrl).finally(() => {
+      container.style.opacity = "1";
+    });
 
     // in una SPA il container può essere smontato e ricreato tra una init e l'altra
     if (!root || mountedContainer !== container) {

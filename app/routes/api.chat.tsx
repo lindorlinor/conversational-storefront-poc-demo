@@ -130,7 +130,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
         <link href="https://fonts.googleapis.com/css2?family=Jomolhari&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <title>Chat</title>
-        ${themeCss ? `<style>${themeCss}</style>` : ''}
       </head>
       <body style="margin:0">
         <div id="chat-page-root" data-app-origin="${appOrigin}" data-api-url="${apiUrlAttr}"></div>
