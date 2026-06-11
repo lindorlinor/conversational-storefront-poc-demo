@@ -5,6 +5,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
 import { getThemeConfig, buildThemeCss } from '../shopify/theme.graphql';
+import { corsPreflightResponse, responseWithCors } from '../cors.server';
 
 import {getUItools}  from '../tools/buildUITools';
 
@@ -88,7 +89,11 @@ export const model = wrapLanguageModel({
 })
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  console.log('[chat loader] GET', request.url);
+
+  const preflight = corsPreflightResponse(request);
+  /* se è una richiesta preflight (riconosciuta solo dal campo method=OPTIONS) allora ritorna la response con gli header CORS, la response poi arriva al browser che può continuare */
+  if (preflight) return preflight;
+  
   const url = new URL(request.url);
   const appOrigin = url.origin.replace(/^http:/, 'https:');
   const shop = url.searchParams.get('shop') ?? '';
@@ -162,6 +167,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  
+  const preflight = corsPreflightResponse(request);
+  /* se è una richiesta preflight (riconosciuta solo dal campo method=OPTIONS) allora ritorna la response con gli header CORS, la response poi arriva al browser che può continuare */
+  if (preflight) return preflight;
+
+
   try {
 
     const shop = new URL(request.url).searchParams.get('shop') ?? '';
@@ -254,13 +265,13 @@ export async function action({ request }: ActionFunctionArgs) {
       messages: await convertToModelMessages(messages),
     })
 
-    return result.toUIMessageStreamResponse()
+    return responseWithCors(result.toUIMessageStreamResponse())
   } catch (err) {
     console.error('[chat] ERROR:', err)
     const message = err instanceof Error ? err.message : String(err)
-    return new Response(JSON.stringify({ error: message }), {
+    return responseWithCors(new Response(JSON.stringify({ error: message }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
-    })
+    }))
   }
 }
