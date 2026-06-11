@@ -26,12 +26,13 @@ let root: Root | null = null;
 
 window.ConversationalStorefront = {
   init({ apiUrl, getCartId, setCartId }: InitOptions = {}) {
-    const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
-    const resolvedGetCartId = getCartId ?? defaultGetCartId;
-    const resolvedSetCartId = setCartId ?? defaultSetCartId;
-
     const container = document.getElementById("chat-page-root");
     if (!container) return;
+
+    // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
+    const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
+    const resolvedGetCartId = getCartId ?? defaultGetCartId;
+    const resolvedSetCartId = setCartId ?? defaultSetCartId;
 
     if (!root) root = createRoot(container);
     root.render(<ChatPage apiUrl={resolvedApiUrl} getCartId={resolvedGetCartId} setCartId={resolvedSetCartId} />);

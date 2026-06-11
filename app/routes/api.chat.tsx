@@ -88,9 +88,22 @@ export const model = wrapLanguageModel({
 })
 
 export async function loader({ request }: LoaderFunctionArgs) {
+  console.log('[chat loader] GET', request.url);
   const url = new URL(request.url);
   const appOrigin = url.origin.replace(/^http:/, 'https:');
   const shop = url.searchParams.get('shop') ?? '';
+
+  // se la richiesta arriva dall'app proxy Shopify aggiunge path_prefix e il
+  // widget può usare il default /apps/chatbot; in accesso diretto (tunnel,
+  // iframe dello storefront headless) l'endpoint è la route /api/chat
+  const isProxied = url.searchParams.has('path_prefix');
+  // nel caso proxy l'URL resta pulito: Shopify aggiunge shop, timestamp e
+  // signature a ogni richiesta inoltrata, rigiocare quelli del primo load
+  // invalida la firma
+  const apiUrl = isProxied
+    ? '/apps/chatbot'
+    : `/api/chat?shop=${encodeURIComponent(shop)}`;
+  const apiUrlAttr = apiUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
   let themeCss = '';
   if (shop) {
@@ -115,14 +128,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
         ${themeCss ? `<style>${themeCss}</style>` : ''}
       </head>
       <body style="margin:0">
-        <div id="chat-page-root" data-app-origin="${appOrigin}"></div>
+        <div id="chat-page-root" data-app-origin="${appOrigin}" data-api-url="${apiUrlAttr}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
         <script src="${appOrigin}/chat-page.js" defer></script>
         <script>window.addEventListener('load', function() { ConversationalStorefront.init(); });</script>
       </body>
     </html>`;
+  // senza questo header Shopify applica "frame-ancestors 'none'" alle risposte
+  // dell'app proxy e il widget non può essere embeddato in un iframe
   return new Response(html, {
-    headers: { "Content-Type": "text/html" },
+    headers: {
+      "Content-Type": "text/html",
+      // admin.shopify.com serve per l'anteprima nell'editor del tema, dove lo
+      // store è a sua volta dentro un iframe dell'admin
+      "Content-Security-Policy": `frame-ancestors 'self' http://localhost:* https://*.myshopify.com https://admin.shopify.com`,
+    },
   });
 }
 
