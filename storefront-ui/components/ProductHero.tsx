@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Product, Variant } from "../models/types";
-import { addToCartExecute } from "../utils/utils";
-import { getCartId, setCartId } from "../utils/storefront";
+import { cart } from "../cart";
 
 type ProductHeroProps = Product & { selectedVariantTitle?: string };
 
@@ -47,8 +46,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
     try {
       setIsAdding(true);
       setError(null);
-      const result = await addToCartExecute({ rawCartId: getCartId(), variantId, quantity: 1 });
-      if ("newCartId" in result && result.newCartId) setCartId(result.newCartId);
+      await cart.addLine(variantId);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Impossibile aggiungere al carrello");
     } finally {

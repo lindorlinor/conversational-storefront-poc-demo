@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { Product, Variant } from "../models/types";
-import { addToCartExecute } from "../utils/utils";
-import { getCartId, setCartId } from "../utils/storefront";
+import { cart } from "../cart";
 
 type VariantOption = Variant & { available?: boolean };
 
@@ -59,8 +58,7 @@ export function VariantSelector({
     try {
       setIsAdding(true);
       setError(null);
-      const result = await addToCartExecute({ rawCartId: getCartId(), variantId, quantity: 1 });
-      if ("newCartId" in result && result.newCartId) setCartId(result.newCartId);
+      await cart.addLine(variantId);
       setAdded(true);
       setTimeout(() => setAdded(false), 1900);
     } catch (err) {

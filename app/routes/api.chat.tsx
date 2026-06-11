@@ -131,7 +131,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
         <div id="chat-page-root" data-app-origin="${appOrigin}" data-api-url="${apiUrlAttr}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
         <script src="${appOrigin}/chat-page.js" defer></script>
-        <script>window.addEventListener('load', function() { ConversationalStorefront.init(); });</script>
+        <script>
+          // nel caso app proxy questa pagina è same-origin con lo store, quindi
+          // document.cookie legge/scrive il cookie cart dello store: qui facciamo
+          // da "merchant di riferimento" (issue #79), il widget non tocca cookie
+          window.addEventListener('load', function () {
+            var m = document.cookie.match(/(?:^|;\\s*)cart=([^;]+)/);
+            ConversationalStorefront.init({
+              cartId: m ? decodeURIComponent(m[1]) : null,
+            });
+          });
+          window.addEventListener('conversational-storefront:cart-id-changed', function (e) {
+            document.cookie = 'cart=' + encodeURIComponent(e.detail.cartId) + '; path=/; max-age=' + 60 * 60 * 24 * 30;
+          });
+        </script>
       </body>
     </html>`;
   // senza questo header Shopify applica "frame-ancestors 'none'" alle risposte

@@ -1,6 +1,6 @@
 import { createRoot, Root } from "react-dom/client";
 import { ChatPage } from "./ChatPage";
-import { getCartId as defaultGetCartId, setCartId as defaultSetCartId } from "./utils/storefront";
+import { cart } from "./cart";
 import rawStyles from "./page.css?inline";
 
 const styleEl = document.createElement("style");
@@ -12,8 +12,9 @@ document.head.appendChild(styleEl);
 
 interface InitOptions {
   apiUrl?: string;
-  getCartId?: () => string | null;
-  setCartId?: (cartId: string) => void;
+  // valore iniziale: il widget poi lo aggiorna da solo e segnala i cambiamenti
+  // con l'evento "conversational-storefront:cart-id-changed" (anche postMessage)
+  cartId?: string | null;
 }
 
 declare global {
@@ -25,16 +26,15 @@ declare global {
 let root: Root | null = null;
 
 window.ConversationalStorefront = {
-  init({ apiUrl, getCartId, setCartId }: InitOptions = {}) {
+  init({ apiUrl, cartId }: InitOptions = {}) {
     const container = document.getElementById("chat-page-root");
     if (!container) return;
 
     // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
     const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
-    const resolvedGetCartId = getCartId ?? defaultGetCartId;
-    const resolvedSetCartId = setCartId ?? defaultSetCartId;
+    cart.init(cartId ?? null);
 
     if (!root) root = createRoot(container);
-    root.render(<ChatPage apiUrl={resolvedApiUrl} getCartId={resolvedGetCartId} setCartId={resolvedSetCartId} />);
+    root.render(<ChatPage apiUrl={resolvedApiUrl} />);
   },
 };
