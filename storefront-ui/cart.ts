@@ -1,13 +1,15 @@
-import { addToCartExecute } from "./utils/utils";
-
-
 export const CART_ID_CHANGED_EVENT = "conversational-storefront:cart-id-changed";
 
 class Cart {
   private id: string | null = null;
+  private endpoint: string | null = null;
 
-  init(initialId: string | null) {
+  init(initialId: string | null, apiUrl?: string) {
     this.id = initialId;
+    if (apiUrl) {
+      const u = new URL(apiUrl, window.location.href);
+      this.endpoint = u.pathname.replace(/\/$/, "") + "/cart" + u.search;
+    }
   }
 
   getId(): string | null {
@@ -26,8 +28,14 @@ class Cart {
   }
 
   async addLine(variantId: string, quantity = 1) {
-    const result = await addToCartExecute({ rawCartId: this.id, variantId, quantity });
-    if ("newCartId" in result && result.newCartId) this.applyId(result.newCartId);
+    if (!this.endpoint) return { error: "endpoint carrello non configurato" };
+    const res = await fetch(this.endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cartId: this.id, variantId, quantity }),
+    });
+    const result = await res.json().catch(() => ({ error: `risposta non valida (${res.status})` }));
+    if (result && typeof result.newCartId === "string") this.applyId(result.newCartId);
     return result;
   }
 }
