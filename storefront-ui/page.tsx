@@ -24,6 +24,7 @@ declare global {
 }
 
 let root: Root | null = null;
+let mountedContainer: HTMLElement | null = null;
 
 window.ConversationalStorefront = {
   init({ apiUrl, cartId }: InitOptions = {}) {
@@ -34,7 +35,11 @@ window.ConversationalStorefront = {
     const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
     cart.init(cartId ?? null, resolvedApiUrl);
 
-    if (!root) root = createRoot(container);
+    // in una SPA il container può essere smontato e ricreato tra una init e l'altra
+    if (!root || mountedContainer !== container) {
+      root = createRoot(container);
+      mountedContainer = container;
+    }
     root.render(<ChatPage apiUrl={resolvedApiUrl} />);
   },
 };
