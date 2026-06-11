@@ -7,8 +7,9 @@ class Cart {
   init(initialId: string | null, apiUrl?: string) {
     this.id = initialId;
     if (apiUrl) {
+      // url assoluto: con apiUrl cross-origin il path relativo punterebbe all'origin del merchant invece che al backend del widget
       const u = new URL(apiUrl, window.location.href);
-      this.endpoint = u.pathname.replace(/\/$/, "") + "/cart" + u.search;
+      this.endpoint = u.origin + u.pathname.replace(/\/$/, "") + "/cart" + u.search;
     }
   }
 
