@@ -61,7 +61,13 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
 
       <button
         type="button"
-        onClick={() => window.parent.postMessage({ type: "conversational-storefront:close" }, "*")}
+        onClick={() => {
+          /* doppio canale perchè l'avevo pensato solo per iframe, ora funziona anche se la richiesta proviene dalla stesa pagina */
+          window.dispatchEvent(new CustomEvent("conversational-storefront:close"));
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: "conversational-storefront:close" }, "*");
+          }
+        }}
         className="font-widget-secondary fixed top-4 right-4 z-50 flex items-center gap-1.5 rounded-widget-base border border-widget-border bg-widget-bg px-3 py-1.5 text-sm text-widget-text-secondary shadow-sm transition hover:text-widget-text"
       >
         Negozio
