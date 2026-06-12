@@ -5,6 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { ChatInput } from "./components/chat-input/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
+import type { SerializedComponentSchema } from "./component-registry";
 import PreviewSection from "./preview/PreviewSection"; // DEBUG — rimuovi per produzione
 
 // todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
@@ -31,7 +32,10 @@ function syncNewCartId(
   }
 }
 
-export function ChatPage({ apiUrl }: { apiUrl: string }) {
+export function ChatPage({ apiUrl, componentSchemas }: {
+  apiUrl: string;
+  componentSchemas?: Record<string, SerializedComponentSchema>;
+}) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
   const shop = parsed.searchParams.get("shop") ?? "";
@@ -45,8 +49,10 @@ export function ChatPage({ apiUrl }: { apiUrl: string }) {
   });
 
   /* cart id letto al momento dell'invio perchè può cambiare durante la sessione (prima null e poi modificato)*/
+  /* componentSchemas: schemi (JSON Schema) dei componenti del merchant, inviati
+     a ogni richiesta così il backend può generare i tool corrispondenti. per ora così, todo endpoint probabilmente */
   const send = (text: string) => {
-    sendMessage({ text }, { body: { cartId: cart.getId() } });
+    sendMessage({ text }, { body: { cartId: cart.getId(), componentSchemas } });
     setInputValue("");
   };
 
