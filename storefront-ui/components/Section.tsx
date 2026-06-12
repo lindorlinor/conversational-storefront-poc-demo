@@ -1,5 +1,4 @@
 import type { UIMessage } from "@ai-sdk/react";
-import type { ComponentName } from "../../app/components-schema/registry";
 import WidgetRenderer from "./WidgetRenderer";
 import type { ReactNode } from "react";
 
@@ -28,12 +27,13 @@ function Section({ message, children }: SectionProps) {
               state: string;
               input: Record<string, unknown>;
             };
-            const toolName = toolPart.type.slice("tool-".length) as ComponentName;
+            const toolName = toolPart.type.slice("tool-".length);
             return (
               <WidgetRenderer
                 key={i}
                 toolName={toolName}
                 input={toolPart.input}
+                state={toolPart.state}
               />
             );
           }

@@ -1,6 +1,11 @@
 import { createRoot, Root } from "react-dom/client";
 import { ChatPage } from "./ChatPage";
 import { cart } from "./cart";
+import {
+  registerComponents,
+  getComponentSchemas,
+  type MerchantComponent,
+} from "./component-registry";
 import rawStyles from "./page.css?inline";
 
 const styleEl = document.createElement("style");
@@ -35,6 +40,9 @@ interface InitOptions {
   // valore iniziale: il widget poi lo aggiorna da solo e segnala i cambiamenti
   // con l'evento "conversational-storefront:cart-id-changed" (anche postMessage)
   cartId?: string | null;
+  // componenti del merchant che sovrascrivono (stesso nome) o aggiungono
+  // (nome nuovo) widget al registry: { component, schema, description }
+  components?: Record<string, MerchantComponent>;
 }
 
 declare global {
@@ -47,9 +55,13 @@ let root: Root | null = null;
 let mountedContainer: HTMLElement | null = null;
 
 window.ConversationalStorefront = {
-  init({ apiUrl, cartId }: InitOptions = {}) {
+  init({ apiUrl, cartId, components }: InitOptions = {}) {
     const container = document.getElementById("chat-page-root");
     if (!container) return;
+
+    // registra i componenti del merchant prima del render: il render loop li
+    // userà per il lookup e i loro schemi viaggeranno nel body verso il backend
+    registerComponents(components);
 
     // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
     const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
@@ -66,6 +78,11 @@ window.ConversationalStorefront = {
       root = createRoot(container);
       mountedContainer = container;
     }
-    root.render(<ChatPage apiUrl={resolvedApiUrl} />);
+    root.render(
+      <ChatPage
+        apiUrl={resolvedApiUrl}
+        componentSchemas={getComponentSchemas()}
+      />,
+    );
   },
 };
