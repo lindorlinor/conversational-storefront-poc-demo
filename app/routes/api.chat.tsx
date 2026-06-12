@@ -7,7 +7,7 @@ import { getSystemPrompt } from '../shopify/system-prompt.graphql';
 import { getThemeConfig, buildThemeCss } from '../shopify/theme.graphql';
 import { corsPreflightResponse, responseWithCors } from '../cors.server';
 
-import {getUItools}  from '../tools/buildUITools';
+import {getUItools, buildMerchantUITools}  from '../tools/buildUITools';
 
 function parseRetryAfterMs(err: unknown): number | null {
   const haystack = typeof err === 'string' ? err : JSON.stringify(err)
@@ -180,8 +180,17 @@ export async function action({ request }: ActionFunctionArgs) {
     console.log('[chat action] system prompt:', systemPrompt);
 
     const body = await request.json()
-    const { messages, cartId } = body
+    const { messages, cartId, componentSchemas } = body
     console.log('[cart] cartId dal body:', cartId)
+
+    // cosa ha mandato il merchant via init({ components }): nomi + schemi
+    console.log(
+      '[merchant] componentSchemas ricevuti:',
+      componentSchemas ? Object.keys(componentSchemas) : '(nessuno)',
+    )
+    if (componentSchemas) {
+      console.log('[merchant] schemi:', JSON.stringify(componentSchemas, null, 2))
+    }
 
     const t0 = Date.now()
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === 'user')
@@ -193,9 +202,20 @@ export async function action({ request }: ActionFunctionArgs) {
         : lastUserMessage?.parts?.find((p: { type: string }) => p.type === 'text')?.text ?? '(unknown)'
     console.log(`\n[0] USER: "${userText}"`)
 
-    let searchToolEndTime: number | null = t0
-    const productCardStreamStart: number[] = []
-    const productListStreamStart: number[] = []
+    // i tool del merchant vanno per ultimi: stesso nome => override del default
+    const merchantTools = buildMerchantUITools(componentSchemas)
+    const tools = {
+      searchProductTool,
+      fetchCollectionTool,
+      searchProductInCollectionTool,
+      addToCartTool: addToCartTool(cartId),
+      ...getUItools(),
+      ...merchantTools,
+    }
+    const toolNames = Object.keys(tools)
+    const merchantNames = Object.keys(merchantTools)
+    console.log(`[tools] creati ${toolNames.length} tool:`, toolNames)
+    console.log('[tools] dal merchant:', merchantNames.length ? merchantNames : '(nessuno)')
 
     const result = streamText({
       system: systemPrompt,
@@ -205,46 +225,22 @@ export async function action({ request }: ActionFunctionArgs) {
         openai: { parallelToolCalls: false },
       },
       onChunk: ({ chunk }) => {
-        const c = chunk as { type: string; toolName?: string; toolCallId?: string }
-        if (c.type === 'tool-input-start' && c.toolName === 'searchProductTool') {
-          console.log(`[0→1] searchProductTool: CHIAMATO — ${Date.now() - t0}ms dopo la domanda (1° LLM TTFT)`)
-        }
-        if (c.type === 'tool-result' && c.toolName === 'searchProductTool') {
-          searchToolEndTime = Date.now()
-        }
-        if (c.type === 'tool-input-start' && c.toolName === 'ProductCard') {
-          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
-          productCardStreamStart.push(Date.now())
-          console.log(`\n[3] ProductCard: STREAMING START — model decision time: ${decisionMs}ms`)
-        }
-        if (c.type === 'tool-result' && c.toolName === 'ProductCard') {
-          const start = productCardStreamStart.shift()
-          const fillMs = start ? Date.now() - start : -1
-          console.log(`[4] ProductCard: SCHEMA COMPLETE — schema fill time: ${fillMs}ms`)
-        }
-        if (c.type === 'tool-input-start' && c.toolName === 'ProductList') {
-          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
-          productListStreamStart.push(Date.now())
-          console.log(`\n[3] ProductList: STREAMING START — model decision time: ${decisionMs}ms`)
-        }
-        if (c.type === 'tool-result' && c.toolName === 'ProductList') {
-          const start = productListStreamStart.shift()
-          const fillMs = start ? Date.now() - start : -1
-          console.log(`[4] ProductList: SCHEMA COMPLETE — schema fill time: ${fillMs}ms`)
-        }
-        if (c.type === 'tool-input-start' && c.toolName === 'CollectionWidget') {
-          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
-          console.log(`\n[3] CollectionWidget: STREAMING START — model decision time: ${decisionMs}ms`)
-        }
-        if (c.type === 'tool-result' && c.toolName === 'CollectionWidget') {
-          console.log(`[4] CollectionWidget: SCHEMA COMPLETE`)
-        }
-        if (c.type === 'tool-input-start' && c.toolName === 'ProductHero') {
-          const decisionMs = searchToolEndTime ? Date.now() - searchToolEndTime : -1
-          console.log(`\n[3] ProductHero: STREAMING START — model decision time: ${decisionMs}ms`)
-        }
-        if (c.type === 'tool-result' && c.toolName === 'ProductHero') {
-          console.log(`[4] ProductHero: SCHEMA COMPLETE`)
+        /* ho procrastinato l'accorpamento della logica per 3 settimane come minimo */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const c = chunk as any
+        switch (c.type) {
+          // il modello ha deciso di chiamare un tool: vedo subito QUALE
+          case 'tool-input-start':
+            console.log(`\n[tool-call] → ${c.toolName} (+${Date.now() - t0}ms)`)
+            break
+          // input completo del tool (cosa ci ha messo dentro il modello)
+          case 'tool-call':
+            console.log(`[tool-call] ${c.toolName} input:`, JSON.stringify(c.input ?? c.args))
+            break
+          // risultato del tool (solo presenza, l'output può essere enorme)
+          case 'tool-result':
+            console.log(`[tool-result] ← ${c.toolName}`)
+            break
         }
       },
       onFinish: ({ usage }) => {
@@ -260,7 +256,7 @@ export async function action({ request }: ActionFunctionArgs) {
         }
       },
       model: model,
-      tools: { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool: addToCartTool(cartId), ...getUItools() },
+      tools,
       messages: await convertToModelMessages(messages),
     })
 
