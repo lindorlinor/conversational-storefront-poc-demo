@@ -134,19 +134,39 @@ export async function loader({ request }: LoaderFunctionArgs) {
       <body style="margin:0">
         <div id="chat-page-root" data-app-origin="${appOrigin}" data-api-url="${apiUrlAttr}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
-        <script src="${appOrigin}/chat-page.js" defer></script>
-        <script>
+        <!-- il bundle è un modulo ES con React external: l'import map fa risolvere
+             react/react-dom dei suoi specificatori bare alle copie esm.sh -->
+        <script type="importmap">
+          {
+            "imports": {
+              "react": "https://esm.sh/react@18",
+              "react-dom": "https://esm.sh/react-dom@18",
+              "react-dom/client": "https://esm.sh/react-dom@18/client",
+              "react/jsx-runtime": "https://esm.sh/react@18/jsx-runtime"
+            }
+          }
+        </script>
+        <script type="module">
+          import React from 'react';
+          import { createRoot } from 'react-dom/client';
+          import { ConversationalStorefront } from '${appOrigin}/widget/conversational-storefront.js';
+
+          var container = document.getElementById('chat-page-root');
+          // storefront headless: il parent passa il cartId nell'src dell'iframe
+          var fromQuery = new URLSearchParams(window.location.search).get('cartId');
           // nel caso app proxy questa pagina è same-origin con lo store, quindi
           // document.cookie legge/scrive il cookie cart dello store: qui facciamo
           // da "merchant di riferimento" (issue #79), il widget non tocca cookie
-          window.addEventListener('load', function () {
-            // storefront headless: il parent passa il cartId nell'src dell'iframe
-            var fromQuery = new URLSearchParams(window.location.search).get('cartId');
-            var m = document.cookie.match(/(?:^|;\\s*)cart=([^;]+)/);
-            ConversationalStorefront.init({
-              cartId: fromQuery || (m ? decodeURIComponent(m[1]) : null),
-            });
-          });
+          var m = document.cookie.match(/(?:^|;\\s*)cart=([^;]+)/);
+          var cartId = fromQuery || (m ? decodeURIComponent(m[1]) : null);
+
+          createRoot(container).render(
+            React.createElement(ConversationalStorefront, {
+              apiUrl: container.dataset.apiUrl,
+              cartId: cartId,
+            })
+          );
+
           window.addEventListener('conversational-storefront:cart-id-changed', function (e) {
             document.cookie = 'cart=' + encodeURIComponent(e.detail.cartId) + '; path=/; max-age=' + 60 * 60 * 24 * 30;
           });

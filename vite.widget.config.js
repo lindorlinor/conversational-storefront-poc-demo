@@ -5,10 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
-// Bundle per store Hydrogen: a differenza di vite.page.config.js NON include
-// React (lo prende dall'host) e produce un modulo ES che esporta il componente
-// <ConversationalStorefront>, montato dal merchant nel suo albero React. Così i
-// componenti reali del merchant (ProductCard ecc.) hanno il context Hydrogen.
+// Bundle unico del widget: modulo ES che esporta <ConversationalStorefront>,
+// React preso dall'host (esm.sh nel caso iframe/Liquid, context Hydrogen nello
+// store headless) così esiste una sola istanza di React. Montato dall'host con
+// createRoot. Sostituisce i vecchi vite.page.config.js e vite.hydrogen.config.js.
 export default defineConfig({
   esbuild: {
     jsx: "automatic",
@@ -21,7 +21,7 @@ export default defineConfig({
     outDir: resolve(__dirname, "public"),
     emptyOutDir: false,
     rollupOptions: {
-      input: resolve(__dirname, "storefront-ui/hydrogen.tsx"),
+      input: resolve(__dirname, "storefront-ui/page.tsx"),
       // senza questo Vite (build "app", non-lib) tree-shaka gli export dell'entry
       // e ConversationalStorefront sparisce: lo forziamo a mantenere l'export
       preserveEntrySignatures: "strict",
@@ -34,7 +34,7 @@ export default defineConfig({
         id.startsWith("react/") ||
         id.startsWith("react-dom/"),
       output: {
-        entryFileNames: "chat-page.hydrogen.js",
+        entryFileNames: "conversational-storefront.js",
         format: "es",
         inlineDynamicImports: true,
       },

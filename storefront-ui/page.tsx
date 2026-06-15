@@ -1,4 +1,4 @@
-import { createRoot, Root } from "react-dom/client";
+import { useEffect, useState } from "react";
 import { ChatPage } from "./ChatPage";
 import { cart } from "./cart";
 import {
@@ -8,23 +8,34 @@ import {
 } from "./component-registry";
 import rawStyles from "./page.css?inline";
 
-const styleEl = document.createElement("style");
-styleEl.textContent = rawStyles.replace(
-  /@layer\s+utilities\s*\{([\s\S]*?)\}(?=\s*(?:@layer|$))/g,
-  "$1"
-);
-document.head.appendChild(styleEl);
+/* differenza con page.tsx: non include react e non fa createRoot, lo monta l'host */
 
+let stylesInjected = false;
+function injectStyles() {
+  if (stylesInjected || typeof document === "undefined") return;
+  stylesInjected = true;
+  const styleEl = document.createElement("style");
+  styleEl.textContent = rawStyles.replace(
+    /@layer\s+utilities\s*\{([\s\S]*?)\}(?=\s*(?:@layer|$))/g,
+    "$1",
+  );
+  document.head.appendChild(styleEl);
+}
 
-/* injecetTheme usato per iniettare il CSS del tema del merchant. Viene chiamato da */
+/* injectTheme: scarica e inietta il CSS del tema del merchant prima del render */
 function injectTheme(apiUrl: string): Promise<void> {
   const u = new URL(apiUrl, window.location.href);
-  const themeUrl = u.origin + u.pathname.replace(/\/$/, "") + "/theme" + u.search;
+  const themeUrl =
+    u.origin + u.pathname.replace(/\/$/, "") + "/theme" + u.search;
+  console.log("[injectTheme] fetching theme CSS from:", themeUrl);
   return fetch(themeUrl)
     .then((res) => (res.ok ? res.text() : ""))
     .then((css) => {
+      console.log(
+        `[injectTheme] CSS ricevuto (${css.length} char):\n`,
+        css || "(vuoto)",
+      );
       if (!css) return;
-      // rimuove un tema iniettato da una init precedente (re-mount SPA)
       const el = document.createElement("style");
       el.dataset.conversationalStorefrontTheme = "";
       el.textContent = css;
@@ -35,54 +46,46 @@ function injectTheme(apiUrl: string): Promise<void> {
     });
 }
 
-interface InitOptions {
+export interface ConversationalStorefrontProps {
   apiUrl?: string;
-  // valore iniziale: il widget poi lo aggiorna da solo e segnala i cambiamenti
-  // con l'evento "conversational-storefront:cart-id-changed" (anche postMessage)
   cartId?: string | null;
-  // componenti del merchant che sovrascrivono (stesso nome) o aggiungono
-  // (nome nuovo) widget al registry: { component, schema, description }
-  components?: Record<string, MerchantComponent>;
+  components?: Record<string, MerchantComponent>; //aggiunte props react rispetto page.tsx (che a pensarci dovrei rinominare liquid.tsx ? todo)
 }
 
-declare global {
-  interface Window {
-    ConversationalStorefront: { init: (options?: InitOptions) => void };
-  }
-}
+export function ConversationalStorefront({
+  apiUrl,
+  cartId,
+  components,
+}: ConversationalStorefrontProps) {
+  const [ready, setReady] = useState(false);
+  // opacity 0 finché il tema non è iniettato, così non flesha (solo se c'è un apiUrl da cui fetcharlo)
+  const [opacity, setOpacity] = useState(apiUrl ? 0 : 1);
 
-let root: Root | null = null;
-let mountedContainer: HTMLElement | null = null;
-
-window.ConversationalStorefront = {
-  init({ apiUrl, cartId, components }: InitOptions = {}) {
-    const container = document.getElementById("chat-page-root");
-    if (!container) return;
-
-    // registra i componenti del merchant prima del render: il render loop li
-    // userà per il lookup e i loro schemi viaggeranno nel body verso il backend
+  useEffect(() => {
+    injectStyles();
+    // registra i componenti del merchant prima del primo render di ChatPage
     registerComponents(components);
 
-    // priorità: opzione esplicita > data-api-url scritto dal loader > default proxy
-    const resolvedApiUrl = apiUrl ?? container.dataset.apiUrl ?? `/apps/chatbot${window.location.search}`;
+    const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
     cart.init(cartId ?? null, resolvedApiUrl);
 
-    /* nascosto perchè altrimenti flesha le persone */
-    container.style.opacity = "0";
-    injectTheme(resolvedApiUrl).finally(() => {
-      container.style.opacity = "1";
-    });
-
-    // in una SPA il container può essere smontato e ricreato tra una init e l'altra
-    if (!root || mountedContainer !== container) {
-      root = createRoot(container);
-      mountedContainer = container;
+    // se apiUrl è esplicito iniettiamo il tema del merchant; con il default proxy
+    // il tema è già nella pagina iframe (api.chat.tsx) quindi non serve
+    if (apiUrl) {
+      injectTheme(apiUrl).finally(() => setOpacity(1));
     }
-    root.render(
-      <ChatPage
-        apiUrl={resolvedApiUrl}
-        componentSchemas={getComponentSchemas()}
-      />,
-    );
-  },
-};
+
+    setReady(true);
+  }, [apiUrl, cartId, components]);
+
+  if (!ready) return null;
+
+  const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
+  return (
+    <div style={{ opacity, transition: "opacity 120ms ease" }}>
+      <ChatPage apiUrl={resolvedApiUrl} componentSchemas={getComponentSchemas()} />
+    </div>
+  );
+}
+
+export default ConversationalStorefront;
