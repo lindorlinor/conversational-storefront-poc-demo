@@ -63,7 +63,7 @@ export function ChatPage({ apiUrl, componentSchemas }: {
   const disabled = status === "streaming" || status === "submitted";
 
   return (
-    <div className="font-widget-primary flex flex-col h-screen bg-gradient-to-b from-widget-page-from to-widget-page-to">
+    <div className="tw:font-widget-primary tw:flex tw:flex-col tw:h-screen tw:bg-gradient-to-b tw:from-widget-page-from tw:to-widget-page-to">
 
       <button
         type="button"
@@ -74,30 +74,30 @@ export function ChatPage({ apiUrl, componentSchemas }: {
             window.parent.postMessage({ type: "conversational-storefront:close" }, "*");
           }
         }}
-        className="font-widget-secondary fixed top-4 right-4 z-50 flex items-center gap-1.5 rounded-widget-base border border-widget-border bg-widget-bg px-3 py-1.5 text-sm text-widget-text-secondary shadow-sm transition hover:text-widget-text"
+        className="tw:font-widget-secondary tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
       >
         Negozio
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="tw:h-4 tw:w-4">
           <path d="M5 12h14M13 6l6 6-6 6" />
         </svg>
       </button>
 
-      <div className={`flex justify-center items-center px-5 text-center transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 opacity-0 py-0" : "max-h-40 opacity-100 py-6"}`}>
+      <div className={`tw:flex tw:justify-center tw:items-center tw:px-5 tw:text-center tw:transition-all tw:duration-300 tw:overflow-hidden ${isScrolled ? "tw:max-h-0 tw:opacity-0 tw:py-0" : "tw:max-h-40 tw:opacity-100 tw:py-6"}`}>
         <Title apiBase={apiBase} shop={shop} />
       </div>
 
-      <div className={`flex justify-center px-5 transition-all duration-300 overflow-hidden ${isScrolled ? "max-h-0 opacity-0 py-0 pointer-events-none" : "max-h-40 opacity-100 py-4"}`}>
-        <div className="w-1/2">
+      <div className={`tw:flex tw:justify-center tw:px-5 tw:transition-all tw:duration-300 tw:overflow-hidden ${isScrolled ? "tw:max-h-0 tw:opacity-0 tw:py-0 tw:pointer-events-none" : "tw:max-h-40 tw:opacity-100 tw:py-4"}`}>
+        <div className="tw:w-1/2">
           <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} />
         </div>
       </div>
 
       <div
-        className="overflow-y-auto flex flex-col flex-1"
+        className="tw:overflow-y-auto tw:flex tw:flex-col tw:flex-1"
         onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 50)}
       >
 
-        <div className="flex flex-col">
+        <div className="tw:flex tw:flex-col">
           {messages
             .filter((message) => message.role === "assistant")
             .slice(-1)
@@ -108,8 +108,8 @@ export function ChatPage({ apiUrl, componentSchemas }: {
               ),
             )}
           {(status === "streaming" || status === "submitted") && (
-            <div className="w-[80%] mx-auto py-3">
-              <div className="self-start bg-widget-surface px-4 py-2.5 rounded-lg text-base text-widget-text-muted">
+            <div className="tw:w-[80%] tw:mx-auto tw:py-3">
+              <div className="tw:self-start tw:bg-widget-surface tw:px-4 tw:py-2.5 tw:rounded-lg tw:text-base tw:text-widget-text-muted">
                 ...
               </div>
             </div>
@@ -120,7 +120,7 @@ export function ChatPage({ apiUrl, componentSchemas }: {
  */}
       </div>
 
-      <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-1/2 z-50 transition-all duration-300 ${isScrolled ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}>
+      <div className={`tw:fixed tw:bottom-6 tw:left-1/2 tw:-translate-x-1/2 tw:w-1/2 tw:z-50 tw:transition-all tw:duration-300 ${isScrolled ? "tw:opacity-100 tw:translate-y-0" : "tw:opacity-0 tw:translate-y-4 tw:pointer-events-none"}`}>
         <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} />
       </div>
 

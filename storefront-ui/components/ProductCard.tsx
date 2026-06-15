@@ -3,12 +3,12 @@ import { variantUrl } from "../utils/storefront";
 
 export function ProductCardSkeleton() {
     return (
-        <div className="animate-pulse flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-card overflow-hidden border border-widget-border">
-            <div className="aspect-square bg-widget-card-image border border-widget-card-image-border" />
-            <div className="p-3 flex flex-col gap-2">
-                <div className="h-4 bg-widget-surface rounded w-3/4" />
-                <div className="h-3 bg-widget-surface rounded w-1/2" />
-                <div className="h-8 bg-widget-surface rounded w-1/3 self-end mt-1" />
+        <div className="tw:animate-pulse tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border">
+            <div className="tw:aspect-square tw:bg-widget-card-image tw:border tw:border-widget-card-image-border" />
+            <div className="tw:p-3 tw:flex tw:flex-col tw:gap-2">
+                <div className="tw:h-4 tw:bg-widget-surface tw:rounded tw:w-3/4" />
+                <div className="tw:h-3 tw:bg-widget-surface tw:rounded tw:w-1/2" />
+                <div className="tw:h-8 tw:bg-widget-surface tw:rounded tw:w-1/3 tw:self-end tw:mt-1" />
             </div>
         </div>
     );
@@ -43,25 +43,25 @@ const ProductCard = (product: Product) => {
             {cards.map(({ key, imgUrl: cardImgUrl, url: cardUrl, price, variantTitle }) => (
                 <div
                     key={key}
-                    className="flex-shrink-0 w-[var(--size-widget-card)] rounded-widget-card overflow-hidden border border-widget-border bg-widget-card"
+                    className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border tw:bg-widget-card"
                 >
-                    <a href={cardUrl} className="block aspect-square overflow-hidden bg-widget-card-image border border-widget-card-image-border group">
+                    <a href={cardUrl} className="tw:block tw:aspect-square tw:overflow-hidden tw:bg-widget-card-image tw:border tw:border-widget-card-image-border tw:group">
                         <img
                             src={cardImgUrl}
                             alt={title ?? ''}
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            className="tw:w-full tw:h-full tw:object-cover tw:transition-transform tw:duration-300 tw:group-hover:scale-105"
                         />
                     </a>
-                    <div className="p-3 flex flex-col gap-1">
-                        <p className="m-0 text-sm font-semibold text-widget-text leading-snug line-clamp-2">{title}</p>
+                    <div className="tw:p-3 tw:flex tw:flex-col tw:gap-1">
+                        <p className="tw:m-0 tw:text-sm tw:font-semibold tw:text-widget-text tw:leading-snug tw:line-clamp-2">{title}</p>
                         {variantTitle && (
-                            <p className="font-widget-secondary m-0 text-xs text-widget-text-secondary">{variantTitle}</p>
+                            <p className="tw:font-widget-secondary tw:m-0 tw:text-xs tw:text-widget-text-secondary">{variantTitle}</p>
                         )}
-                        <div className="flex items-center justify-between mt-2">
-                            <span className="font-widget-secondary text-sm font-bold text-widget-text-secondary">{price} {currencyCode}</span>
+                        <div className="tw:flex tw:items-center tw:justify-between tw:mt-2">
+                            <span className="tw:font-widget-secondary tw:text-sm tw:font-bold tw:text-widget-text-secondary">{price} {currencyCode}</span>
                             <a
                                 href={cardUrl}
-                                className="font-widget-secondary rounded-widget-base text-xs px-3 py-1.5 bg-widget-accent text-widget-accent-fg font-medium no-underline border border-widget-accent-fg"
+                                className="tw:font-widget-secondary tw:rounded-widget-base tw:text-xs tw:px-3 tw:py-1.5 tw:bg-widget-accent tw:text-widget-accent-fg tw:font-medium tw:no-underline tw:border tw:border-widget-accent-fg"
                                 style={{ textDecoration: 'none' }}
                             >
                                 View

@@ -69,7 +69,7 @@ export function buildThemeCss(config: ThemeConfig): string {
   const vars = config.variant_selector ?? {};
   const declarations = Object.entries(vars)
     .filter(([, v]) => v !== "")
-    .map(([key, value]) => `  --${key}: ${value};`)
+    .map(([key, value]) => `  --tw-${key}: ${value};`)
     .join("\n");
   if (!declarations) return "";
   return `:root {\n${declarations}\n}`;

@@ -39,8 +39,8 @@ export function ProductList({ products }: { products?: Product[] }) {
 
   if (!products?.length) {
     return (
-      <div className="w-full overflow-x-auto">
-        <div className="flex gap-3 flex-nowrap pb-2 w-max">
+      <div className="tw:w-full tw:overflow-x-auto">
+        <div className="tw:flex tw:gap-3 tw:flex-nowrap tw:pb-2 tw:w-max">
           {Array.from({ length: PLACEHOLDER_COUNT }).map((_, i) => (
             <ProductCardSkeleton key={i} />
           ))}
@@ -50,9 +50,9 @@ export function ProductList({ products }: { products?: Product[] }) {
   }
 
   return (
-    <div className="w-full relative py-8">
-      <div ref={scrollRef} className="overflow-x-auto pb-2">
-        <div className="flex gap-3 flex-nowrap w-max">
+    <div className="tw:w-full tw:relative tw:py-8">
+      <div ref={scrollRef} className="tw:overflow-x-auto tw:pb-2">
+        <div className="tw:flex tw:gap-3 tw:flex-nowrap tw:w-max">
           {products.map((p, i) => (
             <ProductCard key={p.id ?? i} {...p} />
           ))}
@@ -62,7 +62,7 @@ export function ProductList({ products }: { products?: Product[] }) {
       {canScrollLeft && (
         <button
           onClick={() => scrollBy('left')}
-          className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
+          className="tw:absolute tw:left-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-1 tw:pr-8 tw:cursor-pointer tw:text-widget-text-secondary tw:hover:text-widget-text tw:transition-colors"
           style={{ background: 'linear-gradient(to right, var(--color-widget-scroll-fade), transparent)' }}
           aria-label="Scorri a sinistra"
         >
@@ -73,8 +73,8 @@ export function ProductList({ products }: { products?: Product[] }) {
       <button
         onClick={() => scrollBy('right')}
         disabled={!canScrollRight}
-        className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${
-          canScrollRight ? 'opacity-100 cursor-pointer' : 'opacity-0 pointer-events-none'
+        className={`tw:absolute tw:right-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-8 tw:pr-1 tw:transition-all tw:text-widget-text-secondary tw:hover:text-widget-text ${
+          canScrollRight ? 'tw:opacity-100 tw:cursor-pointer' : 'tw:opacity-0 tw:pointer-events-none'
         }`}
         style={{ background: 'linear-gradient(to left, var(--color-widget-scroll-fade), transparent)' }}
         aria-label="Scorri a destra"

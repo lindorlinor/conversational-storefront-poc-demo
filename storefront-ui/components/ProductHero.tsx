@@ -65,42 +65,42 @@ export function ProductHero({ title, description, images = [], price, url, varia
   };
 
   return (
-    <div className="flex gap-8 py-8">
+    <div className="tw:flex tw:gap-8 tw:py-8">
 
       {/* colonna sinistra 40% — info prodotto */}
-      <div className="w-[40%] flex flex-col gap-4">
+      <div className="tw:w-[40%] tw:flex tw:flex-col tw:gap-4">
 
-        <h2 className="text-2xl font-semibold text-widget-text leading-tight">{title}.</h2>
+        <h2 className="tw:text-2xl tw:font-semibold tw:text-widget-text tw:leading-tight">{title}.</h2>
 
         {variants.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="tw:flex tw:flex-wrap tw:gap-2">
             {variants.map((v) => (
-              <button key={v.id ?? v.title} onClick={() => handleVariantSelect(v)} className={`font-widget-secondary px-3 py-1.5 text-xs font-medium rounded-widget-base border transition-colors ${selectedVariant?.title === v.title ? "bg-widget-accent text-widget-accent-fg border-widget-accent-fg" : "bg-widget-bg text-widget-text-secondary border-widget-accent-fg hover:border-widget-accent"}`}>
+              <button key={v.id ?? v.title} onClick={() => handleVariantSelect(v)} className={`tw:font-widget-secondary tw:px-3 tw:py-1.5 tw:text-xs tw:font-medium tw:rounded-widget-base tw:border tw:transition-colors ${selectedVariant?.title === v.title ? "tw:bg-widget-accent tw:text-widget-accent-fg tw:border-widget-accent-fg" : "tw:bg-widget-bg tw:text-widget-text-secondary tw:border-widget-accent-fg tw:hover:border-widget-accent"}`}>
                 {v.title}
               </button>
             ))}
           </div>
         )}
 
-        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="font-widget-secondary flex items-center justify-between w-full px-3 py-2 bg-widget-accent text-widget-accent-fg border border-widget-accent-fg text-sm font-medium rounded-widget-base disabled:opacity-50 disabled:cursor-not-allowed">
+        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="tw:font-widget-secondary tw:flex tw:items-center tw:justify-between tw:w-full tw:px-3 tw:py-2 tw:bg-widget-accent tw:text-widget-accent-fg tw:border tw:border-widget-accent-fg tw:text-sm tw:font-medium tw:rounded-widget-base tw:disabled:opacity-50 tw:disabled:cursor-not-allowed">
           <span>Add to cart</span>
           {formattedPrice && (
-            <div className="flex items-center gap-2">
+            <div className="tw:flex tw:items-center tw:gap-2">
               <span>{isAdding ? "..." : formattedPrice}</span>
-              <span className="text-base leading-none">+</span>
+              <span className="tw:text-base tw:leading-none">+</span>
             </div>
           )}
         </button>
 
-        {error && <p className="text-xs text-widget-error leading-relaxed">{error}</p>}
+        {error && <p className="tw:text-xs tw:text-widget-error tw:leading-relaxed">{error}</p>}
 
         {description && (
-          <p className="font-widget-secondary text-xs text-widget-text-secondary leading-relaxed">{description}</p>
+          <p className="tw:font-widget-secondary tw:text-xs tw:text-widget-text-secondary tw:leading-relaxed">{description}</p>
         )}
 
         {url && (
-          <div className="mt-auto">
-            <a href={url} className="text-xs text-widget-text-secondary hover:text-widget-text transition-colors font-widget-secondary">
+          <div className="tw:mt-auto">
+            <a href={url} className="tw:text-xs tw:text-widget-text-secondary tw:hover:text-widget-text tw:transition-colors tw:font-widget-secondary">
               see on the traditional shop →
             </a>
           </div>
@@ -108,17 +108,17 @@ export function ProductHero({ title, description, images = [], price, url, varia
       </div>
 
       {/* gallery */}
-      <div className="w-[60%] relative h-72 rounded-lg overflow-hidden">
+      <div className="tw:w-[60%] tw:relative tw:h-72 tw:rounded-lg tw:overflow-hidden">
         {displayImages.length > 0 ? (
           <>
             <div
               ref={galleryRef}
-              className="flex h-full overflow-x-auto"
+              className="tw:flex tw:h-full tw:overflow-x-auto"
               style={{ scrollbarWidth: "none" }}
             >
               {displayImages.map((img, i) => (
-                <div key={i} className="flex-shrink-0 h-full aspect-square bg-widget-surface">
-                  <img src={img.url} alt={img.altText ?? title} className="w-full h-full object-contain" />
+                <div key={i} className="tw:flex-shrink-0 tw:h-full tw:aspect-square tw:bg-widget-surface">
+                  <img src={img.url} alt={img.altText ?? title} className="tw:w-full tw:h-full tw:object-contain" />
                 </div>
               ))}
             </div>
@@ -126,7 +126,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
             {canLeft && (
               <button
                 onClick={() => scrollBy("left")}
-                className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
+                className="tw:absolute tw:left-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-1 tw:pr-8 tw:cursor-pointer tw:text-widget-text-secondary tw:hover:text-widget-text tw:transition-colors"
                 style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
                 aria-label="Immagine precedente"
               >←</button>
@@ -134,13 +134,13 @@ export function ProductHero({ title, description, images = [], price, url, varia
             <button
               onClick={() => scrollBy("right")}
               disabled={!canRight}
-              className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canRight ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
+              className={`tw:absolute tw:right-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-8 tw:pr-1 tw:transition-all tw:text-widget-text-secondary tw:hover:text-widget-text ${canRight ? "tw:opacity-100 tw:cursor-pointer" : "tw:opacity-0 tw:pointer-events-none"}`}
               style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
               aria-label="Immagine successiva"
             >→</button>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-widget-surface text-widget-text-muted text-sm">
+          <div className="tw:w-full tw:h-full tw:flex tw:items-center tw:justify-center tw:bg-widget-surface tw:text-widget-text-muted tw:text-sm">
             no image
           </div>
         )}

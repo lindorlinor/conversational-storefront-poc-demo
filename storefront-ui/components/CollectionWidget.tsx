@@ -44,39 +44,39 @@ export function CollectionWidget({
   };
 
   return (
-    <div className="flex gap-8 py-8">
+    <div className="tw:flex tw:gap-8 tw:py-8">
 
       {/* colonna sinistra — testo */}
-      <div className="flex-shrink-0 w-[220px] flex flex-col gap-3">
-        <h2 className="text-[22px] font-medium m-0 text-gray-900">{title}</h2>
-        <p className="font-widget-secondary text-sm leading-relaxed text-gray-500 m-0">{description}</p>
+      <div className="tw:flex-shrink-0 tw:w-[220px] tw:flex tw:flex-col tw:gap-3">
+        <h2 className="tw:text-[22px] tw:font-medium tw:m-0 tw:text-gray-900">{title}</h2>
+        <p className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-gray-500 tw:m-0">{description}</p>
       </div>
 
       {/* colonna destra — immagine di copertina + scroll prodotti */}
-      <div className="flex-1 flex gap-3 min-w-0">
+      <div className="tw:flex-1 tw:flex tw:gap-3 tw:min-w-0">
 
         {coverImageUrl && (
-          <div className="flex-shrink-0 w-[var(--size-widget-card)] aspect-square rounded-widget-card bg-widget-surface border border-widget-border overflow-hidden">
-            <img src={coverImageUrl} alt={title} className="w-full h-full object-cover" />
+          <div className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:aspect-square tw:rounded-widget-card tw:bg-widget-surface tw:border tw:border-widget-border tw:overflow-hidden">
+            <img src={coverImageUrl} alt={title} className="tw:w-full tw:h-full tw:object-cover" />
           </div>
         )}
 
-        <div className="flex-1 min-w-0 relative">
+        <div className="tw:flex-1 tw:min-w-0 tw:relative">
           <div
             ref={scrollRef}
-            className="overflow-x-auto"
+            className="tw:overflow-x-auto"
             style={{ scrollbarWidth: "none" }}
           >
-            <div className="flex gap-3 flex-nowrap">
+            <div className="tw:flex tw:gap-3 tw:flex-nowrap">
               {products.length > 0 ? (
                 products.map((product) => (
-                  <div key={product.id} className="flex-shrink-0 w-[var(--size-widget-card)]">
+                  <div key={product.id} className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)]">
                     <ProductCard {...product} />
                   </div>
                 ))
               ) : (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex-shrink-0 w-[var(--size-widget-card)]">
+                  <div key={i} className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)]">
                     <ProductCardSkeleton />
                   </div>
                 ))
@@ -87,14 +87,14 @@ export function CollectionWidget({
           {canLeft && (
             <button
               onClick={() => scrollBy("left")}
-              className="absolute left-0 inset-y-0 z-10 flex items-center pl-1 pr-8 cursor-pointer text-widget-text-secondary hover:text-widget-text transition-colors"
+              className="tw:absolute tw:left-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-1 tw:pr-8 tw:cursor-pointer tw:text-widget-text-secondary tw:hover:text-widget-text tw:transition-colors"
               style={{ background: "linear-gradient(to right, var(--color-widget-scroll-fade), transparent)" }}
             >←</button>
           )}
           <button
             onClick={() => scrollBy("right")}
             disabled={!canRight}
-            className={`absolute right-0 inset-y-0 z-10 flex items-center pl-8 pr-1 transition-all text-widget-text-secondary hover:text-widget-text ${canRight ? "opacity-100 cursor-pointer" : "opacity-0 pointer-events-none"}`}
+            className={`tw:absolute tw:right-0 tw:inset-y-0 tw:z-10 tw:flex tw:items-center tw:pl-8 tw:pr-1 tw:transition-all tw:text-widget-text-secondary tw:hover:text-widget-text ${canRight ? "tw:opacity-100 tw:cursor-pointer" : "tw:opacity-0 tw:pointer-events-none"}`}
             style={{ background: "linear-gradient(to left, var(--color-widget-scroll-fade), transparent)" }}
           >→</button>
         </div>

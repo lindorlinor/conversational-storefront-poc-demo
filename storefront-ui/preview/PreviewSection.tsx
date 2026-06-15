@@ -112,7 +112,7 @@ const PRODUCTS_3 = [
 
 export default function PreviewSection() {
   return (
-    <div className="flex flex-col">
+    <div className="tw:flex tw:flex-col">
       <Section><ProductList products={PRODUCTS_1} /></Section>
       <Section><ProductHero {...SKI_WAX} /></Section>
       <Section><ProductList products={PRODUCTS_2} /></Section>

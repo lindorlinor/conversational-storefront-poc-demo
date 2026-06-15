@@ -9,15 +9,15 @@ interface SectionProps {
 
 function Section({ message, children }: SectionProps) {
   return (
-    <section className="section pt-3 rounded-widget-base">
-      <div className="w-[80%] mx-auto pb-4">
+    <section className="section tw:pt-3 tw:rounded-widget-base">
+      <div className="tw:w-[80%] tw:mx-auto tw:pb-4">
         {children}
 
         {message?.parts.map((part: UIMessage["parts"][number], i: number) => {
 
           // testo dell'LLM
           if (part.type === "text") {
-            return <p key={i} className="font-widget-secondary text-sm leading-relaxed text-widget-text">{part.text}</p>;
+            return <p key={i} className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>;
           }
 
           // widget dal registry

@@ -1,9 +1,12 @@
 @config "../tailwind.page.config.js";
-@import "tailwindcss";
+/* prefix(tw): tutte le utility del widget diventano tw:* (es. tw:flex,
+   tw:grid-cols-1). Così non collidono mai per nome con le classi del merchant
+   (Tailwind v3/v4), che restano senza prefisso. Il separatore in v4 è ":". */
+@import "tailwindcss" prefix(tw);
 
 
 
-@theme {
+@theme inline{
   --color-widget-bg:                  #ffffff;
   --color-widget-card:                #ffffff;
   --color-widget-surface:             #f9fafb;

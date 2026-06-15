@@ -22,7 +22,7 @@ export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInp
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-2 rounded-widget-base border border-widget-border bg-widget-bg px-4 py-2 shadow-sm transition-colors focus-within:border-widget-accent"
+      className="tw:flex tw:items-center tw:gap-2 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-4 tw:py-2 tw:shadow-sm tw:transition-colors tw:focus-within:border-widget-accent"
     >
       <input
         type="text"
@@ -30,19 +30,19 @@ export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInp
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        className="font-widget-secondary flex-1 bg-transparent text-sm text-widget-text-secondary outline-none"
+        className="tw:font-widget-secondary tw:flex-1 tw:bg-transparent tw:text-sm tw:text-widget-text-secondary tw:outline-none"
       />
 
       <button
         type="submit"
         disabled={disabled}
-        className="flex-shrink-0 cursor-pointer rounded-widget-base bg-widget-accent p-2 text-widget-accent-fg border border-widget-accent-fg transition hover:bg-black disabled:cursor-default disabled:opacity-40"
+        className="tw:flex-shrink-0 tw:cursor-pointer tw:rounded-widget-base tw:bg-widget-accent tw:p-2 tw:text-widget-accent-fg tw:border tw:border-widget-accent-fg tw:transition tw:hover:bg-black tw:disabled:cursor-default tw:disabled:opacity-40"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="h-4 w-4"
+          className="tw:h-4 tw:w-4"
         >
           <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
         </svg>
