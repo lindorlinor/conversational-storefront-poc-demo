@@ -73,7 +73,7 @@ function injectTheme(apiUrl: string): Promise<void> {
 }
 
 export interface ConversationalStorefrontProps {
-  apiUrl?: string;
+  apiUrl: string;
   cartId?: string | null;
   components?: Record<string, MerchantComponent>; //aggiunte props react rispetto page.tsx (che a pensarci dovrei rinominare liquid.tsx ? todo)
 }
@@ -84,32 +84,26 @@ export function ConversationalStorefront({
   components,
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
-  // opacity 0 finché il tema non è iniettato, così non flesha (solo se c'è un apiUrl da cui fetcharlo)
-  const [opacity, setOpacity] = useState(apiUrl ? 0 : 1);
+  // opacity 0 finché il tema non è iniettato, così non flesha
+  const [opacity, setOpacity] = useState(0);
 
   useEffect(() => {
     injectStyles();
     // registra i componenti del merchant prima del primo render di ChatPage
     registerComponents(components);
 
-    const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
-    cart.init(cartId ?? null, resolvedApiUrl);
+    cart.init(cartId ?? null, apiUrl);
 
-    // se apiUrl è esplicito iniettiamo il tema del merchant; con il default proxy
-    // il tema è già nella pagina iframe (api.chat.tsx) quindi non serve
-    if (apiUrl) {
-      injectTheme(apiUrl).finally(() => setOpacity(1));
-    }
+    injectTheme(apiUrl).finally(() => setOpacity(1));
 
     setReady(true);
   }, [apiUrl, cartId, components]);
 
   if (!ready) return null;
 
-  const resolvedApiUrl = apiUrl ?? `/apps/chatbot${window.location.search}`;
   return (
     <div style={{ opacity, transition: "opacity 120ms ease" }}>
-      <ChatPage apiUrl={resolvedApiUrl} componentSchemas={getComponentSchemas()} />
+      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} />
     </div>
   );
 }

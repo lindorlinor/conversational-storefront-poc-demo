@@ -28,14 +28,12 @@ export function registerComponents(
   }
 }
 
-// componente del merchant per quel nome (lookup nel render loop); undefined
 // se il merchant non ha registrato nulla per quel nome -> si usa il default
 export function getComponent(name: string): ComponentType<any> | undefined {
   return merchantComponents[name]?.component;
 }
 
-// schemi dei componenti merchant da includere nel body di ogni richiesta chat:
-// il JSON Schema vive nel frontend ma il tool va costruito nel backend
+// json schema delle componenti del merchant
 export function getComponentSchemas(): Record<string, SerializedComponentSchema> {
   return Object.fromEntries(
     Object.entries(merchantComponents).map(([name, def]) => [

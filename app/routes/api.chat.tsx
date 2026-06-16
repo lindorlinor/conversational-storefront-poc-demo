@@ -4,7 +4,6 @@ import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, 
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
-import { getThemeConfig, buildThemeCss } from '../shopify/theme.graphql';
 import { corsPreflightResponse, responseWithCors } from '../cors.server';
 
 import {getUItools, buildMerchantUITools}  from '../tools/buildUITools';
@@ -110,16 +109,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     : `/api/chat?shop=${encodeURIComponent(shop)}`;
   const apiUrlAttr = apiUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
-  let themeCss = '';
-  if (shop) {
-    try {
-      const { admin } = await unauthenticated.admin(shop);
-      const config = await getThemeConfig(admin);
-      if (config) themeCss = buildThemeCss(config.theme);
-    } catch {
-      // tema non disponibile, il widget usa i valori di default del CSS
-    }
-  }
+
 
   // si ho importato i font face direttamente solo per poter avere piu varietà nella personalizzazione del tema, a logica si possono vedere solo quelli del proprio store quindi non dovrebbero esserci problemi
   const html = `<!DOCTYPE html>
