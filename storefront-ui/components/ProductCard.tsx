@@ -3,7 +3,7 @@ import { variantUrl } from "../utils/storefront";
 
 export function ProductCardSkeleton() {
     return (
-        <div className="tw:animate-pulse tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border">
+        <div className="tw:animate-pulse tw:flex-shrink-0 tw:w-[var(--tw-size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border">
             <div className="tw:aspect-square tw:bg-widget-card-image tw:border tw:border-widget-card-image-border" />
             <div className="tw:p-3 tw:flex tw:flex-col tw:gap-2">
                 <div className="tw:h-4 tw:bg-widget-surface tw:rounded tw:w-3/4" />
@@ -43,7 +43,7 @@ const ProductCard = (product: Product) => {
             {cards.map(({ key, imgUrl: cardImgUrl, url: cardUrl, price, variantTitle }) => (
                 <div
                     key={key}
-                    className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border tw:bg-widget-card"
+                    className="tw:flex-shrink-0 tw:w-[var(--tw-size-widget-card)] tw:rounded-widget-card tw:overflow-hidden tw:border tw:border-widget-border tw:bg-widget-card"
                 >
                     <a href={cardUrl} className="tw:block tw:aspect-square tw:overflow-hidden tw:bg-widget-card-image tw:border tw:border-widget-card-image-border tw:group">
                         <img

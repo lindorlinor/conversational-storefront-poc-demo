@@ -39,7 +39,7 @@ export function CollectionWidget({
   const scrollBy = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const cardPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--size-widget-card").trim()) || 216;
+    const cardPx = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tw-size-widget-card").trim()) || 216;
     el.scrollBy({ left: dir === "right" ? cardPx + 12 : -(cardPx + 12), behavior: "smooth" });
   };
 
@@ -56,7 +56,7 @@ export function CollectionWidget({
       <div className="tw:flex-1 tw:flex tw:gap-3 tw:min-w-0">
 
         {coverImageUrl && (
-          <div className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)] tw:aspect-square tw:rounded-widget-card tw:bg-widget-surface tw:border tw:border-widget-border tw:overflow-hidden">
+          <div className="tw:flex-shrink-0 tw:w-[var(--tw-size-widget-card)] tw:aspect-square tw:rounded-widget-card tw:bg-widget-surface tw:border tw:border-widget-border tw:overflow-hidden">
             <img src={coverImageUrl} alt={title} className="tw:w-full tw:h-full tw:object-cover" />
           </div>
         )}
@@ -70,13 +70,13 @@ export function CollectionWidget({
             <div className="tw:flex tw:gap-3 tw:flex-nowrap">
               {products.length > 0 ? (
                 products.map((product) => (
-                  <div key={product.id} className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)]">
+                  <div key={product.id} className="tw:flex-shrink-0 tw:w-[var(--tw-size-widget-card)]">
                     <ProductCard {...product} />
                   </div>
                 ))
               ) : (
                 Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="tw:flex-shrink-0 tw:w-[var(--size-widget-card)]">
+                  <div key={i} className="tw:flex-shrink-0 tw:w-[var(--tw-size-widget-card)]">
                     <ProductCardSkeleton />
                   </div>
                 ))

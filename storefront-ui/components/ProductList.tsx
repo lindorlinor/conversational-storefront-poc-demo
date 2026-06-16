@@ -32,7 +32,7 @@ export function ProductList({ products }: { products?: Product[] }) {
     const el = scrollRef.current;
     if (!el) return;
     const cardPx = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--size-widget-card').trim()
+      getComputedStyle(document.documentElement).getPropertyValue('--tw-size-widget-card').trim()
     ) || 216;
     el.scrollBy({ left: dir === 'right' ? cardPx + 12 : -(cardPx + 12), behavior: 'smooth' });
   };
