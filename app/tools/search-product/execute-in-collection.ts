@@ -12,7 +12,9 @@ const GRAPHQL_QUERY = `
     $filters: [ProductFilter!]
     $sortKey: ProductCollectionSortKeys = COLLECTION_DEFAULT
     $reverse: Boolean = false
-  ) {
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
     collection(handle: $handle) {
       products(
         first: $first
@@ -38,7 +40,8 @@ const GRAPHQL_QUERY = `
   }
 `
 
-export async function searchProductInCollectionExecute(args: SearchProductInCollectionArgs) {
+
+export async function searchProductInCollectionExecute(args: SearchProductInCollectionArgs, { country, language }: { country?: string; language?: string } = {}) {
   console.log('[searchProductInCollectionTool] called with args:', JSON.stringify(args))
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductInCollectionTool: EXECUTE START`)
@@ -70,6 +73,8 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
           filters: productFilters.length > 0 ? productFilters : undefined,
           sortKey: sortKey ?? 'COLLECTION_DEFAULT',
           reverse: reverse ?? false,
+          country: country?.toUpperCase() ?? undefined,
+          language: language?.toUpperCase() ?? undefined,
         },
       }),
     },

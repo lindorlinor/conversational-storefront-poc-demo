@@ -83,7 +83,7 @@ const rateLimitRetryMiddleware: LanguageModelMiddleware = {
 
 //modello con middleware per errori rate limit (con il 5 mini difficile ma è lo tengo comunque, magari in futuro può servire per altri modelli)
 export const model = wrapLanguageModel({
-  model: openai('gpt-5-mini-2025-08-07'),
+  model: openai('gpt-5-mini-2025-08-07'), //gpt-5.5-2026-04-23 per quello nuovo
   middleware: rateLimitRetryMiddleware,
 })
 
@@ -143,17 +143,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
           var container = document.getElementById('chat-page-root');
           // storefront headless: il parent passa il cartId nell'src dell'iframe
-          var fromQuery = new URLSearchParams(window.location.search).get('cartId');
+          var params = new URLSearchParams(window.location.search);
+          var fromQuery = params.get('cartId');
           // nel caso app proxy questa pagina è same-origin con lo store, quindi
           // document.cookie legge/scrive il cookie cart dello store: qui facciamo
           // da "merchant di riferimento" (issue #79), il widget non tocca cookie
           var m = document.cookie.match(/(?:^|;\\s*)cart=([^;]+)/);
           var cartId = fromQuery || (m ? decodeURIComponent(m[1]) : null);
+          var country = params.get('country');
+          var language = params.get('language');
 
           createRoot(container).render(
             React.createElement(ConversationalStorefront, {
               apiUrl: container.dataset.apiUrl,
               cartId: cartId,
+              country: country,
+              language: language,
             })
           );
 
@@ -190,7 +195,7 @@ export async function action({ request }: ActionFunctionArgs) {
     console.log('[chat action] system prompt:', systemPrompt);
 
     const body = await request.json()
-    const { messages, cartId, componentSchemas } = body
+    const { messages, cartId, componentSchemas, country, language } = body
     console.log('[cart] cartId dal body:', cartId)
 
     // cosa ha mandato il merchant via init({ components }): nomi + schemi
@@ -215,9 +220,9 @@ export async function action({ request }: ActionFunctionArgs) {
     // i tool del merchant vanno per ultimi: stesso nome => override del default
     const merchantTools = buildMerchantUITools(componentSchemas)
     const tools = {
-      searchProductTool,
+      searchProductTool: searchProductTool(country, language),
       fetchCollectionTool,
-      searchProductInCollectionTool,
+      searchProductInCollectionTool: searchProductInCollectionTool(country, language),
       addToCartTool: addToCartTool(cartId),
       ...getUItools(),
       ...merchantTools,

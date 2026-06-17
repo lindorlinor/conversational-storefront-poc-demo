@@ -12,7 +12,9 @@ const GRAPHQL_QUERY = `
     $filters: [ProductFilter!]
     $sortKey: SearchSortKeys = RELEVANCE
     $reverse: Boolean = false
-  ) {
+    $country: CountryCode
+    $language: LanguageCode
+  ) @inContext(country: $country, language: $language) {
     search(
       query: $query
       first: $first
@@ -56,7 +58,8 @@ const GRAPHQL_QUERY = `
   }
 `
 
-export async function searchProductExecute(args: SearchProductArgs) {
+
+export async function searchProductExecute(args: SearchProductArgs, { country, language }: { country?: string; language?: string } = {}) {
   console.log('[searchProductTool] called with args:', JSON.stringify(args))
   const t1 = Date.now()
   console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
@@ -125,6 +128,8 @@ export async function searchProductExecute(args: SearchProductArgs) {
           filters: productFilters.length > 0 ? productFilters : undefined,
           sortKey: sortKey ?? 'RELEVANCE',
           reverse: reverse ?? false,
+          country: country?.toUpperCase() ?? undefined,
+          language: language?.toUpperCase() ?? undefined,
         },
       }),
     },
