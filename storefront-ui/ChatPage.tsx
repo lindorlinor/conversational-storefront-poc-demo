@@ -32,8 +32,10 @@ function syncNewCartId(
   }
 }
 
-export function ChatPage({ apiUrl, componentSchemas }: {
+export function ChatPage({ apiUrl, componentSchemas, country, language }: {
   apiUrl: string;
+  country?: string;
+  language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
@@ -52,7 +54,7 @@ export function ChatPage({ apiUrl, componentSchemas }: {
   /* componentSchemas: schemi (JSON Schema) dei componenti del merchant, inviati
      a ogni richiesta così il backend può generare i tool corrispondenti. per ora così, todo endpoint probabilmente */
   const send = (text: string) => {
-    sendMessage({ text }, { body: { cartId: cart.getId(), componentSchemas } });
+    sendMessage({ text }, { body: { cartId: cart.getId(), componentSchemas, country, language } });
     setInputValue("");
   };
 

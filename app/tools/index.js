@@ -9,9 +9,9 @@ import { searchProductInCollectionExecute } from './search-product/execute-in-co
 
 import { addToCartDefinition } from './cart/definition';
 import { addToCartExecute } from './cart/execute';
-export const searchProductTool = tool({
+export const searchProductTool = (country, language) => tool({
   ...searchProductDefinition,
-  execute: searchProductExecute,
+  execute: (args) => searchProductExecute(args, { country, language }),
 });
 
 export const fetchCollectionTool = tool({
@@ -19,9 +19,9 @@ export const fetchCollectionTool = tool({
   execute: fetchCollectionExecute,
 });
 
-export const searchProductInCollectionTool = tool({
+export const searchProductInCollectionTool = (country, language) => tool({
   ...searchProductInCollectionDefinition,
-  execute: searchProductInCollectionExecute,
+  execute: (args) => searchProductInCollectionExecute(args, { country, language }),
 });
 
 

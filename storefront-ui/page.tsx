@@ -76,12 +76,16 @@ export interface ConversationalStorefrontProps {
   apiUrl: string;
   cartId?: string | null;
   components?: Record<string, MerchantComponent>; //aggiunte props react rispetto page.tsx (che a pensarci dovrei rinominare liquid.tsx ? todo)
+  country?: string;
+  language?: string;
 }
 
 export function ConversationalStorefront({
   apiUrl,
   cartId,
   components,
+  country,
+  language,
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
   // opacity 0 finché il tema non è iniettato, così non flesha
@@ -103,7 +107,7 @@ export function ConversationalStorefront({
 
   return (
     <div style={{ opacity, transition: "opacity 120ms ease" }}>
-      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} />
+      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} />
     </div>
   );
 }
