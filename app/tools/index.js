@@ -1,4 +1,5 @@
 import { tool } from 'ai';
+import { z } from 'zod';
 import { searchProductDefinition } from './search-product/definition';
 import { searchProductExecute } from './search-product/execute';
 import { fetchCollectionDefinition } from './fetch-collection/definition';
@@ -29,6 +30,15 @@ export const addToCartTool = (rawId) => tool({
   ...addToCartDefinition,
   execute: (params) => addToCartExecute({ ...params, rawCartId: rawId }),
 });
+
+
+export const changeMarketTool = tool({
+  description: 'Call this tool when the user has explicitly confirmed they want to switch to a different market. Do NOT call it to detect language or suggest a switch — use it only after the user has said yes to changing market.',
+  inputSchema: z.object({
+    isoCode: z.string().describe('ISO 639-1 language code detected from the user input, e.g. "it", "fr", "de"'),
+  }),
+  execute: async ({ isoCode }) => ({ ok: true, isoCode }),
+})
 
 
 

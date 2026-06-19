@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages, stepCountIs, wrapLanguageModel, type LanguageModelMiddleware } from 'ai'
-import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool } from '../tools'
+import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool, changeMarketTool } from '../tools'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
@@ -226,14 +226,17 @@ export async function action({ request }: ActionFunctionArgs) {
       addToCartTool: addToCartTool(cartId),
       ...getUItools(),
       ...merchantTools,
+      changeMarketTool,
     }
     const toolNames = Object.keys(tools)
     const merchantNames = Object.keys(merchantTools)
     console.log(`[tools] creati ${toolNames.length} tool:`, toolNames)
     console.log('[tools] dal merchant:', merchantNames.length ? merchantNames : '(nessuno)')
 
+    const marketContext = `Current market: country=${country ?? 'unknown'}, language=${language ?? 'unknown'}.`;
+
     const result = streamText({
-      system: systemPrompt,
+      system: `${marketContext}\n\n${systemPrompt}`,
       stopWhen: stepCountIs(12),
       maxRetries: 5,
       providerOptions: {

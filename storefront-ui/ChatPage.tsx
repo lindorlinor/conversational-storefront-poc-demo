@@ -6,7 +6,31 @@ import { ChatInput } from "./components/chat-input/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
-import PreviewSection from "./preview/PreviewSection"; // DEBUG — rimuovi per produzione
+/* import PreviewSection from "./preview/PreviewSection";
+ */
+function notifyMarketChanged(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  messages: any[],
+  processedToolCalls: Set<string>,
+  onChangeMarket?: (isoCode: string) => void,
+) {
+  for (const message of messages) {
+    if (message.role !== "assistant") continue;
+    for (const part of message.parts ?? []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = part as any;
+      if (
+        p.type === "tool-changeMarketTool" &&
+        p.state === "output-available" &&
+        p.output?.ok &&
+        !processedToolCalls.has(p.toolCallId)
+      ) {
+        processedToolCalls.add(p.toolCallId);
+        onChangeMarket?.(p.output.isoCode);
+      }
+    }
+  }
+}
 
 // todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
 function syncNewCartId(
@@ -32,11 +56,12 @@ function syncNewCartId(
   }
 }
 
-export function ChatPage({ apiUrl, componentSchemas, country, language }: {
+export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket }: {
   apiUrl: string;
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
+  onChangeMarket?: (isoCode: string) => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -60,7 +85,8 @@ export function ChatPage({ apiUrl, componentSchemas, country, language }: {
 
   useEffect(() => {
     syncNewCartId(messages, processedToolCalls.current);
-  }, [messages]);
+    notifyMarketChanged(messages, processedToolCalls.current, onChangeMarket);
+  }, [messages, onChangeMarket]);
 
   const disabled = status === "streaming" || status === "submitted";
 
