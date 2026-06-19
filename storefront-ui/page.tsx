@@ -78,7 +78,7 @@ export interface ConversationalStorefrontProps {
   components?: Record<string, MerchantComponent>; //aggiunte props react rispetto page.tsx (che a pensarci dovrei rinominare liquid.tsx ? todo)
   country?: string;
   language?: string;
-  onChangeMarket?: (isoCode: string) => void;
+  onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
 }
 

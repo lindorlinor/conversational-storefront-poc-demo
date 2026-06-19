@@ -12,8 +12,10 @@ function notifyMarketChanged(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],
   processedToolCalls: Set<string>,
-  onChangeMarket?: (isoCode: string) => void,
+  shop: string,
+  onChangeMarket?: (isoCode: string, dismiss: () => void) => void,
 ) {
+  const dismissed = loadDismissed(shop);
   for (const message of messages) {
     if (message.role !== "assistant") continue;
     for (const part of message.parts ?? []) {
@@ -23,10 +25,12 @@ function notifyMarketChanged(
         p.type === "tool-changeMarketTool" &&
         p.state === "output-available" &&
         p.output?.ok &&
-        !processedToolCalls.has(p.toolCallId)
+        !processedToolCalls.has(p.toolCallId) &&
+        !dismissed.has(p.toolCallId)
       ) {
         processedToolCalls.add(p.toolCallId);
-        onChangeMarket?.(p.output.isoCode);
+        const dismiss = () => dismissToolCall(shop, p.toolCallId);
+        onChangeMarket?.(p.output.isoCode, dismiss);
       }
     }
   }
@@ -57,6 +61,7 @@ function syncNewCartId(
 }
 
 const SESSION_KEY = "conversational-storefront:messages";
+const DISMISSED_KEY = "conversational-storefront:dismissed";
 
 function loadMessages(shop: string) {
   try {
@@ -64,6 +69,34 @@ function loadMessages(shop: string) {
     return raw ? JSON.parse(raw) : undefined;
   } catch {
     return undefined;
+  }
+}
+
+function clearMessages(shop: string) {
+  try {
+    sessionStorage.removeItem(`${SESSION_KEY}:${shop}`);
+    sessionStorage.removeItem(`${DISMISSED_KEY}:${shop}`);
+  } catch {
+    // ignore
+  }
+}
+
+function loadDismissed(shop: string): Set<string> {
+  try {
+    const raw = sessionStorage.getItem(`${DISMISSED_KEY}:${shop}`);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function dismissToolCall(shop: string, toolCallId: string) {
+  try {
+    const dismissed = loadDismissed(shop);
+    dismissed.add(toolCallId);
+    sessionStorage.setItem(`${DISMISSED_KEY}:${shop}`, JSON.stringify([...dismissed]));
+  } catch {
+    // ignore
   }
 }
 
@@ -80,7 +113,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
-  onChangeMarket?: (isoCode: string) => void;
+  onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
@@ -107,7 +140,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
-    notifyMarketChanged(messages, processedToolCalls.current, onChangeMarket);
+    notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
   }, [messages, onChangeMarket, shop]);
 
   const disabled = status === "streaming" || status === "submitted";
@@ -117,7 +150,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
 
       <button
         type="button"
-        onClick={() => onClose?.()}
+        onClick={() => { clearMessages(shop); onClose?.(); }}
         className="tw:font-widget-secondary tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
       >
         Negozio
