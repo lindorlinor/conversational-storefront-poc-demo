@@ -79,6 +79,7 @@ export interface ConversationalStorefrontProps {
   country?: string;
   language?: string;
   onChangeMarket?: (isoCode: string) => void;
+  onClose?: () => void;
 }
 
 export function ConversationalStorefront({
@@ -88,6 +89,7 @@ export function ConversationalStorefront({
   country,
   language,
   onChangeMarket,
+  onClose,
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
   // opacity 0 finché il tema non è iniettato, così non flesha
@@ -109,7 +111,7 @@ export function ConversationalStorefront({
 
   return (
     <div style={{ opacity, transition: "opacity 120ms ease" }}>
-      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} />
+      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} />
     </div>
   );
 }

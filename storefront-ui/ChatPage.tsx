@@ -56,12 +56,32 @@ function syncNewCartId(
   }
 }
 
-export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket }: {
+const SESSION_KEY = "conversational-storefront:messages";
+
+function loadMessages(shop: string) {
+  try {
+    const raw = sessionStorage.getItem(`${SESSION_KEY}:${shop}`);
+    return raw ? JSON.parse(raw) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function saveMessages(shop: string, messages: unknown[]) {
+  try {
+    sessionStorage.setItem(`${SESSION_KEY}:${shop}`, JSON.stringify(messages));
+  } catch {
+    // sessionStorage non disponibile (es. iframe con cookie bloccati)
+  }
+}
+
+export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose }: {
   apiUrl: string;
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
   onChangeMarket?: (isoCode: string) => void;
+  onClose?: () => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -73,6 +93,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
 
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
+    messages: loadMessages(shop),
   });
 
   /* cart id letto al momento dell'invio perchè può cambiare durante la sessione (prima null e poi modificato)*/
@@ -84,9 +105,10 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   };
 
   useEffect(() => {
+    if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
     notifyMarketChanged(messages, processedToolCalls.current, onChangeMarket);
-  }, [messages, onChangeMarket]);
+  }, [messages, onChangeMarket, shop]);
 
   const disabled = status === "streaming" || status === "submitted";
 
@@ -95,13 +117,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
 
       <button
         type="button"
-        onClick={() => {
-          /* doppio canale perchè l'avevo pensato solo per iframe, ora funziona anche se la richiesta proviene dalla stesa pagina */
-          window.dispatchEvent(new CustomEvent("conversational-storefront:close"));
-          if (window.parent !== window) {
-            window.parent.postMessage({ type: "conversational-storefront:close" }, "*");
-          }
-        }}
+        onClick={() => onClose?.()}
         className="tw:font-widget-secondary tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
       >
         Negozio
