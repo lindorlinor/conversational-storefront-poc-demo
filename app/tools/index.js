@@ -42,3 +42,10 @@ export const changeMarketTool = tool({
 
 
 
+export const viewCartTool = tool({
+  description: 'Call this tool when the user wants to view their cart.',
+  execute: async () => ({ ok: true }),
+
+})
+
+

@@ -37,6 +37,29 @@ function notifyMarketChanged(
   }
 }
 
+function notifyViewCart(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  messages: any[],
+  processedToolCalls: Set<string>,
+  onViewCart?: () => void,
+) {
+  for (const message of messages) {
+    if (message.role !== "assistant") continue;
+    for (const part of message.parts ?? []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = part as any;
+      if (
+        p.type === "tool-viewCartTool" &&
+        p.state === "output-available" &&
+        p.output?.ok &&
+        !processedToolCalls.has(p.toolCallId)
+      ) {
+        processedToolCalls.add(p.toolCallId);
+        onViewCart?.();
+      }
+    }
+  }
+}
 // todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
 function syncNewCartId(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -62,13 +85,15 @@ function syncNewCartId(
 }
 
 
-export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose }: {
+export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose, onViewCart
+ }: {
   apiUrl: string;
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
+  onViewCart?: () => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -94,6 +119,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
+    notifyViewCart(messages, processedToolCalls.current, onViewCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
   }, [messages, onChangeMarket, shop]);
 
