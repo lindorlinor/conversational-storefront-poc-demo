@@ -18,6 +18,7 @@ export type Product = {
     url?: string;
     price?: { amount?: string; currencyCode?: string };
     variants?: Variant[];
+    defaultVariantId?: string;
 }
 
 export type Collection = {
