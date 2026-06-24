@@ -25,7 +25,6 @@ function notifyMarketChanged(
       if (
         p.type === "tool-changeMarketTool" &&
         p.state === "output-available" &&
-        p.output?.ok &&
         !processedToolCalls.has(p.toolCallId) &&
         !dismissed.has(p.toolCallId)
       ) {
@@ -41,8 +40,10 @@ function notifyViewCart(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],
   processedToolCalls: Set<string>,
-  onViewCart?: () => void,
+  shop: string,
+  onViewCart?: (dismiss: () => void) => void,
 ) {
+  const dismissed = loadDismissed(shop);
   for (const message of messages) {
     if (message.role !== "assistant") continue;
     for (const part of message.parts ?? []) {
@@ -51,11 +52,12 @@ function notifyViewCart(
       if (
         p.type === "tool-viewCartTool" &&
         p.state === "output-available" &&
-        p.output?.ok &&
-        !processedToolCalls.has(p.toolCallId)
+        !processedToolCalls.has(p.toolCallId) &&
+        !dismissed.has(p.toolCallId)
       ) {
         processedToolCalls.add(p.toolCallId);
-        onViewCart?.();
+        const dismiss = () => dismissToolCall(shop, p.toolCallId);
+        onViewCart?.(dismiss);
       }
     }
   }
@@ -93,7 +95,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   componentSchemas?: Record<string, SerializedComponentSchema>;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
-  onViewCart?: () => void;
+  onViewCart?: ( dismiss: () => void) => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -119,7 +121,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
-    notifyViewCart(messages, processedToolCalls.current, onViewCart);
+    notifyViewCart(messages, processedToolCalls.current, shop ?? '', onViewCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
   }, [messages, onChangeMarket, shop]);
 

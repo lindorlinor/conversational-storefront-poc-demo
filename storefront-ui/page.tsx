@@ -79,7 +79,7 @@ export interface ConversationalStorefrontProps {
   country?: string;
   language?: string;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
-  onViewCart?: () => void;
+  onViewCart?: (dismiss: () => void) => void;
   onClose?: () => void;
 }
 
