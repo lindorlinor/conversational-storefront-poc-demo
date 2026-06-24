@@ -161,7 +161,11 @@ export async function searchProductExecute(args: SearchProductArgs, { country, l
 
     const hasRealVariants = !(rawVariants.length === 1 && rawVariants[0].title === 'Default Title')
     return {
-      ...node,
+      id: node.id,
+      title: node.title,
+      handle: node.handle,
+      description: node.description,
+      url: node.url,
       imgUrl: node.featuredImage?.url ?? null,
       images: node.images?.nodes ?? [],
       price: node.priceRange?.minVariantPrice ?? null,

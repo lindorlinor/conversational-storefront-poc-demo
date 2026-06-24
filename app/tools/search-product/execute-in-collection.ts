@@ -95,7 +95,10 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
   console.log(`⏱ [2] searchProductInCollectionTool: EXECUTE END — ${Date.now() - t1}ms (Shopify API)`)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const products = collection.products.nodes.map((node: any) => ({
-    ...node,
+    id: node.id,
+    title: node.title,
+    handle: node.handle,
+    url: node.url,
     imgUrl: node.featuredImage?.url ?? null,
     price: node.priceRange?.minVariantPrice ?? null,
   }))
