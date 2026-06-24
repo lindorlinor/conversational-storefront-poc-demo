@@ -1,6 +1,6 @@
 import { openai } from '@ai-sdk/openai'
 import { streamText, convertToModelMessages, stepCountIs, wrapLanguageModel, type LanguageModelMiddleware } from 'ai'
-import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, addToCartTool, changeMarketTool, viewCartTool } from '../tools'
+import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, requestAddToCartTool, changeMarketTool, viewCartTool } from '../tools'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
 import { getSystemPrompt } from '../shopify/system-prompt.graphql';
@@ -223,7 +223,7 @@ export async function action({ request }: ActionFunctionArgs) {
       searchProductTool: searchProductTool(country, language),
       fetchCollectionTool,
       searchProductInCollectionTool: searchProductInCollectionTool(country, language),
-      addToCartTool,
+      requestAddToCartTool,
       ...getUItools(),
       ...merchantTools,
       changeMarketTool,
