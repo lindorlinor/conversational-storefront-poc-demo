@@ -2,8 +2,7 @@ import { tool } from 'ai'
 import { z } from 'zod'
 
 export const addToCartDefinition = tool({
-    description: `Aggiunge un prodotto al carrello. 
-        Chiamalo quando l'utente vuole aggiungere un prodotto al carrello.
+    description: `Richiede allo storefront di aggiungere un prodotto al carrello. Chiamalo quando l'utente chiede di aggiungere un prodotto al carrello. Quando chiami questo tool, non confermare l'avvenuta aggiunta - l'esito reale arriverà in un secondo momento.
         Se il prodotto ha variants[], chiedi prima all'utente quale vuole e usa il variantId scelto.
         Se il prodotto ha solo defaultVariantId, usa quello direttamente.
         IMPORTANTE: usa SOLO variantId ottenuti da una ricerca precedente con searchProductTool. 

@@ -223,7 +223,7 @@ export async function action({ request }: ActionFunctionArgs) {
       searchProductTool: searchProductTool(country, language),
       fetchCollectionTool,
       searchProductInCollectionTool: searchProductInCollectionTool(country, language),
-      addToCartTool: addToCartTool(cartId),
+      addToCartTool,
       ...getUItools(),
       ...merchantTools,
       changeMarketTool,

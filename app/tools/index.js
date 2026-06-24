@@ -9,7 +9,6 @@ import { searchProductInCollectionExecute } from './search-product/execute-in-co
 
 
 import { addToCartDefinition } from './cart/definition';
-import { addToCartExecute } from './cart/execute';
 export const searchProductTool = (country, language) => tool({
   ...searchProductDefinition,
   execute: (args) => searchProductExecute(args, { country, language }),
@@ -26,9 +25,9 @@ export const searchProductInCollectionTool = (country, language) => tool({
 });
 
 
-export const addToCartTool = (rawId) => tool({
+export const requestAddToCartTool = tool({
   ...addToCartDefinition,
-  execute: (params) => addToCartExecute({ ...params, rawCartId: rawId }),
+  execute: async ({ variantId, quantity = 1 }) => ({ variantId, quantity }),
 });
 
 

@@ -62,6 +62,29 @@ function notifyViewCart(
     }
   }
 }
+function notifyAddToCart(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  messages: any[],
+  processedToolCalls: Set<string>,
+  onAddToCart?: (variantId: string, quantity: number) => void,
+) {
+  for (const message of messages) {
+    if (message.role !== "assistant") continue;
+    for (const part of message.parts ?? []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p = part as any;
+      if (
+        p.type === "tool-addToCartTool" &&
+        p.state === "output-available" &&
+        !processedToolCalls.has(p.toolCallId)
+      ) {
+        processedToolCalls.add(p.toolCallId);
+        onAddToCart?.(p.output.variantId, p.output.quantity);
+      }
+    }
+  }
+}
+
 // todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
 function syncNewCartId(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -87,7 +110,7 @@ function syncNewCartId(
 }
 
 
-export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose, onViewCart
+export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose, onViewCart, onAddToCart
  }: {
   apiUrl: string;
   country?: string;
@@ -96,6 +119,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
   onViewCart?: ( dismiss: () => void) => void;
+  onAddToCart?: (variantId: string, quantity: number) => void;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -122,8 +146,9 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
     notifyViewCart(messages, processedToolCalls.current, shop ?? '', onViewCart);
+    notifyAddToCart(messages, processedToolCalls.current, onAddToCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
-  }, [messages, onChangeMarket, shop]);
+  }, [messages, onChangeMarket, onAddToCart, shop]);
 
   const disabled = status === "streaming" || status === "submitted";
 

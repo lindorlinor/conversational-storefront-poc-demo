@@ -80,6 +80,7 @@ export interface ConversationalStorefrontProps {
   language?: string;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onViewCart?: (dismiss: () => void) => void;
+  onAddToCart?: (variantId: string, quantity: number) => void;
   onClose?: () => void;
 }
 
@@ -91,6 +92,7 @@ export function ConversationalStorefront({
   language,
   onChangeMarket,
   onViewCart,
+  onAddToCart,
   onClose,
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
@@ -113,7 +115,7 @@ export function ConversationalStorefront({
 
   return (
     <div style={{ opacity, transition: "opacity 120ms ease" }}>
-      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} />
+      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
     </div>
   );
 }
