@@ -55,7 +55,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
       url: z.string().optional(),
       imgUrl: z.string().nullable().optional(),
       images: z.array(z.object({
-        url: z.string(),
+        url: z.string().nullable(),
         altText: z.string().optional(),
       })).optional().describe("All product images for the gallery carousel."),
       price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
