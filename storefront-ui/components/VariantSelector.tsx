@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Product, Variant } from "../models/types";
-import { cart } from "../cart";
+import { useAddToCart } from "../add-to-cart-context";
 
 type VariantOption = Variant & { available?: boolean };
 
@@ -24,6 +24,8 @@ export function VariantSelector({
   const [isAdding, setIsAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const onAddToCart = useAddToCart();
 
   const displayImages =
     selected?.image?.url
@@ -54,13 +56,17 @@ export function VariantSelector({
 
   const handleAddToCart = async () => {
     const variantId = selected?.id ?? variants[0]?.id;
-    if (!variantId || isAdding) return;
+    if (!variantId || isAdding || !onAddToCart) return;
     try {
       setIsAdding(true);
       setError(null);
-      await cart.addLine(variantId);
-      setAdded(true);
-      setTimeout(() => setAdded(false), 1900);
+      const res = await onAddToCart(variantId, 1);
+      if (res.success) {
+        setAdded(true);
+        setTimeout(() => setAdded(false), 1900);
+      } else {
+        setError(res.reason);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Impossibile aggiungere al carrello");
     } finally {

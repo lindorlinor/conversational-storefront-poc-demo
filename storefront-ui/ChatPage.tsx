@@ -7,6 +7,7 @@ import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
 import { loadMessages, saveMessages, clearMessages, loadDismissed, dismissToolCall } from "./chat-session";
+import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
 /* import PreviewSection from "./preview/PreviewSection";
  */
 function notifyMarketChanged(
@@ -66,7 +67,7 @@ function notifyAddToCart(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],
   processedToolCalls: Set<string>,
-  onAddToCart?: (variantId: string, quantity: number) => void,
+  onAddToCart?: AddToCartRequest,
 ) {
   for (const message of messages) {
     if (message.role !== "assistant") continue;
@@ -74,7 +75,7 @@ function notifyAddToCart(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const p = part as any;
       if (
-        p.type === "tool-addToCartTool" &&
+        p.type === "tool-requestAddToCartTool" &&
         p.state === "output-available" &&
         !processedToolCalls.has(p.toolCallId)
       ) {
@@ -119,7 +120,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
   onViewCart?: ( dismiss: () => void) => void;
-  onAddToCart?: (variantId: string, quantity: number) => void;
+  onAddToCart?: AddToCartRequest;
 }) {
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
@@ -153,6 +154,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const disabled = status === "streaming" || status === "submitted";
 
   return (
+    <AddToCartProvider value={onAddToCart}>
     <div className="tw:font-widget-primary tw:flex tw:flex-col tw:h-screen tw:bg-gradient-to-b tw:from-widget-page-from tw:to-widget-page-to">
 
       <button
@@ -209,5 +211,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
       </div>
 
     </div>
+    </AddToCartProvider>
   );
 }

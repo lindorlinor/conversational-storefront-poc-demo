@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Product, Variant } from "../models/types";
-import { cart } from "../cart";
+import { useAddToCart } from "../add-to-cart-context";
 
 type ProductHeroProps = Product & { selectedVariantTitle?: string };
 
@@ -10,6 +10,8 @@ export function ProductHero({ title, description, images = [], price, url, varia
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(initialVariant);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const onAddToCart = useAddToCart();
 
   const galleryRef = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
@@ -40,13 +42,13 @@ export function ProductHero({ title, description, images = [], price, url, varia
   const handleVariantSelect = (variant: Variant) => setSelectedVariant(variant);
 
   const handleAddToCart = async () => {
-    console.log('selectedVariant:', selectedVariant);
     const variantId = selectedVariant?.id ?? variants[0]?.id;
-    if (!variantId || isAdding) return;
+    if (!variantId || isAdding || !onAddToCart) return;
     try {
       setIsAdding(true);
       setError(null);
-      await cart.addLine(variantId);
+      const res = await onAddToCart(variantId, 1);
+      if (!res.success) setError(res.reason);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Impossibile aggiungere al carrello");
     } finally {

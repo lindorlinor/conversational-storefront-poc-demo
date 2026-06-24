@@ -7,6 +7,9 @@ import {
   type MerchantComponent,
 } from "./component-registry";
 import rawStyles from "./page.css?inline";
+import type { AddToCartRequest, AddToCartResult } from "./add-to-cart-context";
+
+export type { AddToCartRequest, AddToCartResult };
 
 
 // Scoperchia il blocco `@layer utilities { ... }`: le regole dentro un @layer
@@ -80,7 +83,7 @@ export interface ConversationalStorefrontProps {
   language?: string;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onViewCart?: (dismiss: () => void) => void;
-  onAddToCart?: (variantId: string, quantity: number) => void;
+  onAddToCart?: AddToCartRequest;
   onClose?: () => void;
 }
 
