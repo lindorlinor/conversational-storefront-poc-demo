@@ -1,4 +1,5 @@
-import { useChat } from "@ai-sdk/react";
+import { useChat, type UIMessage } from "@ai-sdk/react";
+import WidgetRenderer from "./components/WidgetRenderer";
 import { useRef, useEffect, useState } from "react";
 import { cart } from "./cart";
 import { DefaultChatTransport } from "ai";
@@ -215,12 +216,39 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
           {messages
             .filter((message) => message.role === "assistant")
             .slice(-1)
-            .map(
-              (message) => (
-                console.log("Rendering message:", message),
-                (<Section key={message.id} message={message} />)
-              ),
-            )}
+            .flatMap((message) => (
+              console.log("Rendering message:", message),
+              message.parts.map((part: UIMessage["parts"][number], i: number) => {
+                
+                if (part.type === "text") {
+                  return (
+                    <Section key={`${message.id}-${i}`}>
+                      <p className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
+                    </Section>
+                  );
+                }
+
+                if (part.type.startsWith("tool-")) {
+                  const toolPart = part as {
+                    type: string;
+                    state: string;
+                    input: Record<string, unknown>;
+                  };
+                  const toolName = toolPart.type.slice("tool-".length);
+                  return (
+                    <Section key={`${message.id}-${i}`}>
+                      <WidgetRenderer
+                        toolName={toolName}
+                        input={toolPart.input}
+                        state={toolPart.state}
+                      />
+                    </Section>
+                  );
+                }
+
+                return null;
+              })
+            ))}
           {(status === "streaming" || status === "submitted") && (
             <div className="tw:w-[80%] tw:mx-auto tw:py-3">
               <div className="tw:self-start tw:bg-widget-surface tw:px-4 tw:py-2.5 tw:rounded-lg tw:text-base tw:text-widget-text-muted">

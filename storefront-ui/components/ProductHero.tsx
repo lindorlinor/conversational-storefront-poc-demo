@@ -4,7 +4,7 @@ import { useAddToCart } from "../add-to-cart-context";
 
 type ProductHeroProps = Product & { selectedVariantTitle?: string };
 
-export function ProductHero({ title, description, images = [], price, url, variants = [], selectedVariantTitle }: ProductHeroProps) {
+export function ProductHero({ title, description, images = [], price, url, variants = [], selectedVariantTitle, defaultVariantId }: ProductHeroProps) {
   const initialVariant = selectedVariantTitle ? (variants.find(v => v.title === selectedVariantTitle) ?? null) : null;
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(initialVariant);
@@ -42,7 +42,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
   const handleVariantSelect = (variant: Variant) => setSelectedVariant(variant);
 
   const handleAddToCart = async () => {
-    const variantId = selectedVariant?.id ?? variants[0]?.id;
+    const variantId = selectedVariant?.id ?? variants[0]?.id ?? defaultVariantId;
     if (!variantId || isAdding || !onAddToCart) return;
     try {
       setIsAdding(true);
@@ -84,7 +84,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
           </div>
         )}
 
-        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id)} className="tw:font-widget-secondary tw:flex tw:items-center tw:justify-between tw:w-full tw:px-3 tw:py-2 tw:bg-widget-accent tw:text-widget-accent-fg tw:border tw:border-widget-accent-fg tw:text-sm tw:font-medium tw:rounded-widget-base tw:disabled:opacity-50 tw:disabled:cursor-not-allowed">
+        <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id && !defaultVariantId)} className="tw:font-widget-secondary tw:flex tw:items-center tw:justify-between tw:w-full tw:px-3 tw:py-2 tw:bg-widget-accent tw:text-widget-accent-fg tw:border tw:border-widget-accent-fg tw:text-sm tw:font-medium tw:rounded-widget-base tw:disabled:opacity-50 tw:disabled:cursor-not-allowed">
           <span>Add to cart</span>
           {formattedPrice && (
             <div className="tw:flex tw:items-center tw:gap-2">
