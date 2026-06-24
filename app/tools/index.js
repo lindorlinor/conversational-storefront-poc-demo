@@ -31,8 +31,8 @@ export const requestAddToCartTool = tool({
 });
 
 
-export const changeMarketTool = tool({
-  description: 'Call this tool when the user has explicitly confirmed they want to switch to a different market. Do NOT call it to detect language or suggest a switch — use it only after the user has said yes to changing market.',
+export const requestChangeMarketTool = tool({
+  description: 'Call this tool when the user has explicitly confirmed they want to switch to a different market. Do NOT call it to detect language or suggest a switch — use it only after the user has said yes to changing market. This tool probably will ask the user to select a merket from a list.',
   inputSchema: z.object({
     isoCode: z.string().optional().describe('ISO 639-1 language code detected from the user input, e.g. "it", "fr", "de"'),
   }),

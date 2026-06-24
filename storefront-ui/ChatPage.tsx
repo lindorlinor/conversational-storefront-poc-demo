@@ -24,7 +24,7 @@ function notifyMarketChanged(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const p = part as any;
       if (
-        p.type === "tool-changeMarketTool" &&
+        p.type === "tool-requestChangeMarketTool" &&
         p.state === "output-available" &&
         !processedToolCalls.has(p.toolCallId) &&
         !dismissed.has(p.toolCallId)
