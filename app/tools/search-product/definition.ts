@@ -16,10 +16,10 @@ export const searchProductSchema = z.object({
                         'Maximum price explicitly mentioned by the user. Set to null if not mentioned.'
                     ),
                 })
-                .nullable()
-                .describe('Set to null if the user does not mention a price or budget.'),
-            availability: z.boolean().nullable().describe(
-                'Set to null if the user does not mention availability. Only set to true/false when the user uses words like "available", "in stock", "out of stock".'
+                .nullish()
+                .describe('Omit or set to null if the user does not mention a price or budget.'),
+            availability: z.boolean().nullish().describe(
+                'Omit or set to null if the user does not mention availability. Only set to true/false when the user uses words like "available", "in stock", "out of stock".'
             ),
             categories: z.array(z.string()).optional().describe(
                 'Product type categories. Omit entirely if the user does not mention a specific category.'

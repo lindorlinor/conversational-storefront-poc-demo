@@ -1,21 +1,17 @@
-import { useState } from "react";
-
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
 }
 
-export function ChatInput({ onSend, disabled = false, value, onChange }: ChatInputProps) {
-  const [placeholder, setPlaceholder] = useState("Scrivi un messaggio...");
-
+export function ChatInput({ onSend, disabled = false, value, onChange, placeholder = "Scrivi un messaggio..." }: ChatInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = value.trim();
     if (!text) return;
     onSend(text);
-    setPlaceholder(text);
     onChange("");
   };
 

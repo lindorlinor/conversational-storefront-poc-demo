@@ -96,7 +96,7 @@ export function ConversationalStorefront({
   onChangeMarket,
   onViewCart,
   onAddToCart,
-  onClose,
+  onClose
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
   // opacity 0 finché il tema non è iniettato, così non flesha

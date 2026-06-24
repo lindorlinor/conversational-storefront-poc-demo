@@ -73,11 +73,11 @@ export const registry: Record<ComponentName, ComponentSchema> = {
     schema: z.object({
       title: z.string().optional(),
       description: z.string().nullable().describe("Product description. Pass null if not available — do not invent one."),
-      url: z.string().optional(),
+      url: z.string().nullable(),
       imgUrl: z.string().nullable().optional(),
       images: z.array(z.object({
-        url: z.string(),
-        altText: z.string().optional(),
+        url: z.string().nullable(),
+        altText: z.string().nullable(),
       })).optional().describe("Product images for the gallery."),
       price: z.object({ amount: z.string(), currencyCode: z.string() }).nullable().optional(),
       variants: z.array(z.object({

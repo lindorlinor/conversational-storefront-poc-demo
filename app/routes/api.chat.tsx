@@ -83,7 +83,7 @@ const rateLimitRetryMiddleware: LanguageModelMiddleware = {
 
 //modello con middleware per errori rate limit (con il 5 mini difficile ma è lo tengo comunque, magari in futuro può servire per altri modelli)
 export const model = wrapLanguageModel({
-  model: openai('gpt-5-mini-2025-08-07'), //gpt-5.5-2026-04-23 per quello nuovo
+  model: openai.chat('gpt-5-mini-2025-08-07'), //gpt-5.5-2026-04-23 per quello nuovo
   middleware: rateLimitRetryMiddleware,
 })
 

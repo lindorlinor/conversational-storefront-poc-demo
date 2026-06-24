@@ -63,29 +63,6 @@ function notifyViewCart(
     }
   }
 }
-function notifyAddToCart(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: any[],
-  processedToolCalls: Set<string>,
-  onAddToCart?: AddToCartRequest,
-) {
-  for (const message of messages) {
-    if (message.role !== "assistant") continue;
-    for (const part of message.parts ?? []) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = part as any;
-      if (
-        p.type === "tool-requestAddToCartTool" &&
-        p.state === "output-available" &&
-        !processedToolCalls.has(p.toolCallId)
-      ) {
-        processedToolCalls.add(p.toolCallId);
-        onAddToCart?.(p.output.variantId, p.output.quantity);
-      }
-    }
-  }
-}
-
 // todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
 function syncNewCartId(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -129,8 +106,11 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const processedToolCalls = useRef(new Set<string>());
   const [isScrolled, setIsScrolled] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [addingToCart, setAddingToCart] = useState(false);
+  const DEFAULT_PLACEHOLDER = "Scrivi un messaggio...";
+  const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({ api: apiUrl }),
     messages: loadMessages(shop),
   });
@@ -141,31 +121,79 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const send = (text: string) => {
     sendMessage({ text }, { body: { cartId: cart.getId(), componentSchemas, country, language } });
     setInputValue("");
+    setPlaceholder(text);
+  };
+
+   const onAddToCartFromUI: AddToCartRequest = async (variantId, quantity) => {
+    const res = onAddToCart
+      ? await onAddToCart(variantId, quantity)
+      : ({ success: false, reason: "add-to-cart non disponibile" } as const);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `add-to-cart-${Date.now()}`,
+        role: "user",
+        parts: [{ type: "text", text: `[risultato aggiunta carrello: ${JSON.stringify(res)}]` }],
+      },
+    ]);
+    return res;
   };
 
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
     notifyViewCart(messages, processedToolCalls.current, shop ?? '', onViewCart);
-    notifyAddToCart(messages, processedToolCalls.current, onAddToCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
-  }, [messages, onChangeMarket, onAddToCart, shop]);
 
-  const disabled = status === "streaming" || status === "submitted";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const message of messages as any[]) {
+      if (message.role !== "assistant") continue;
+      for (const part of message.parts ?? []) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const p = part as any;
+        if (
+          p.type === "tool-requestAddToCartTool" &&
+          p.state === "output-available" &&
+          !processedToolCalls.current.has(p.toolCallId)
+        ) {
+          processedToolCalls.current.add(p.toolCallId);
+          if (!onAddToCart) continue;
+          setAddingToCart(true);
+          void onAddToCart(p.output.variantId, p.output.quantity)
+            .then((res) => {
+              sendMessage(
+                { text: `[risultato aggiunta carrello: ${JSON.stringify(res)}]` },
+                { body: { cartId: cart.getId(), componentSchemas, country, language } },
+              );
+            })
+            .finally(() => setAddingToCart(false));
+        }
+      }
+    }
+  }, [messages, onChangeMarket, onAddToCart, onViewCart, shop, sendMessage, componentSchemas, country, language]);
+
+  const disabled = status === "streaming" || status === "submitted" || addingToCart;
 
   return (
-    <AddToCartProvider value={onAddToCart}>
+    <AddToCartProvider value={onAddToCartFromUI}>
     <div className="tw:font-widget-primary tw:flex tw:flex-col tw:h-screen tw:bg-gradient-to-b tw:from-widget-page-from tw:to-widget-page-to">
 
       <button
         type="button"
-        onClick={() => { clearMessages(shop); onClose?.(); }}
-        className="tw:font-widget-secondary tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
+        onClick={() => { stop(); clearMessages(shop); setInputValue(""); setPlaceholder(DEFAULT_PLACEHOLDER); setMessages([]); processedToolCalls.current.clear(); }}
+        className="tw:font-widget-secondary tw:fixed tw:top-4 tw:left-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
       >
-        Negozio
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="tw:h-4 tw:w-4">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
+        Reset
+      </button>
+      <button
+      type="button"
+      onClick={() => onClose?.()}
+      className="tw:font-widget-secondary tw:fixed tw:top-4 tw:right-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="tw:h-4 tw:w-4">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
       </button>
 
       <div className={`tw:flex tw:justify-center tw:items-center tw:px-5 tw:text-center tw:transition-all tw:duration-300 tw:overflow-hidden ${isScrolled ? "tw:max-h-0 tw:opacity-0 tw:py-0" : "tw:max-h-40 tw:opacity-100 tw:py-6"}`}>
@@ -174,7 +202,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
 
       <div className={`tw:flex tw:justify-center tw:px-5 tw:transition-all tw:duration-300 tw:overflow-hidden ${isScrolled ? "tw:max-h-0 tw:opacity-0 tw:py-0 tw:pointer-events-none" : "tw:max-h-40 tw:opacity-100 tw:py-4"}`}>
         <div className="tw:w-1/2">
-          <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} />
+          <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} placeholder={placeholder} />
         </div>
       </div>
 
@@ -207,7 +235,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
       </div>
 
       <div className={`tw:fixed tw:bottom-6 tw:left-1/2 tw:-translate-x-1/2 tw:w-1/2 tw:z-50 tw:transition-all tw:duration-300 ${isScrolled ? "tw:opacity-100 tw:translate-y-0" : "tw:opacity-0 tw:translate-y-4 tw:pointer-events-none"}`}>
-        <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} />
+        <ChatInput value={inputValue} onChange={setInputValue} onSend={send} disabled={disabled} placeholder={placeholder} />
       </div>
 
     </div>

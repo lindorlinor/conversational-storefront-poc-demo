@@ -43,6 +43,7 @@ export const requestChangeMarketTool = tool({
 
 export const viewCartTool = tool({
   description: 'Call this tool when the user wants to view their cart.',
+  inputSchema: z.object({}),
   execute: async () => ({ }),
 
 })
