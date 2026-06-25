@@ -10,8 +10,6 @@ import type { SerializedComponentSchema } from "./component-registry";
 import { loadMessages, saveMessages, clearMessages, dismissToolCall } from "./chat-session";
 import { useTranslation } from "react-i18next";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
-/* import PreviewSection from "./preview/PreviewSection"; */
-
 
 
 function syncNewCartId(
@@ -184,7 +182,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
                       <Section key={`${message.id}-${i}`}>
                         <p className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
                       </Section>
-
                   );
                 }
 
@@ -217,8 +214,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
           )}
         </div>
 
-{/*         <PreviewSection />
- */}
       </div>
 
       <div className={`tw:fixed tw:bottom-6 tw:left-1/2 tw:-translate-x-1/2 tw:w-1/2 tw:z-50 tw:transition-all tw:duration-300 ${isScrolled ? "tw:opacity-100 tw:translate-y-0" : "tw:opacity-0 tw:translate-y-4 tw:pointer-events-none"}`}>
