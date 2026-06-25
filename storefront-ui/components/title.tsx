@@ -9,11 +9,6 @@ export default function Title({ apiBase = "", shop = "" }: TitleProps) {
   const [title, setTitle] = useState<string | null>(null);
 
   useEffect(() => {
-    // const params = shop ? `?shop=${encodeURIComponent(shop)}` : "";
-    // fetch(`${apiBase}/title${params}`)
-    //   .then((res) => res.json())
-    //   .then((data: { title: string }) => setTitle(data.title))
-    //   .catch(() => setTitle("Chiedimi qualcosa"));
     setTitle("Scopri le novità o lasciati conquistare dalle nostre proposte");
   }, [apiBase, shop]);
 

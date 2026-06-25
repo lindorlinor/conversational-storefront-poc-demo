@@ -1,8 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
-import { ProductCard, ProductCardSkeleton} from './ProductCard';
+import { ProductCard} from './ProductCard';
 import { Product } from '../models/types';
 
-const PLACEHOLDER_COUNT = 3;
 
 export function ProductList({ products }: { products?: Product[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -24,7 +23,6 @@ export function ProductList({ products }: { products?: Product[] }) {
     const ro = new ResizeObserver(updateArrows);
     ro.observe(el);
     return () => { el.removeEventListener('scroll', updateArrows); ro.disconnect(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products]);
 
   const scrollBy = (dir: 'left' | 'right') => {
@@ -36,7 +34,10 @@ export function ProductList({ products }: { products?: Product[] }) {
     el.scrollBy({ left: dir === 'right' ? cardPx + 12 : -(cardPx + 12), behavior: 'smooth' });
   };
 
-  if (!products?.length) {
+
+  if (!products?.length) return null;
+
+ /*  if (!products?.length) {
     return (
       <div className="tw:w-full tw:overflow-x-auto">
         <div className="tw:flex tw:gap-3 tw:flex-nowrap tw:pb-2 tw:w-max">
@@ -46,7 +47,7 @@ export function ProductList({ products }: { products?: Product[] }) {
         </div>
       </div>
     );
-  }
+  } */
 
   return (
     <div className="tw:w-full tw:relative tw:py-8">

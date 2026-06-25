@@ -49,6 +49,8 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   onViewCart?: ( dismiss: () => void) => void;
   onAddToCart?: AddToCartRequest;
 }) {
+  const {t} = useTranslation();
+
   const parsed = new URL(apiUrl, window.location.href);
   const apiBase = parsed.pathname;
   const shop = parsed.searchParams.get("shop") ?? "";
@@ -57,11 +59,12 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const [isScrolled, setIsScrolled] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
-  const {t} = useTranslation();
+
   const DEFAULT_PLACEHOLDER = t("inputPlaceholder");
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
 
   const { messages, sendMessage, setMessages, status, stop, addToolOutput } = useChat({
+    
     transport: new DefaultChatTransport({
       api: apiUrl,
       prepareSendMessagesRequest: ({ messages, body }) => ({
@@ -70,6 +73,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
     }),
     messages: loadMessages(shop),
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) {
         return;
@@ -177,9 +181,7 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
                 
                 if (part.type === "text") {
                   return (
-                    <Section key={`${message.id}-${i}`}>
-                      <p className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
-                    </Section>
+                    <p key={`${message.id}-${i}`} className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
                   );
                 }
 

@@ -101,14 +101,13 @@ export function ConversationalStorefront({
   onClose
 }: ConversationalStorefrontProps) {
   const [ready, setReady] = useState(false);
-  // opacity 0 finché il tema non è iniettato, così non flesha
   const [opacity, setOpacity] = useState(0);
 
   const i18n = useMemo(() => createI18n(language), [language]);
 
   useEffect(() => {
     injectStyles();
-    // registra i componenti del merchant prima del primo render di ChatPage
+    
     registerComponents(components);
 
     cart.init(cartId ?? null, apiUrl);
