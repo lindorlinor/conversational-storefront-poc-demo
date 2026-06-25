@@ -10,32 +10,7 @@ import type { SerializedComponentSchema } from "./component-registry";
 import { loadMessages, saveMessages, clearMessages, loadDismissed, dismissToolCall } from "./chat-session";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
 /* import PreviewSection from "./preview/PreviewSection"; */
-function notifyMarketChanged(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: any[],
-  processedToolCalls: Set<string>,
-  shop: string,
-  onChangeMarket?: (isoCode: string, dismiss: () => void) => void,
-) {
-  const dismissed = loadDismissed(shop);
-  for (const message of messages) {
-    if (message.role !== "assistant") continue;
-    for (const part of message.parts ?? []) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = part as any;
-      if (
-        p.type === "tool-requestChangeMarketTool" &&
-        p.state === "output-available" &&
-        !processedToolCalls.has(p.toolCallId) &&
-        !dismissed.has(p.toolCallId)
-      ) {
-        processedToolCalls.add(p.toolCallId);
-        const dismiss = () => dismissToolCall(shop, p.toolCallId);
-        onChangeMarket?.(p.output.isoCode, dismiss);
-      }
-    }
-  }
-}
+
 
 
 function syncNewCartId(
@@ -112,6 +87,11 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
         const dismiss = () => dismissToolCall(shop, toolCall.toolCallId);
         onViewCart?.(dismiss);
       }
+      else if (toolCall.toolName === "requestChangeMarketTool") {
+        const dismiss = () => dismissToolCall(shop, toolCall.toolCallId);
+        const isoCode = (toolCall.input as { isoCode: string }).isoCode;
+        onChangeMarket?.(isoCode, dismiss);
+      }
     },
 
   });
@@ -143,7 +123,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
-    notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
 
   }, [messages, onChangeMarket, onAddToCart, onViewCart, shop, sendMessage, componentSchemas, country, language]);
 
