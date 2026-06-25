@@ -9,5 +9,6 @@
   "hint": "Choisissez une variante pour continuer",
   "noImage": "Aucune image",
   "price": "Prix",
-  "selectVariant": "Sélectionnez une variante"
+  "selectVariant": "Sélectionnez une variante",
+  "inputPlaceholder": "Écrivez votre message ici..."
 }

@@ -8,6 +8,7 @@ import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
 import { loadMessages, saveMessages, clearMessages, dismissToolCall } from "./chat-session";
+import { useTranslation } from "react-i18next";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
 /* import PreviewSection from "./preview/PreviewSection"; */
 
@@ -56,7 +57,8 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const [isScrolled, setIsScrolled] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
-  const DEFAULT_PLACEHOLDER = "Scrivi un messaggio...";
+  const {t} = useTranslation();
+  const DEFAULT_PLACEHOLDER = t("inputPlaceholder");
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
 
   const { messages, sendMessage, setMessages, status, stop, addToolOutput } = useChat({
