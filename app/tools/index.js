@@ -26,8 +26,7 @@ export const searchProductInCollectionTool = (country, language) => tool({
 
 
 export const requestAddToCartTool = tool({
-  ...addToCartDefinition,
-  execute: async ({ variantId, quantity = 1 }) => ({ variantId, quantity }),
+  ...addToCartDefinition
 });
 
 

@@ -2,7 +2,7 @@ import { useChat, type UIMessage } from "@ai-sdk/react";
 import WidgetRenderer from "./components/WidgetRenderer";
 import { useRef, useEffect, useState } from "react";
 import { cart } from "./cart";
-import { DefaultChatTransport } from "ai";
+import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { ChatInput } from "./components/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
@@ -110,9 +110,31 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   const DEFAULT_PLACEHOLDER = "Scrivi un messaggio...";
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
 
-  const { messages, sendMessage, setMessages, status, stop } = useChat({
-    transport: new DefaultChatTransport({ api: apiUrl }),
+  const { messages, sendMessage, setMessages, status, stop, addToolOutput } = useChat({
+    transport: new DefaultChatTransport({
+      api: apiUrl,
+      prepareSendMessagesRequest: ({ messages, body }) => ({
+        body: { messages, cartId: cart.getId(), componentSchemas, country, language, ...body },
+      }),
+    }),
     messages: loadMessages(shop),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    async onToolCall({ toolCall }) {
+      if (toolCall.dynamic) {
+        return;
+      }
+      if (toolCall.toolName === "requestAddToCartTool") {
+        const { variantId, quantity } = toolCall.input as { variantId: string; quantity: number };
+        const res = onAddToCart
+          ? await onAddToCart(variantId, quantity).finally(() => setAddingToCart(false))
+          : ({ success: false, reason: "add-to-cart non disponibile" } as const);
+        addToolOutput({
+          tool: 'requestAddToCartTool',
+          toolCallId: toolCall.toolCallId,
+          output: res,
+        });
+      }
+    },
   });
 
   /* cart id letto al momento dell'invio perchè può cambiare durante la sessione (prima null e poi modificato)*/
@@ -145,31 +167,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
     notifyViewCart(messages, processedToolCalls.current, shop ?? '', onViewCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const message of messages as any[]) {
-      if (message.role !== "assistant") continue;
-      for (const part of message.parts ?? []) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const p = part as any;
-        if (
-          p.type === "tool-requestAddToCartTool" &&
-          p.state === "output-available" &&
-          !processedToolCalls.current.has(p.toolCallId)
-        ) {
-          processedToolCalls.current.add(p.toolCallId);
-          if (!onAddToCart) continue;
-          setAddingToCart(true);
-          void onAddToCart(p.output.variantId, p.output.quantity)
-            .then((res) => {
-              sendMessage(
-                { text: `[risultato aggiunta carrello: ${JSON.stringify(res)}]` },
-                { body: { cartId: cart.getId(), componentSchemas, country, language } },
-              );
-            })
-            .finally(() => setAddingToCart(false));
-        }
-      }
-    }
   }, [messages, onChangeMarket, onAddToCart, onViewCart, shop, sendMessage, componentSchemas, country, language]);
 
   const disabled = status === "streaming" || status === "submitted" || addingToCart;
