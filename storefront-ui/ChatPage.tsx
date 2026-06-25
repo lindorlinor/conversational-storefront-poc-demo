@@ -7,7 +7,7 @@ import { ChatInput } from "./components/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
-import { loadMessages, saveMessages, clearMessages, loadDismissed, dismissToolCall } from "./chat-session";
+import { loadMessages, saveMessages, clearMessages, dismissToolCall } from "./chat-session";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
 /* import PreviewSection from "./preview/PreviewSection"; */
 
