@@ -3,7 +3,7 @@ import { searchProductInCollectionSchema } from './definition-in-collection'
 
 type SearchProductInCollectionArgs = z.infer<typeof searchProductInCollectionSchema>
 
-const STOREFRONT_API_VERSION = '2025-01'
+const STOREFRONT_API_VERSION = '2026-04'
 
 const GRAPHQL_QUERY = `
   query SearchProductsInCollection(

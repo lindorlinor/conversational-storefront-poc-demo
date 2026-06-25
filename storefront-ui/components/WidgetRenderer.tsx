@@ -1,9 +1,9 @@
 import { ComponentMap } from "../registry-mapper";
 import { getComponent } from "../component-registry";
 import type { ComponentType } from "react";
+import Section from "./Section";
 
-// toolName è arbitrario (può essere un nome registrato dal merchant): prima
-// cerco nel registro runtime del merchant, poi nel ComponentMap di default
+
 function WidgetRenderer({
   toolName,
   input,
@@ -28,7 +28,12 @@ function WidgetRenderer({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ComponentMap as Record<string, ComponentType<any>>)[toolName];
   if (!Component) return null;
-  return <Component {...input} state={state} />;
+
+  return (
+    <Section>
+      <Component {...input} state={state} />
+    </Section>
+  );
 }
 
 export default WidgetRenderer;

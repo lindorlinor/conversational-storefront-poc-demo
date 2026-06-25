@@ -1,5 +1,5 @@
 import { CART_QUERY, CART_CREATE_MUTATION, CART_LINES_ADD_MUTATION } from './cart.graphql';
-const STOREFRONT_API_VERSION = '2025-01'
+const STOREFRONT_API_VERSION = '2026-04'
 
 function storefrontFetch(query: string, variables: Record<string, unknown>) {
   const shop = process.env.SHOPIFY_SHOP

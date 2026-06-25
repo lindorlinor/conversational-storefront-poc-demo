@@ -181,7 +181,10 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
                 
                 if (part.type === "text") {
                   return (
-                    <p key={`${message.id}-${i}`} className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
+                      <Section key={`${message.id}-${i}`}>
+                        <p className="tw:font-widget-secondary tw:text-sm tw:leading-relaxed tw:text-widget-text">{part.text}</p>
+                      </Section>
+
                   );
                 }
 
@@ -193,13 +196,12 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
                   };
                   const toolName = toolPart.type.slice("tool-".length);
                   return (
-                    <Section key={`${message.id}-${i}`}>
-                      <WidgetRenderer
-                        toolName={toolName}
-                        input={toolPart.input}
-                        state={toolPart.state}
-                      />
-                    </Section>
+                    <WidgetRenderer
+                      key={`${message.id}-${i}`}
+                      toolName={toolName}
+                      input={toolPart.input}
+                      state={toolPart.state}
+                    />
                   );
                 }
 

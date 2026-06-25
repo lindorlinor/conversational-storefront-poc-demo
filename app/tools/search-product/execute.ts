@@ -3,7 +3,7 @@ import { searchProductSchema } from './definition'
 
 type SearchProductArgs = z.infer<typeof searchProductSchema>
 
-const STOREFRONT_API_VERSION = '2025-01'
+const STOREFRONT_API_VERSION = '2026-04'
 const GRAPHQL_QUERY = `
   query SearchProducts(
     $query: String!

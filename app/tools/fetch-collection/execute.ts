@@ -3,7 +3,7 @@ import { fetchCollectionSchema } from './definition'
 
 type FetchCollectionArgs = z.infer<typeof fetchCollectionSchema>
 
-const STOREFRONT_API_VERSION = '2025-01'
+const STOREFRONT_API_VERSION = '2026-04'
 const GRAPHQL_QUERY = `
   query FetchCollections($first: Int!) {
     collections(first: $first) {

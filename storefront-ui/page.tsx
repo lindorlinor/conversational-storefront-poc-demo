@@ -3,11 +3,7 @@ import { I18nextProvider } from "react-i18next";
 import { createI18n } from "./i18n";
 import { ChatPage } from "./ChatPage";
 import { cart } from "./cart";
-import {
-  registerComponents,
-  getComponentSchemas,
-  type MerchantComponent,
-} from "./component-registry";
+import { registerComponents, getComponentSchemas, type MerchantComponent} from "./component-registry";
 import rawStyles from "./page.css?inline";
 import type { AddToCartRequest, AddToCartResult } from "./add-to-cart-context";
 
@@ -107,7 +103,7 @@ export function ConversationalStorefront({
 
   useEffect(() => {
     injectStyles();
-    
+
     registerComponents(components);
 
     cart.init(cartId ?? null, apiUrl);
