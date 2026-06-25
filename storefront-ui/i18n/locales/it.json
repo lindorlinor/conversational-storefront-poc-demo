@@ -1,0 +1,13 @@
+{
+  "addToCart": "Aggiungi al carrello",
+  "added": "Aggiunto al carrello",
+  "viewInShop": "vedi sullo shop tradizionale →",
+  "viewInStore": "vedi nello store →",
+  "variant": "Variante",
+  "selected": "Selezionata:",
+  "noSelection": "Nessuna selezione",
+  "hint": "Scegli una variante per continuare",
+  "noImage": "Nessuna immagine",
+  "price": "Prezzo",
+  "selectVariant": "Seleziona una variante"
+}

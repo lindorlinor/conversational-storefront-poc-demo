@@ -1,0 +1,13 @@
+{
+  "addToCart": "Ajouter au panier",
+  "added": "Ajouté au panier",
+  "viewInShop": "voir sur la boutique traditionnelle →",
+  "viewInStore": "voir dans la boutique →",
+  "variant": "Variante",
+  "selected": "Sélectionnée :",
+  "noSelection": "Aucune sélection",
+  "hint": "Choisissez une variante pour continuer",
+  "noImage": "Aucune image",
+  "price": "Prix",
+  "selectVariant": "Sélectionnez une variante"
+}
