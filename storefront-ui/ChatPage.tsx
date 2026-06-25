@@ -37,33 +37,7 @@ function notifyMarketChanged(
   }
 }
 
-function notifyViewCart(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: any[],
-  processedToolCalls: Set<string>,
-  shop: string,
-  onViewCart?: (dismiss: () => void) => void,
-) {
-  const dismissed = loadDismissed(shop);
-  for (const message of messages) {
-    if (message.role !== "assistant") continue;
-    for (const part of message.parts ?? []) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = part as any;
-      if (
-        p.type === "tool-viewCartTool" &&
-        p.state === "output-available" &&
-        !processedToolCalls.has(p.toolCallId) &&
-        !dismissed.has(p.toolCallId)
-      ) {
-        processedToolCalls.add(p.toolCallId);
-        const dismiss = () => dismissToolCall(shop, p.toolCallId);
-        onViewCart?.(dismiss);
-      }
-    }
-  }
-}
-// todo gestire l'intercettazione del cartId tramite eventi custom invece di ispezionare i messaggi: non è flessibile a cambiamenti futuri. (issue #)
+
 function syncNewCartId(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],
@@ -134,7 +108,12 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
           output: res,
         });
       }
+      else if (toolCall.toolName === "viewCartTool") {
+        const dismiss = () => dismissToolCall(shop, toolCall.toolCallId);
+        onViewCart?.(dismiss);
+      }
     },
+
   });
 
   /* cart id letto al momento dell'invio perchè può cambiare durante la sessione (prima null e poi modificato)*/
@@ -164,7 +143,6 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
     syncNewCartId(messages, processedToolCalls.current);
-    notifyViewCart(messages, processedToolCalls.current, shop ?? '', onViewCart);
     notifyMarketChanged(messages, processedToolCalls.current, shop ?? '', onChangeMarket);
 
   }, [messages, onChangeMarket, onAddToCart, onViewCart, shop, sendMessage, componentSchemas, country, language]);
