@@ -8,9 +8,7 @@ function mostRecentlyUpdated<T extends { updatedAt: string }>(items: T[]): T {
   );
 }
 
-export type ThemeConfig = {
-  variant_selector?: Record<string, string>;
-};
+export type ThemeConfig = Record<string, string>;
 
 export async function getThemeConfig(admin: AdminApiContext): Promise<{ id: string; theme: ThemeConfig } | null> {
   const res = await admin.graphql(`
@@ -66,8 +64,7 @@ export async function createThemeConfig(admin: AdminApiContext, config: ThemeCon
 }
 
 export function buildThemeCss(config: ThemeConfig): string {
-  const vars = config.variant_selector ?? {};
-  const declarations = Object.entries(vars)
+  const declarations = Object.entries(config ?? {})
     .filter(([, v]) => v !== "")
     .map(([key, value]) => `  --tw-${key}: ${value};`)
     .join("\n");

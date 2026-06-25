@@ -111,8 +111,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const result = await getThemeConfig(admin);
 
-  // per ora prendo direttamente variant_selector
-  return { saved: result?.theme.variant_selector ?? {} };
+  return { saved: result?.theme ?? {} };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -199,8 +198,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const raw = formData.get("theme") as string;
   try {
-    const variant_selector = JSON.parse(raw) as Record<string, string>;
-    await createThemeConfig(admin, { variant_selector });
+    await createThemeConfig(admin, JSON.parse(raw) as Record<string, string>);
     return Response.json({ ok: true });
   } catch (e) {
     return Response.json({ ok: false, error: (e as Error).message }, { status: 500 });
