@@ -88,9 +88,9 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         image: z.object({ url: z.string() }).optional(),
         available: z.boolean().optional().describe("false if the variant is out of stock — renders with a strikethrough and is not selectable."),
       })).optional().describe("All available variants (e.g. sizes, colors). Mark out-of-stock ones with available: false."),
-      variantLabel: z.string().optional().describe("Human-readable name of the variant dimension, e.g. 'Taglia', 'Colore', 'Materiale'. Defaults to 'Variante'."),
+      variantLabel: z.string().optional().describe("Human-readable name of the variant dimension, in the language of the current market, e.g. 'Taglia', 'Colore', 'Materiale', 'Size', 'Couleur'. This is the product-specific dimension name (it changes per product type), not a fixed UI string. Falls back to a generic 'Variant' label if omitted."),
     }),
-    description: "Shows an interactive variant picker that lets the user choose a variant and add the product to the cart. Use this ONLY when the user explicitly asks to add a product to the cart AND there are multiple variants (e.g. sizes) but the user has not specified which one — never use it just to display product details.",
+    description: "Shows an interactive variant picker that lets the user choose a variant and add the product to the cart. Use this ONLY when the user explicitly asks to add a product to the cart AND there are multiple variants (e.g. sizes) but the user has not specified which one — never use it just to display product details. Set variantLabel to the product-specific dimension name in the language of the current market.",
   },
 };
 

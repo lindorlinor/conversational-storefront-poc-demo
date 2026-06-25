@@ -18,7 +18,7 @@ export default function Title({ apiBase = "", shop = "" }: TitleProps) {
   }, [apiBase, shop]);
 
   return (
-    <h1 className={`tw:text-4xl tw:text-widget-text tw:transition-opacity tw:duration-700 tw:ease-in-out ${title ? "tw:opacity-100" : "tw:opacity-0"}`}>
+    <h1 className={`tw:text-4xl tw:font-widget-primary tw:text-widget-text tw:transition-opacity tw:duration-700 tw:ease-in-out ${title ? "tw:opacity-100" : "tw:opacity-0"}`}>
       {title ?? ""}
     </h1>
   );

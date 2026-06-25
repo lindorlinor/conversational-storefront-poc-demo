@@ -1,10 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { Product, Variant } from "../models/types";
 import { useAddToCart } from "../add-to-cart-context";
 
-type ProductHeroProps = Product & { selectedVariantTitle?: string };
+type ProductHeroProps = Product & {
+  selectedVariantTitle?: string;
+};
 
 export function ProductHero({ title, description, images = [], price, url, variants = [], selectedVariantTitle, defaultVariantId }: ProductHeroProps) {
+  const { t } = useTranslation();
   const initialVariant = selectedVariantTitle ? (variants.find(v => v.title === selectedVariantTitle) ?? null) : null;
 
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(initialVariant);
@@ -85,7 +89,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
         )}
 
         <button onClick={handleAddToCart} disabled={isAdding || (!selectedVariant?.id && !variants[0]?.id && !defaultVariantId)} className="tw:font-widget-secondary tw:flex tw:items-center tw:justify-between tw:w-full tw:px-3 tw:py-2 tw:bg-widget-accent tw:text-widget-accent-fg tw:border tw:border-widget-accent-fg tw:text-sm tw:font-medium tw:rounded-widget-base tw:disabled:opacity-50 tw:disabled:cursor-not-allowed">
-          <span>Add to cart</span>
+          <span>{t("addToCart")}</span>
           {formattedPrice && (
             <div className="tw:flex tw:items-center tw:gap-2">
               <span>{isAdding ? "..." : formattedPrice}</span>
@@ -103,7 +107,7 @@ export function ProductHero({ title, description, images = [], price, url, varia
         {url && (
           <div className="tw:mt-auto">
             <a href={url} className="tw:text-xs tw:text-widget-text-secondary tw:hover:text-widget-text tw:transition-colors tw:font-widget-secondary">
-              see on the traditional shop →
+              {t("viewInShop")}
             </a>
           </div>
         )}
