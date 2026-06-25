@@ -1,6 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { ProductCard } from './index';
-import { ProductCardSkeleton } from './ProductCard';
+import { ProductCard, ProductCardSkeleton} from './ProductCard';
 import { Product } from '../models/types';
 
 const PLACEHOLDER_COUNT = 3;

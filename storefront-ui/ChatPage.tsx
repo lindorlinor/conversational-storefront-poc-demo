@@ -3,14 +3,13 @@ import WidgetRenderer from "./components/WidgetRenderer";
 import { useRef, useEffect, useState } from "react";
 import { cart } from "./cart";
 import { DefaultChatTransport } from "ai";
-import { ChatInput } from "./components/chat-input/ChatInput";
+import { ChatInput } from "./components/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
 import { loadMessages, saveMessages, clearMessages, loadDismissed, dismissToolCall } from "./chat-session";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
-/* import PreviewSection from "./preview/PreviewSection";
- */
+/* import PreviewSection from "./preview/PreviewSection"; */
 function notifyMarketChanged(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages: any[],

@@ -14,7 +14,7 @@ export function ProductCardSkeleton() {
     );
 }
 
-const ProductCard = (product: Product) => {
+export const ProductCard = (product: Product) => {
     const { title, url, imgUrl, price: productPrice, variants } = product;
 
     const imgUrlPartial = !!imgUrl && (() => { try { new URL(imgUrl); return false; } catch { return true; } })();
@@ -73,5 +73,3 @@ const ProductCard = (product: Product) => {
         </>
     );
 }
-
-export default ProductCard
