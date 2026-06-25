@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { I18nextProvider } from "react-i18next";
+import { createI18n } from "./i18n";
 import { ChatPage } from "./ChatPage";
 import { cart } from "./cart";
 import {
@@ -102,6 +104,8 @@ export function ConversationalStorefront({
   // opacity 0 finché il tema non è iniettato, così non flesha
   const [opacity, setOpacity] = useState(0);
 
+  const i18n = useMemo(() => createI18n(language), [language]);
+
   useEffect(() => {
     injectStyles();
     // registra i componenti del merchant prima del primo render di ChatPage
@@ -117,9 +121,11 @@ export function ConversationalStorefront({
   if (!ready) return null;
 
   return (
-    <div style={{ opacity, transition: "opacity 120ms ease" }}>
-      <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
-    </div>
+    <I18nextProvider i18n={i18n}>
+      <div style={{ opacity, transition: "opacity 120ms ease" }}>
+        <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
+      </div>
+    </I18nextProvider>
   );
 }
 
