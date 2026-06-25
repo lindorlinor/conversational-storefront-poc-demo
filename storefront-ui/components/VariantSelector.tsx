@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Product, Variant } from "../models/types";
 import { useAddToCart } from "../add-to-cart-context";
+import { label } from "./LabelSkeleton";
 
 type VariantOption = Variant & { available?: boolean };
 
@@ -17,8 +19,11 @@ export function VariantSelector({
   price,
   url,
   variants = [],
-  variantLabel = "Variante",
-}: VariantSelectorProps) {
+  variantLabel,
+  state,
+}: VariantSelectorProps & { state?: string }) {
+  const {t} = useTranslation();
+  const variantLabelText = variantLabel ?? t("variant");
   const [selected, setSelected] = useState<VariantOption | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
@@ -118,7 +123,7 @@ export function VariantSelector({
             )}
           </>
         ) : (
-          <div className="tw:text-widget-text-muted tw:text-sm">Nessuna immagine</div>
+          <div className="tw:text-widget-text-muted tw:text-sm">{t("noImage")}</div>
         )}
       </div>
 
@@ -137,12 +142,12 @@ export function VariantSelector({
         {variants.length > 0 && (
           <div className="tw:border-t tw:border-widget-border tw:pt-5">
             <div className="tw:flex tw:items-baseline tw:justify-between tw:gap-3 tw:mb-1">
-              <span className="tw:text-xs tw:font-bold tw:uppercase tw:tracking-widest tw:text-widget-text">{variantLabel}</span>
+              <span className="tw:text-xs tw:font-bold tw:uppercase tw:tracking-widest tw:text-widget-text">{label(variantLabelText, state, "4rem")}</span>
               <span className="tw:text-sm tw:text-widget-text-secondary">
                 {selected ? (
-                  <>Selezionata: <b className="tw:text-widget-text tw:font-bold">{selected.title}</b></>
+                  <>{t("selected")} <b className="tw:text-widget-text tw:font-bold">{selected.title}</b></>
                 ) : (
-                  "Nessuna selezione"
+                  t("noSelection")
                 )}
               </span>
             </div>
@@ -153,12 +158,12 @@ export function VariantSelector({
                 <span className="tw:inline-flex tw:items-center tw:justify-center tw:w-[18px] tw:h-[18px] tw:border-[1.5px] tw:rounded-full tw:text-[11px] tw:font-bold tw:flex-none tw:border-current">
                   1
                 </span>
-                {`Scegli ${variantLabel.toLowerCase()} per continuare`}
+                {t("hint")}
               </p>
             )}
 
             {/* Chips */}
-            <div className="tw:flex tw:flex-wrap tw:gap-2.5" role="group" aria-label={variantLabel}>
+            <div className="tw:flex tw:flex-wrap tw:gap-2.5" role="group" aria-label={variantLabelText}>
               {variants.map((v) => {
                 const isAvailable = v.available !== false;
                 const isSelected = selected?.id === v.id && selected?.title === v.title;
@@ -168,7 +173,7 @@ export function VariantSelector({
                     onClick={() => isAvailable && handleSelect(v)}
                     disabled={!isAvailable}
                     aria-pressed={isSelected}
-                    aria-label={`${variantLabel} ${v.title}${!isAvailable ? " — esaurito" : ""}`}
+                    aria-label={`${variantLabelText} ${v.title}${!isAvailable ? " — esaurito" : ""}`}
                     className={[
                       "tw:font-widget-secondary tw:min-w-[58px] tw:h-[54px] tw:px-3.5 tw:border-[1.5px] tw:rounded-widget-base tw:text-base tw:font-semibold tw:flex tw:items-center tw:justify-center tw:transition-all tw:duration-100",
                       isSelected
@@ -190,7 +195,7 @@ export function VariantSelector({
         <div className="tw:mt-5 tw:pt-5 tw:border-t tw:border-widget-border tw:flex tw:items-end tw:gap-5">
           {formattedPrice && (
             <div className="tw:font-widget-secondary tw:flex tw:flex-col tw:gap-0.5 tw:flex-none">
-              <span className=" tw:text-[11px] tw:font-bold tw:uppercase tw:tracking-widest tw:text-widget-text-muted">Prezzo</span>
+              <span className=" tw:text-[11px] tw:font-bold tw:uppercase tw:tracking-widest tw:text-widget-text-muted">{t("price")}</span>
               <span className="tw:text-2xl tw:font-bold tw:tracking-tight tw:text-widget-text">{formattedPrice}</span>
             </div>
           )}
@@ -213,9 +218,7 @@ export function VariantSelector({
                 <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
-              {selected
-                ? "Aggiungi al carrello"
-                : `Seleziona ${variantLabel.toLowerCase()}`}
+              {selected ? t("addToCart") : t("selectVariant")}
             </span>
 
             {/* success label */}
@@ -225,7 +228,7 @@ export function VariantSelector({
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
-              Aggiunto al carrello
+              {t("added")}
             </span>
           </button>
         </div>
@@ -234,7 +237,7 @@ export function VariantSelector({
 
         {url && (
           <a href={url} className="tw:mt-4 tw:text-xs tw:text-widget-text-muted tw:hover:text-widget-text tw:transition-colors tw:self-start">
-            vedi nel negozio →
+            {t("viewInStore")}
           </a>
         )}
       </div>

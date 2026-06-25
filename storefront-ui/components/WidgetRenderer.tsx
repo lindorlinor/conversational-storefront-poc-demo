@@ -28,7 +28,7 @@ function WidgetRenderer({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ComponentMap as Record<string, ComponentType<any>>)[toolName];
   if (!Component) return null;
-  return <Component {...input} />;
+  return <Component {...input} state={state} />;
 }
 
 export default WidgetRenderer;
