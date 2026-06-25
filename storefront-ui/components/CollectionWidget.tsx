@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import type { Product } from "../models/types";
-import ProductCard, { ProductCardSkeleton } from "./ProductCard";
+import {ProductCard, ProductCardSkeleton } from "./ProductCard";
 
 export interface CollectionSectionProps {
   title: string;
