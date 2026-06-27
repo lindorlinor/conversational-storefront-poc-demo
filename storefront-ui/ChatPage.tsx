@@ -7,6 +7,7 @@ import { ChatInput } from "./components/ChatInput";
 import Title from "./components/title";
 import Section from "./components/Section";
 import type { SerializedComponentSchema } from "./component-registry";
+import type { HomeBlock } from "./page";
 import { loadMessages, saveMessages, clearMessages, dismissToolCall } from "./chat-session";
 import { useTranslation } from "react-i18next";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
@@ -36,12 +37,13 @@ function syncNewCartId(
 }
 
 
-export function ChatPage({ apiUrl, componentSchemas, country, language, onChangeMarket, onClose, onViewCart, onAddToCart
+export function ChatPage({ apiUrl, componentSchemas, home, country, language, onChangeMarket, onClose, onViewCart, onAddToCart
  }: {
   apiUrl: string;
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
+  home?: HomeBlock[];
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
   onClose?: () => void;
   onViewCart?: ( dismiss: () => void) => void;
@@ -168,6 +170,19 @@ export function ChatPage({ apiUrl, componentSchemas, country, language, onChange
         className="tw:overflow-y-auto tw:flex tw:flex-col tw:flex-1"
         onScroll={(e) => setIsScrolled(e.currentTarget.scrollTop > 50)}
       >
+
+        {messages.length === 0 && home && home.length > 0 && (
+          <div className="tw:flex tw:flex-col">
+            {home.map((block, i) => (
+              <WidgetRenderer
+                key={i}
+                toolName={block.tool}
+                input={block.props}
+                state="output-available"
+              />
+            ))}
+          </div>
+        )}
 
         <div className="tw:flex tw:flex-col">
           {messages

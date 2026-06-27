@@ -73,10 +73,16 @@ function injectTheme(apiUrl: string): Promise<void> {
     });
 }
 
+export interface HomeBlock {
+  tool: string;
+  props: Record<string, unknown>;
+}
+
 export interface ConversationalStorefrontProps {
   apiUrl: string;
   cartId?: string | null;
   components?: Record<string, MerchantComponent>; //aggiunte props react rispetto page.tsx (che a pensarci dovrei rinominare liquid.tsx ? todo)
+  home?: HomeBlock[];
   country?: string;
   language?: string;
   onChangeMarket?: (isoCode: string, dismiss: () => void) => void;
@@ -89,6 +95,7 @@ export function ConversationalStorefront({
   apiUrl,
   cartId,
   components,
+  home,
   country,
   language,
   onChangeMarket,
@@ -118,7 +125,7 @@ export function ConversationalStorefront({
   return (
     <I18nextProvider i18n={i18n}>
       <div style={{ opacity, transition: "opacity 120ms ease" }}>
-        <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
+        <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} home={home} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
       </div>
     </I18nextProvider>
   );
