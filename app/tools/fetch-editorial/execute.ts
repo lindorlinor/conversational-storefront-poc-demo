@@ -14,7 +14,7 @@ const GRAPHQL_QUERY = `
     metaobjects(type: $type, first: $first) {
       nodes {
         handle
-        displayName
+        type
         fields {
           key
           value
@@ -74,7 +74,7 @@ export async function fetchEditorialExecute(
     }
     return {
       handle: node.handle,
-      displayName: node.displayName,
+      type: node.type,
       fields,
     }
   })
