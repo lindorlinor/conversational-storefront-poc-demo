@@ -6,6 +6,8 @@ import { fetchCollectionDefinition } from './fetch-collection/definition';
 import { fetchCollectionExecute } from './fetch-collection/execute';
 import { searchProductInCollectionDefinition } from './search-product/definition-in-collection';
 import { searchProductInCollectionExecute } from './search-product/execute-in-collection';
+import { fetchEditorialDefinition } from './fetch-editorial/definition';
+import { fetchEditorialExecute } from './fetch-editorial/execute';
 
 
 import { addToCartDefinition } from './cart/definition';
@@ -22,6 +24,11 @@ export const fetchCollectionTool = tool({
 export const searchProductInCollectionTool = (country, language) => tool({
   ...searchProductInCollectionDefinition,
   execute: (args) => searchProductInCollectionExecute(args, { country, language }),
+});
+
+export const fetchEditorialTool = (country, language) => tool({
+  ...fetchEditorialDefinition,
+  execute: (args) => fetchEditorialExecute(args, { country, language }),
 });
 
 
