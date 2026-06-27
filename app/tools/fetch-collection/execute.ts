@@ -1,9 +1,9 @@
 import type { z } from 'zod'
 import { fetchCollectionSchema } from './definition'
+import { storefrontFetch } from '../../shopify/storefront.server'
 
 type FetchCollectionArgs = z.infer<typeof fetchCollectionSchema>
 
-const STOREFRONT_API_VERSION = '2026-04'
 const GRAPHQL_QUERY = `
   query FetchCollections($first: Int!) {
     collections(first: $first) {
@@ -31,25 +31,7 @@ export async function fetchCollectionExecute(args: FetchCollectionArgs) {
 
   const { limit = 100 } = args
 
-  const shop = process.env.SHOPIFY_SHOP
-  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-
-  const response = await fetch(
-    `https://${shop}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Shopify-Storefront-Private-Token': token!,
-      },
-      body: JSON.stringify({
-        query: GRAPHQL_QUERY,
-        variables: { first: limit },
-      }),
-    },
-  )
-
-  const data = await response.json()
+  const data = await storefrontFetch(GRAPHQL_QUERY, { first: limit })
 
   if (data.errors) {
     console.error('[fetchCollectionTool] GraphQL errors:', data.errors)

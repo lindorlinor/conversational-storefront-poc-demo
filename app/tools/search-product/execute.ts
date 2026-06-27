@@ -1,9 +1,9 @@
 import type { z } from 'zod'
 import { searchProductSchema } from './definition'
+import { storefrontFetch } from '../../shopify/storefront.server'
 
 type SearchProductArgs = z.infer<typeof searchProductSchema>
 
-const STOREFRONT_API_VERSION = '2026-04'
 const GRAPHQL_QUERY = `
   query SearchProducts(
     $query: String!
@@ -65,10 +65,6 @@ export async function searchProductExecute(args: SearchProductArgs, { country, l
   console.log(`\n⏱ [1] searchProductTool: EXECUTE START`)
   const { filters, metafield_filters, variant_option_filters, category_filters, taxonomy_filters, limit = 10, sortKey, reverse } = args
 
-  const shop = process.env.SHOPIFY_SHOP
-  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  // console.log('[searchProductTool] shop:', shop, '| token present:', !!token)
-
   const productFilters: Record<string, unknown>[] = []
 
   if (filters?.availability != null) {
@@ -112,30 +108,15 @@ export async function searchProductExecute(args: SearchProductArgs, { country, l
     }
   }
 
-  const response = await fetch(
-    `https://${shop}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Shopify-Storefront-Private-Token': token!,
-      },
-      body: JSON.stringify({
-        query: GRAPHQL_QUERY,
-        variables: {
-          query: args.query ?? '*',
-          first: limit,
-          filters: productFilters.length > 0 ? productFilters : undefined,
-          sortKey: sortKey ?? 'RELEVANCE',
-          reverse: reverse ?? false,
-          country: country?.toUpperCase() ?? undefined,
-          language: language?.toUpperCase() ?? undefined,
-        },
-      }),
-    },
-  )
-
-  const data = await response.json()
+  const data = await storefrontFetch(GRAPHQL_QUERY, {
+    query: args.query ?? '*',
+    first: limit,
+    filters: productFilters.length > 0 ? productFilters : undefined,
+    sortKey: sortKey ?? 'RELEVANCE',
+    reverse: reverse ?? false,
+    country: country?.toUpperCase() ?? undefined,
+    language: language?.toUpperCase() ?? undefined,
+  })
   // console.log('[searchProductTool] response status:', response.status, '| data:', JSON.stringify(data).slice(0, 300))
 
   if (data.errors) {

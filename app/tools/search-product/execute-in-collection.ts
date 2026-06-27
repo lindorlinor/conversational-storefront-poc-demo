@@ -1,9 +1,8 @@
 import type { z } from 'zod'
 import { searchProductInCollectionSchema } from './definition-in-collection'
+import { storefrontFetch } from '../../shopify/storefront.server'
 
 type SearchProductInCollectionArgs = z.infer<typeof searchProductInCollectionSchema>
-
-const STOREFRONT_API_VERSION = '2026-04'
 
 const GRAPHQL_QUERY = `
   query SearchProductsInCollection(
@@ -48,39 +47,21 @@ export async function searchProductInCollectionExecute(args: SearchProductInColl
 
   const { collectionHandle, onlyAvailable, limit = 10, sortKey, reverse } = args
 
-  const shop = process.env.SHOPIFY_SHOP
-  const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN
-
   const productFilters: Record<string, unknown>[] = []
 
   if (onlyAvailable === true) {
     productFilters.push({ available: true })
   }
 
-  const response = await fetch(
-    `https://${shop}.myshopify.com/api/${STOREFRONT_API_VERSION}/graphql.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Shopify-Storefront-Private-Token': token!,
-      },
-      body: JSON.stringify({
-        query: GRAPHQL_QUERY,
-        variables: {
-          handle: collectionHandle,
-          first: limit,
-          filters: productFilters.length > 0 ? productFilters : undefined,
-          sortKey: sortKey ?? 'COLLECTION_DEFAULT',
-          reverse: reverse ?? false,
-          country: country?.toUpperCase() ?? undefined,
-          language: language?.toUpperCase() ?? undefined,
-        },
-      }),
-    },
-  )
-
-  const data = await response.json()
+  const data = await storefrontFetch(GRAPHQL_QUERY, {
+    handle: collectionHandle,
+    first: limit,
+    filters: productFilters.length > 0 ? productFilters : undefined,
+    sortKey: sortKey ?? 'COLLECTION_DEFAULT',
+    reverse: reverse ?? false,
+    country: country?.toUpperCase() ?? undefined,
+    language: language?.toUpperCase() ?? undefined,
+  })
 
   if (data.errors) {
     console.error('[searchProductInCollectionTool] GraphQL errors:', data.errors)
