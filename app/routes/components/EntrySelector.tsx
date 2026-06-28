@@ -1,12 +1,15 @@
-import type { ThemeEntry } from "../../shopify/theme.server";
 import { Button, SectionHeading } from "./basic-ui-components";
 
-function entryLabel(entry: ThemeEntry): string {
+type SelectableEntry = { id: string; handle: string; updatedAt: string };
+
+function entryLabel(entry: SelectableEntry): string {
   return `${entry.handle} — ${new Date(entry.updatedAt).toLocaleString()}`;
 }
 
-export function ThemeEntrySelector({ entries, activeId, selectedId, isCreating, busy, onSelect, onActivate, onNew, onCancel }: {
-  entries: ThemeEntry[];
+export function EntrySelector({ id, heading, entries, activeId, selectedId, isCreating, busy, onSelect, onActivate, onNew, onCancel }: {
+  id: string;
+  heading: string;
+  entries: SelectableEntry[];
   activeId: string | null;
   selectedId: string | null;
   isCreating: boolean;
@@ -20,13 +23,13 @@ export function ThemeEntrySelector({ entries, activeId, selectedId, isCreating, 
 
   return (
     <s-section>
-      <SectionHeading>Active configuration</SectionHeading>
+      <SectionHeading>{heading}</SectionHeading>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <label style={{ fontSize: 13, fontWeight: 500, color: "#374151" }} htmlFor="theme-entry">
+        <label style={{ fontSize: 13, fontWeight: 500, color: "#374151" }} htmlFor={id}>
           Entry
         </label>
         <select
-          id="theme-entry"
+          id={id}
           value={isCreating ? "" : (selectedId ?? "")}
           onChange={e => onSelect(e.target.value)}
           disabled={isCreating || entries.length === 0}

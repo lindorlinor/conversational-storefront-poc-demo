@@ -6,7 +6,7 @@ import { boundary } from "@shopify/shopify-app-react-router/server";
 import { createThemeConfig, updateThemeConfig, setActiveThemeId, listThemeConfigs, getActiveThemeId } from "../shopify/theme.server";
 import { extractTheme } from "../services/theme-extractor.server";
 import { ALL_KEYS, EMPTY_THEME, type ThemeKey } from "../theme/theme.tokens";
-import { ThemeEntrySelector } from "./components/ThemeEntrySelector";
+import { EntrySelector } from "./components/EntrySelector";
 import { ThemeExtractor } from "./components/ThemeExtractor";
 import { ThemeFieldGrid } from "./components/ThemeFieldGrid";
 import { Button, ErrorText } from "./components/basic-ui-components";
@@ -138,7 +138,9 @@ export default function StyleConfiguration() {
 
   return (
     <s-page heading="Style configuration">
-      <ThemeEntrySelector
+      <EntrySelector
+        id="theme-entry"
+        heading="Active configuration"
         entries={entries}
         activeId={activeId}
         selectedId={selectedId}
