@@ -3,7 +3,7 @@ import { streamText, convertToModelMessages, stepCountIs } from 'ai'
 import { searchProductTool, fetchCollectionTool, searchProductInCollectionTool, fetchEditorialTool, requestAddToCartTool, requestChangeMarketTool, viewCartTool } from '../tools'
 import { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
-import { getSystemPrompt } from '../shopify/system-prompt.graphql';
+import { getSystemPrompt } from '../shopify/system-prompt.server';
 import { corsPreflightResponse, responseWithCors } from '../cors.server';
 
 import {getUItools, buildMerchantUITools}  from '../tools/buildUITools';
