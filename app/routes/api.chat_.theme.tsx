@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from 'react-router';
 import { unauthenticated } from '../shopify.server';
-import { getThemeConfig, buildThemeCss } from '../shopify/theme.graphql';
+import { getThemeConfig, buildThemeCss } from '../shopify/theme.server';
 import { corsPreflightResponse, responseWithCors } from '../cors.server';
 
 export async function loader({ request }: LoaderFunctionArgs) {
