@@ -1,5 +1,7 @@
 import type { AdminApiContext } from "@shopify/shopify-app-react-router/server";
-import { LIST_THEMES_QUERY, ACTIVE_THEME_QUERY, SHOP_ID_QUERY, SET_ACTIVE_THEME_MUTATION, CREATE_THEME_MUTATION, UPDATE_THEME_MUTATION } from "./theme.graphql";
+import { LIST_THEMES_QUERY, ACTIVE_THEME_QUERY, CREATE_THEME_MUTATION, UPDATE_THEME_MUTATION } from "./theme.graphql";
+import { getShopId } from "./shop.server";
+import { SET_SHOP_METAFIELD_MUTATION } from "./shop.graphql";
 
 const THEME_TYPE = process.env.THEME_METAOBJECT_TYPE;
 if (!THEME_TYPE) throw new Error("THEME_METAOBJECT_TYPE non è configurato (env)");
@@ -33,7 +35,7 @@ export async function getActiveThemeId(admin: AdminApiContext): Promise<string |
 
 export async function setActiveThemeId(admin: AdminApiContext, id: string): Promise<void> {
   if (!pointerConfigured) return;
-  const res = await admin.graphql(SET_ACTIVE_THEME_MUTATION, {
+  const res = await admin.graphql(SET_SHOP_METAFIELD_MUTATION, {
     variables: {
       metafields: [{
         ownerId: await getShopId(admin),
@@ -100,12 +102,6 @@ export function buildThemeCss(config: ThemeConfig): string {
 }
 
 
-
-async function getShopId(admin: AdminApiContext): Promise<string> {
-  const res = await admin.graphql(SHOP_ID_QUERY);
-  const json = await res.json();
-  return json.data.shop.id as string;
-}
 
 function mostRecentlyUpdated<T extends { updatedAt: string }>(items: T[]): T {
   return items.reduce((latest, n) =>

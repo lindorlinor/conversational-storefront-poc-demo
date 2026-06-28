@@ -17,16 +17,6 @@ export const ACTIVE_THEME_QUERY = `#graphql
     }
   }`;
 
-export const SHOP_ID_QUERY = `#graphql
-  query { shop { id } }`;
-
-export const SET_ACTIVE_THEME_MUTATION = `#graphql
-  mutation setActiveTheme($metafields: [MetafieldsSetInput!]!) {
-    metafieldsSet(metafields: $metafields) {
-      userErrors { field message }
-    }
-  }`;
-
 export const CREATE_THEME_MUTATION = `#graphql
   mutation createTheme($metaobject: MetaobjectCreateInput!) {
     metaobjectCreate(metaobject: $metaobject) {
