@@ -1,7 +1,6 @@
 import { useChat, type UIMessage } from "@ai-sdk/react";
 import WidgetRenderer from "./components/WidgetRenderer";
-import { useRef, useEffect, useState } from "react";
-import { cart } from "./cart";
+import { useEffect, useState } from "react";
 import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 import { ChatInput } from "./components/ChatInput";
 import Title from "./components/title";
@@ -13,33 +12,10 @@ import { useTranslation } from "react-i18next";
 import { AddToCartProvider, type AddToCartRequest } from "./add-to-cart-context";
 
 
-function syncNewCartId(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: any[],
-  processedToolCalls: Set<string>,
-) {
-  for (const message of messages) {
-    if (message.role !== "assistant") continue;
-    for (const part of message.parts ?? []) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const p = part as any;
-      if (
-        p.type === "tool-addToCartTool" &&
-        p.state === "output-available" &&
-        p.output?.newCartId &&
-        !processedToolCalls.has(p.toolCallId)
-      ) {
-        processedToolCalls.add(p.toolCallId);
-        cart.applyId(p.output.newCartId);
-      }
-    }
-  }
-}
-
-
-export function ChatPage({ apiUrl, componentSchemas, home, country, language, onChangeMarket, onClose, onViewCart, onAddToCart
+export function ChatPage({ apiUrl, cartId, componentSchemas, home, country, language, onChangeMarket, onClose, onViewCart, onAddToCart
  }: {
   apiUrl: string;
+  cartId?: string | null;
   country?: string;
   language?: string;
   componentSchemas?: Record<string, SerializedComponentSchema>;
@@ -55,7 +31,6 @@ export function ChatPage({ apiUrl, componentSchemas, home, country, language, on
   const apiBase = parsed.pathname;
   const shop = parsed.searchParams.get("shop") ?? "";
 
-  const processedToolCalls = useRef(new Set<string>());
   const [isScrolled, setIsScrolled] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
@@ -68,7 +43,7 @@ export function ChatPage({ apiUrl, componentSchemas, home, country, language, on
     transport: new DefaultChatTransport({
       api: apiUrl,
       prepareSendMessagesRequest: ({ messages, body }) => ({
-        body: { messages, cartId: cart.getId(), componentSchemas, country, language, ...body },
+        body: { messages, cartId: cartId ?? null, componentSchemas, country, language, ...body },
       }),
     }),
     messages: loadMessages(shop),
@@ -102,11 +77,10 @@ export function ChatPage({ apiUrl, componentSchemas, home, country, language, on
 
   });
 
-  /* cart id letto al momento dell'invio perchè può cambiare durante la sessione (prima null e poi modificato)*/
   /* componentSchemas: schemi (JSON Schema) dei componenti del merchant, inviati
      a ogni richiesta così il backend può generare i tool corrispondenti. per ora così, todo endpoint probabilmente */
   const send = (text: string) => {
-    sendMessage({ text }, { body: { cartId: cart.getId(), componentSchemas, country, language } });
+    sendMessage({ text }, { body: { cartId: cartId ?? null, componentSchemas, country, language } });
     setInputValue("");
     setPlaceholder(text);
   };
@@ -128,8 +102,6 @@ export function ChatPage({ apiUrl, componentSchemas, home, country, language, on
 
   useEffect(() => {
     if (messages.length > 0) saveMessages(shop, messages);
-    syncNewCartId(messages, processedToolCalls.current);
-
   }, [messages, onChangeMarket, onAddToCart, onViewCart, shop, sendMessage, componentSchemas, country, language]);
 
   const disabled = status === "streaming" || status === "submitted" || addingToCart;
@@ -140,7 +112,7 @@ export function ChatPage({ apiUrl, componentSchemas, home, country, language, on
 
       <button
         type="button"
-        onClick={() => { stop(); clearMessages(shop); setInputValue(""); setPlaceholder(DEFAULT_PLACEHOLDER); setMessages([]); processedToolCalls.current.clear(); }}
+        onClick={() => { stop(); clearMessages(shop); setInputValue(""); setPlaceholder(DEFAULT_PLACEHOLDER); setMessages([]); }}
         className="tw:font-widget-secondary tw:fixed tw:top-4 tw:left-4 tw:z-50 tw:flex tw:items-center tw:gap-1.5 tw:rounded-widget-base tw:border tw:border-widget-border tw:bg-widget-bg tw:px-3 tw:py-1.5 tw:text-sm tw:text-widget-text-secondary tw:shadow-sm tw:transition tw:hover:text-widget-text"
       >
         Reset

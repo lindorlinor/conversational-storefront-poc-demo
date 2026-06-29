@@ -3,22 +3,17 @@ type IframeShellParams = {
   apiUrlAttr: string;
 };
 
-// si ho importato i font face direttamente solo per poter avere piu varietà nella personalizzazione del tema, a logica si possono vedere solo quelli del proprio store quindi non dovrebbero esserci problemi
 export function renderIframeShell({ appOrigin, apiUrlAttr }: IframeShellParams) {
   return `<!DOCTYPE html>
     <html lang="it">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://fonts.googleapis.com/css2?family=Jomolhari&display=swap" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <title>Chat</title>
       </head>
       <body style="margin:0">
         <div id="chat-page-root" data-app-origin="${appOrigin}" data-api-url="${apiUrlAttr}"></div>
         <script src="https://cdn.shopify.com/shopifycloud/polaris.js" defer></script>
-        <!-- il bundle è un modulo ES con React external: l'import map fa risolvere
-             react/react-dom dei suoi specificatori bare alle copie esm.sh -->
         <script type="importmap">
           {
             "imports": {
@@ -46,18 +41,51 @@ export function renderIframeShell({ appOrigin, apiUrlAttr }: IframeShellParams) 
           var country = params.get('country');
           var language = params.get('language');
 
+          var pendingAddToCart = {};
+          window.addEventListener('message', function (e) {
+            var data = e.data;
+            if (!data || data.type !== 'conversational-storefront:add-to-cart-result') return;
+            var resolve = pendingAddToCart[data.requestId];
+            if (!resolve) return;
+            delete pendingAddToCart[data.requestId];
+            resolve(data.result);
+          });
+
+          function onAddToCart(variantId, quantity) {
+            return new Promise(function (resolve) {
+              var requestId = String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+              pendingAddToCart[requestId] = resolve;
+              setTimeout(function () {
+                if (pendingAddToCart[requestId]) {
+                  delete pendingAddToCart[requestId];
+                  resolve({ success: false, reason: 'nessuna risposta dal negozio' });
+                }
+              }, 15000);
+              window.parent.postMessage({
+                type: 'conversational-storefront:add-to-cart',
+                requestId: requestId,
+                variantId: variantId,
+                quantity: quantity,
+              }, '*');
+            });
+          }
+
+          // chiusura del widget: l'iframe non controlla il dialog del tema,
+          // segnala al parent che chiude il <dialog> che ci contiene
+          function onClose() {
+            window.parent.postMessage({ type: 'conversational-storefront:close' }, '*');
+          }
+
           createRoot(container).render(
             React.createElement(ConversationalStorefront, {
               apiUrl: container.dataset.apiUrl,
               cartId: cartId,
               country: country,
               language: language,
+              onAddToCart: onAddToCart,
+              onClose: onClose,
             })
           );
-
-          window.addEventListener('conversational-storefront:cart-id-changed', function (e) {
-            document.cookie = 'cart=' + encodeURIComponent(e.detail.cartId) + '; path=/; max-age=' + 60 * 60 * 24 * 30;
-          });
         </script>
       </body>
     </html>`;

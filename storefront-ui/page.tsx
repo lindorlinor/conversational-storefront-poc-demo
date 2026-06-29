@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
 import { createI18n } from "./i18n";
 import { ChatPage } from "./ChatPage";
-import { cart } from "./cart";
 import { registerComponents, getComponentSchemas, type MerchantComponent} from "./component-registry";
 import rawStyles from "./page.css?inline";
 import type { AddToCartRequest, AddToCartResult } from "./add-to-cart-context";
@@ -113,19 +112,17 @@ export function ConversationalStorefront({
 
     registerComponents(components);
 
-    cart.init(cartId ?? null, apiUrl);
-
     injectTheme(apiUrl).finally(() => setOpacity(1));
 
     setReady(true);
-  }, [apiUrl, cartId, components]);
+  }, [apiUrl, components]);
 
   if (!ready) return null;
 
   return (
     <I18nextProvider i18n={i18n}>
       <div style={{ opacity, transition: "opacity 120ms ease" }}>
-        <ChatPage apiUrl={apiUrl} componentSchemas={getComponentSchemas()} home={home} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
+        <ChatPage apiUrl={apiUrl} cartId={cartId} componentSchemas={getComponentSchemas()} home={home} country={country} language={language} onChangeMarket={onChangeMarket} onClose={onClose} onViewCart={onViewCart} onAddToCart={onAddToCart} />
       </div>
     </I18nextProvider>
   );

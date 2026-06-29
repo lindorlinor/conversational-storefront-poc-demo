@@ -78,9 +78,56 @@
       launcher.style.display = 'flex';
     });
 
+    // estrae l'id numerico della variante dal GID Storefront API
+    // (gid://shopify/ProductVariant/123 -> "123"): la Cart Ajax API del tema
+    // vuole l'id numerico, non il global id
+    function numericVariantId(variantId) {
+      var m = String(variantId).match(/(\d+)(?:\?.*)?$/);
+      return m ? m[1] : String(variantId);
+    }
+
+    // il widget (iframe) non tocca il carrello: segnala l'intento via postMessage
+    // e il tema lo esegue sul carrello nativo dello store, poi rimanda l'esito
+    function handleAddToCart(data) {
+      var id = numericVariantId(data.variantId);
+      var quantity = data.quantity > 0 ? data.quantity : 1;
+
+      function reply(result) {
+        iframe.contentWindow.postMessage({
+          type: 'conversational-storefront:add-to-cart-result',
+          requestId: data.requestId,
+          result: result,
+        }, '*');
+      }
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: [{ id: id, quantity: quantity }] }),
+      })
+        .then(function (res) {
+          if (!res.ok) {
+            return res.json().catch(function () { return {}; }).then(function (body) {
+              reply({ success: false, reason: body.description || ('errore carrello (' + res.status + ')') });
+            });
+          }
+          // /cart.js per leggere la quantità totale aggiornata del carrello
+          return fetch('/cart.js')
+            .then(function (r) { return r.json(); })
+            .then(function (cart) { reply({ success: true, totalQuantity: cart.item_count }); })
+            .catch(function () { reply({ success: true }); });
+        })
+        .catch(function () {
+          reply({ success: false, reason: 'aggiunta al carrello non riuscita' });
+        });
+    }
+
     window.addEventListener('message', function (event) {
-      if (event.data && event.data.type === 'conversational-storefront:close') {
+      if (!event.data) return;
+      if (event.data.type === 'conversational-storefront:close') {
         dialog.close();
+      } else if (event.data.type === 'conversational-storefront:add-to-cart') {
+        handleAddToCart(event.data);
       }
     });
 
