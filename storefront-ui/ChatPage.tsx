@@ -55,6 +55,7 @@ export function ChatPage({ apiUrl, cartId, componentSchemas, home, country, lang
       }
       if (toolCall.toolName === "requestAddToCartTool") {
         const { variantId, quantity } = toolCall.input as { variantId: string; quantity: number };
+        setAddingToCart(true);
         const res = onAddToCart
           ? await onAddToCart(variantId, quantity).finally(() => setAddingToCart(false))
           : ({ success: false, reason: "add-to-cart non disponibile" } as const);
@@ -67,11 +68,13 @@ export function ChatPage({ apiUrl, cartId, componentSchemas, home, country, lang
       else if (toolCall.toolName === "viewCartTool") {
         const dismiss = () => dismissToolCall(shop, toolCall.toolCallId);
         onViewCart?.(dismiss);
+        addToolOutput({ tool: 'viewCartTool', toolCallId: toolCall.toolCallId, output: { ok: true } });
       }
       else if (toolCall.toolName === "requestChangeMarketTool") {
         const dismiss = () => dismissToolCall(shop, toolCall.toolCallId);
         const isoCode = (toolCall.input as { isoCode: string }).isoCode;
         onChangeMarket?.(isoCode, dismiss);
+        addToolOutput({ tool: 'requestChangeMarketTool', toolCallId: toolCall.toolCallId, output: { ok: true, isoCode } });
       }
     },
 

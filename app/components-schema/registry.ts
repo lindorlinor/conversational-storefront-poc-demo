@@ -65,7 +65,7 @@ export const registry: Record<ComponentName, ComponentSchema> = {
         price: z.object({ amount: z.string() }).optional(),
         image: z.object({ url: z.string() }).optional(),
       })).optional().describe("Product variants (e.g. size, age group). Pass them so the user can switch between variants interactively."),
-      selectedVariantTitle: z.string().optional().describe("Title of the variant to pre-select on load. Use this when the user has expressed a preference for a specific variant (e.g. asked for a product 'for kids' → set this to the matching variant title such as '3-8 years'). Must exactly match one of the titles in the variants array."),
+      selectedVariantTitle: z.string().nullable().optional().describe("Title of the variant to pre-select on load. Use this when the user has expressed a preference for a specific variant (e.g. asked for a product 'for kids' → set this to the matching variant title such as '3-8 years'). Must exactly match one of the titles in the variants array."),
       defaultVariantId: z.string().optional().describe("Variant id used to add the product to the cart when it has no selectable variants. Pass the defaultVariantId returned by the search tool for products without real variants."),
     }),
     description: "Displays a full product hero with image gallery, price and a link to the shop. Use this when the user asks for details about a single specific product. If the product has variants (e.g. sizes, age groups), pass them and set selectedVariantTitle if the user expressed a preference. For products without variants, pass defaultVariantId so the add-to-cart button works.",

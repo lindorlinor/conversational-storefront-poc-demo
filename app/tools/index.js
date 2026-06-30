@@ -42,7 +42,6 @@ export const requestChangeMarketTool = tool({
   inputSchema: z.object({
     isoCode: z.string().optional().describe('ISO 639-1 language code detected from the user input, e.g. "it", "fr", "de"'),
   }),
-  execute: async ({ isoCode }) => ({isoCode }),
 })
 
 
@@ -50,8 +49,6 @@ export const requestChangeMarketTool = tool({
 export const viewCartTool = tool({
   description: 'Call this tool when the user wants to view their cart.',
   inputSchema: z.object({}),
-  execute: async () => ({ }),
-
 })
 
 

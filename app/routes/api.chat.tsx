@@ -140,7 +140,7 @@ export async function action({ request }: ActionFunctionArgs) {
           // console.log('[chat] assistant messages:', JSON.stringify(assistantMessages, null, 2))
         }
       },
-      model: openai.chat('gpt-5-mini-2025-08-07'),
+      model: openai.chat('gpt-4.1'),
       tools,
       messages: await convertToModelMessages(messages),
     })
